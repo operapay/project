@@ -136,7 +136,6 @@ class Flightpath extends Component {
         return (
             <div className='map' >
                 <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
-                {/* <ReactEcharts option={this.Option()} style={{width:1500, height:700}} /> */}
             </div>
         );
     }
