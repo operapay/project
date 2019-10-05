@@ -67,6 +67,48 @@ class Flightpath extends Component {
             complete: this.getData
         });
     }
+    Option = () => ({
+        xAxis3D: {
+            type: 'value'
+        },
+        yAxis3D: {
+            type: 'value'
+        },
+        zAxis3D: {
+            type: 'value'
+        },
+        grid3D: {
+            show : false,
+            viewControl: {
+                // projection: 'orthographic'
+            }
+        },
+        series: [{
+            type: 'surface',
+            //coordinateSystem: 'maptalks3D',
+            wireframe: {
+                show: false
+            },
+            equation: {
+                x: {
+                    step: 0.05,
+                    min: -3,
+                    max: 3,
+                },
+                y: {
+                    step: 0.05,
+                    min: 0,
+                    max: 2
+                },
+                z: function (x, y) {
+                    if (y > Math.tan(15)* x && y > -Math.tan(15)* x) {
+                        return -Math.tan(15)* y;
+                    }
+                    return '-';
+                }
+            }
+        }]
+    })
     getOption = () => ({
         maptalks3D: {
             // center: [-0.4855, 51.4727],
@@ -113,35 +155,14 @@ class Flightpath extends Component {
                 opacity: 0.5
             },
             data: this.state.dataAll
-        }
-        // {
-        //     type: 'surface',
-        //     //coordinateSystem: 'maptalks3D',
-        //     wireframe: {
-        //         show: false
-        //     },
-        //     equation: {
-        //         x: {
-        //             step: 0.05
-        //         },
-        //         y: {
-        //             step: 0.05
-        //         },
-        //         z: function (x, y) {
-        //             if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
-        //                 return '-';
-        //             }
-        //             return Math.sin(x * Math.PI) * Math.sin(y * Math.PI);
-        //         }
-        //     }
-        // }],
-        ]
+        }],
     });
     
     render() {
         return (
             <div className='map' >
                 <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
+                <ReactEcharts option={this.Option()} style={{width:1500, height:700}} />
             </div>
         );
     }
