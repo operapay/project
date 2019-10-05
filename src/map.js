@@ -1,6 +1,6 @@
 import * as maptalks from 'maptalks'
 
-var map = new maptalks.Map('map', {
+var map = new maptalks.Map$1('map', {
     center: [-0.113049,51.498568],
     zoom: 14,
     pitch : 56,
