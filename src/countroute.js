@@ -8,6 +8,17 @@ import * as d3 from 'd3-request';
 import url from './data/data_flight.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
+import data from './data/flight.json'
+
+function getAirportCoord(idx) {
+    return [data.airports[idx][3], data.airports[idx][4]];
+}
+var routes = data.routes.map(function(airline) {
+    return [
+        getAirportCoord(airline[1]),
+        getAirportCoord(airline[2])
+    ];
+});
 
 var map = {
     center: [100.5367883,13.717152], //mahamek
@@ -34,9 +45,6 @@ var map = {
     //     }
     // }
 }
-
-
-var data = [[100.7415433,13.6383389,400]]
 
 class Flightpath extends Component {
     constructor(props) {
@@ -78,15 +86,6 @@ class Flightpath extends Component {
     getData(result) {
         var num = 1
         var name = result.data[1][1]
-        for(var i=1;i<101;i++){
-            this.state.arr[0].name = result.data[1][1]
-            this.state.arr[0].coords[i-1].push(result.data[i][3])
-            this.state.arr[0].coords[i-1].push(result.data[i][4])
-            this.state.arr[0].coords[i-1].push(result.data[i][5])
-            if(i < 100){
-                this.state.arr[0].coords.push([])
-            }
-        }
         // for(var j=0;j<2;j++){
         //     //console.log(j)
         //     for(var i=num;i<538;i++){
@@ -144,19 +143,6 @@ class Flightpath extends Component {
         maptalks3D: map, 
         series: [
             {
-                type: 'bar3D',
-                coordinateSystem: 'maptalks3D',
-                shading: 'lambert',
-                data: data,
-                barSize: 1.2,
-                minHeight: 0.2,
-                silent: true,
-                itemStyle: {
-                    color: 'orange'
-                    // opacity: 0.8
-                }
-            },
-            {
             type: 'lines3D',
             coordinateSystem: 'maptalks3D',
             effect: {
@@ -173,7 +159,7 @@ class Flightpath extends Component {
                 color: 'rgb(50, 60, 170)',
                 opacity: 0.5
             },
-            data: this.state.dataAll
+            data: routes
         }],
     });
     
