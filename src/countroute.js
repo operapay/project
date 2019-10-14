@@ -3,7 +3,7 @@ import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
-import './visualizer.css'
+import './visualize/offset.css'
 import * as d3 from 'd3-request';
 import url from './data/data_flight.csv';
 import Papa from 'papaparse'

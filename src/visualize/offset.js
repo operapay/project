@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
-import './visualizer.css'
+import './offset.css'
 import * as d3 from 'd3-request';
-import url from './data/data_flight.csv';
+import url from '../data/data_flight.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 
@@ -19,18 +19,21 @@ var map = {
         subdomains: ['a','b','c','d'],
         attribution: '&copy; <a href="http://osm.org">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/">CARTO</a>'
     }),
-    // postEffect: {
-    //     enable: true,
-    //     bloom: {
-    //         intensity: 0.4
-    //     }
-    // }
 }
+
+var dataplane = [{name:'MP19R-RYAUN', coords: [[100.7432,13.70367,0],
+[100.7694,13.80349,609.6],
+[100.7858,13.86579,762],
+[100.8056,13.94083,1066.8]]},
+{name:'LOUIS-BS902', coords: [[100.7518,13.6567,0],
+[100.7369,13.59995,0],
+[100.798,13.51101,0],
+[100.8975,13.51687,1828.8]]}]
 
 
 var centrallocat = [[100.7415433,13.6383389,23]]
 
-class Flightpath extends Component {
+class Flightpath extends React.Component {
     constructor(props) {
         super(props);
 
@@ -129,16 +132,23 @@ class Flightpath extends Component {
                 polyline: true,
                 // silent: true,
                 lineStyle: {
+                    width: 50,
+                    color: 'red',
+                    opacity: 0.3,
+                },
+                data: dataplane
+            },
+            {
+                type: 'lines3D',
+                coordinateSystem: 'maptalks3D',
+                polyline: true,
+                // silent: true,
+                lineStyle: {
                     width: 5,
                     color: 'red',
                     opacity: 0.3,
                 },
-                symbol : 'arrow',
-                progressive: 500,
-                data: [{name:'', coords: [[100.7432,13.70367,0],
-                [100.7694,13.80349,609.6],
-                [100.7858,13.86579,762],
-                [100.8056,13.94083,1066.8]]}]
+                data: dataplane
             },
             {
                 type: 'bar3D',
@@ -178,7 +188,11 @@ class Flightpath extends Component {
     render() {
         // this.state.map.remove()
         return (
-            <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
+            <React.Fragment>
+                <p>Offset Visualization</p>
+                <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
+            </React.Fragment>
+            // <p>test</p>
         );
     }
 }
