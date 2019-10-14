@@ -8,7 +8,7 @@ import * as d3 from 'd3-request';
 import url from './data/data_flight.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
-import * as E3Layer from 'maptalks.e3'
+import * as maptalksE3 from 'maptalks.e3'
 
 var data = [[1142058.223,223372.858,-11,-13,1,-49,-26,-14]];
 //var data = [[1164383,401471,-11,-13,1,-49,-26,-14]];
@@ -73,7 +73,7 @@ var map = new maptalks.Map("map",{
             'zlevel': 1
         }]
     };
-    var e3Layer = new E3Layer('e3', ecOption, { hideOnZooming : true, hideOnRotating : true, hideOnMoving : true })
+    var e3Layer = new maptalksE3('e3', ecOption, { hideOnZooming : true, hideOnRotating : true, hideOnMoving : true })
     .addTo(map);
 ////});
     

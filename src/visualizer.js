@@ -9,20 +9,11 @@ import url from './data/data_flight.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 
-var dataplane = [{name:'', coords: [[100.759529, 13.692165, 0],[101.064133,14.011093,5000]]}]
 var map = {
-    center: [100.5367883,13.717152], //mahamek
+    center: [100.7395539,13.6983666], //mahamek
     zoom: 12,
     // pitch: 80,
-    // draggable : false,        //disable drag
-    // dragPan : false,          //disable drag panning
-    // dragRotate : false,       //disable drag rotation
-    // dragPitch : false,        //disable drag pitch
-    // scrollWheelZoom : false,  //disable wheel zoom
-    // touchZoom : false,        //disable touchzoom
-    // doubleClickZoom : false,  //disable doubleclick zoom
-    // zoomAnimation: false,
-    //altitudeScale: 5,
+    altitudeScale: 3.28,
     baseLayer: new maptalks.TileLayer('base', {
         urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
         subdomains: ['a','b','c','d'],
@@ -37,7 +28,7 @@ var map = {
 }
 
 
-var data = [[100.7415433,13.6383389,400]]
+var centrallocat = [[100.7415433,13.6383389,23]]
 
 class Flightpath extends Component {
     constructor(props) {
@@ -76,38 +67,44 @@ class Flightpath extends Component {
         });
     }
 
+    uniqueNameFlight(name,data){
+        var count = 0
+        for(var i=1;i<data.length;i++){
+            if(name !== data[i][1]){
+                count += 1
+                name = data[i][1]
+            }
+        }
+        return count
+    }
+
     getData(result) {
         var num = 1
         var name = result.data[1][1]
-        for(var i=1;i<101;i++){
-            this.state.arr[0].name = result.data[1][1]
-            this.state.arr[0].coords[i-1].push(result.data[i][3])
-            this.state.arr[0].coords[i-1].push(result.data[i][4])
-            this.state.arr[0].coords[i-1].push(result.data[i][5])
-            if(i < 100){
-                this.state.arr[0].coords.push([])
+        var count = this.uniqueNameFlight(name,result.data)
+        console.log(count)
+        for(var j=0;j<count;j++){
+            //console.log(j)
+            for(var i=num;i<=result.data.length;i++){
+                // console.log(num)
+                if(name !==  result.data[i][1]){
+                    num = i
+                    name = result.data[i][1]
+                    this.state.arr[j].coords.pop()
+                    break;
+                }
+                this.state.arr[j].coords.push([])
+                this.state.arr[j].name = result.data[i][1]
+                this.state.arr[j].coords[i-num].push(result.data[i][4])
+                this.state.arr[j].coords[i-num].push(result.data[i][5])
+                this.state.arr[j].coords[i-num].push(result.data[i][6])
+            }
+            // console.log(j)
+            if(j < count-1){
+                this.state.arr.push({name:'', coords: [[]]})
             }
         }
-        // for(var j=0;j<2;j++){
-        //     //console.log(j)
-        //     for(var i=num;i<538;i++){
-        //         console.log(num)
-        //         this.state.arr[j].name = result.data[i][1]
-        //         this.state.arr[j].coords[i-num-1].push(result.data[i][3])
-        //         this.state.arr[j].coords[i-num-1].push(result.data[i][4])
-        //         this.state.arr[j].coords[i-num-1].push(result.data[i][5])
-        //         if(name ===  result.data[i][1]){
-        //             this.state.arr[0].coords.push([])
-        //         }
-        //         else{
-        //             num = i
-        //             break;
-        //         }
-        //         name = result.data[i][1]
-        //     }
-        //     this.state.arr.push({name:'', coords: [[]]})
-        // }
-        // console.log(result.data)
+        //console.log(result.data)
         // this.setState({test: result.data});
         console.log(this.state.arr)
         //this.test()
@@ -126,27 +123,28 @@ class Flightpath extends Component {
     getOption = () => ({
         maptalks3D: map, 
         series: [
-            // {
-            //     type: 'lines3D',
-            //     coordinateSystem: 'maptalks3D',
-            //     polyline: true,
-            //     lineStyle: {
-            //         width: 2,
-            //         color: 'red',
-            //         opacity: 0.5
-            //     },
-            //     data: [{name:'', coords: [[100.759529, 13.692165, 0],[101.064133,14.011093,5000]]}]
-            // },
             {
-                type: 'surface',
+                type: 'lines3D',
                 coordinateSystem: 'maptalks3D',
-                data : dataplane
+                polyline: true,
+                // silent: true,
+                lineStyle: {
+                    width: 5,
+                    color: 'red',
+                    opacity: 0.3,
+                },
+                symbol : 'arrow',
+                progressive: 500,
+                data: [{name:'', coords: [[100.7432,13.70367,0],
+                [100.7694,13.80349,609.6],
+                [100.7858,13.86579,762],
+                [100.8056,13.94083,1066.8]]}]
             },
             {
                 type: 'bar3D',
                 coordinateSystem: 'maptalks3D',
                 shading: 'lambert',
-                data: data,
+                data: centrallocat,
                 barSize: 1.2,
                 minHeight: 0.2,
                 silent: true,
@@ -162,8 +160,8 @@ class Flightpath extends Component {
                     show: true,
                     constantSpeed: 40,
                     trailWidth: 2,
-                    trailLength: 0.15,
-                    trailOpacity: 1
+                    trailLength: 0.05,
+                    trailOpacity: 1,
                 },
                 //blendMode: 'lighter',
                 polyline: true,

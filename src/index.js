@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Visual from './mapwithechart'
+import Visual from './visualizer'
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<Visual />, document.getElementById('root'));
