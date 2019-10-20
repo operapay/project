@@ -12,7 +12,7 @@ import echarts from 'echarts'
 var map = {
     center: [100.7395539,13.6983666], //mahamek
     zoom: 12,
-    // pitch: 80,
+    pitch: 100,
     altitudeScale: 3.28,
     baseLayer: new maptalks.TileLayer('base', {
         urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
@@ -21,14 +21,16 @@ var map = {
     }),
 }
 
-var dataplane = [{name:'MP19R-RYAUN', coords: [[100.7432,13.70367,0],
-[100.7694,13.80349,609.6],
-[100.7858,13.86579,762],
-[100.8056,13.94083,1066.8]]},
-{name:'LOUIS-BS902', coords: [[100.7518,13.6567,0],
-[100.7369,13.59995,0],
-[100.798,13.51101,0],
-[100.8975,13.51687,1828.8]]}]
+var dataplane = [
+    // {name:'MP19R-RYAUN', coords: [[100.7432,13.70367,0],
+    // [100.7694,13.80349,609.6],
+    // [100.7858,13.86579,762],
+    // [100.8056,13.94083,1066.8]]},
+    {name:'LOUIS-BS902', coords: [[100.7518,13.6567,0],
+    [100.7369,13.59995,0],
+    [100.798,13.51101,0],
+    [100.8975,13.51687,1828.8]]}
+]
 
 
 var centrallocat = [[100.7415433,13.6383389,23]]
@@ -70,12 +72,12 @@ class Flightpath extends React.Component {
         });
     }
 
-    uniqueNameFlight(name,data){
+    uniqueNameFlight(name,data,date){
         var count = 0
         for(var i=1;i<data.length;i++){
-            if(name !== data[i][1]){
+            if (data[i][1] === '-'){
                 count += 1
-                name = data[i][1]
+                console.log(i)
             }
         }
         return count
@@ -84,15 +86,17 @@ class Flightpath extends React.Component {
     getData(result) {
         var num = 1
         var name = result.data[1][1]
-        var count = this.uniqueNameFlight(name,result.data)
+        var date = result.data[1][1]
+        var count = this.uniqueNameFlight(name,result.data,date)
         console.log(count)
+
         for(var j=0;j<count;j++){
             //console.log(j)
             for(var i=num;i<=result.data.length;i++){
                 // console.log(num)
-                if(name !==  result.data[i][1]){
-                    num = i
-                    name = result.data[i][1]
+                if(result.data[i][1] === '-'){
+                    num = i+1
+                    //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
                     break;
                 }
