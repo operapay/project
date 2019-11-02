@@ -2,12 +2,9 @@ import React from "react";
 import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
-import * as maptalks from 'maptalks'
 import './offset.css'
-import * as d3 from 'd3-request';
 import url from '../data/data_flight.csv';
 import Papa from 'papaparse'
-import echarts from 'echarts'
 import 'antd/dist/antd.css';
 import { Select } from 'antd';
 
@@ -19,9 +16,10 @@ class Flightpath extends React.Component {
 
         this.state = {
             rawdata : null,
+            select : "Attitude",
             data : [],
             arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}],
-            avg_arr : {name:'avg', type: 'line',lineStyle:{color:'#CB4335'},showSymbol:false,data:[]},
+            avg_arr : {name:'avg', type: 'line',smooth: true,lineStyle:{color:'#CB4335'},showSymbol:false,data:[]},
         };
 
         this.getData = this.getData.bind(this);
@@ -33,11 +31,12 @@ class Flightpath extends React.Component {
     }
 
     handleChange(value) {
-        if(value == 'Attitude'){
-            this.data_linegraph(this.state.rawdata)
-        }
-        else if (value == 'Lateral'){
+        this.setState({select : value})
+        if (value == 'Lateral'){
             this.data_lateral(this.state.rawdata)
+        }
+        else{
+            this.data_linegraph(this.state.rawdata,value)
         }
     }
 
@@ -75,6 +74,13 @@ class Flightpath extends React.Component {
         }
     }
 
+    distance_xy(x1,y1,x2,y2){
+        var diff_x = Math.pow(x1-x2,2)
+        var diff_y = Math.pow(y1-y2,2)
+        return Math.pow(diff_x+diff_y, 0.5)
+        
+    }
+
     closest(array,num,distribute,param){
         var i=0;
         var minDiff=1000;
@@ -95,10 +101,41 @@ class Flightpath extends React.Component {
         return distribute;
     }
 
+    closest_xy(array,num,distribute,param){
+        var i=0;
+        var minDiff=1000;
+        var distance;
+        var value;
+        var x;
+        var y;
+        for(i in array){
+            //console.log('i',array[0][i])
+            var m=Math.abs(num-array[i][0]);
+            if(m<minDiff){ 
+                    minDiff=m; 
+                    distance=array[i][0]; 
+                    value=array[i][1];
+                }
+        }
+        x = (num*value[0])/distance
+        y = (num*value[1])/distance
+        distribute[param].x.push(x)
+        distribute[param].y.push(y)
+        distribute[param].data.push([x,y])
+        return distribute;
+    }
+
     init_arrdistribute(distribute){
         // distribute.push({dis:0,data:[]})
         for(var i=1;i<=15;i+=0.5){
             distribute.push({dis:i,data:[]})
+        }
+    }
+
+    init_arrdistribute_xy(distribute){
+        // distribute.push({dis:0,data:[]})
+        for(var i=1;i<30;i+=2){
+            distribute.push({dis:i,x:[],y:[],data:[]})
         }
     }
 
@@ -107,11 +144,11 @@ class Flightpath extends React.Component {
     data_lateral(result){
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
         var num = 1
-        var list;
         var long_origin = 100.7541404;
         var lat_origin = 13.6993272;
-        //var distribute = []
-        //this.init_arrdistribute(distribute)
+        var dist = [{name:'',data:[[]]}]
+        var distribute = []
+        this.init_arrdistribute_xy(distribute)
         var name = result.data[num][1]
         var date = result.data[num][2]
         var count = this.uniqueNameFlight(name,result.data,date)
@@ -127,42 +164,46 @@ class Flightpath extends React.Component {
                 }
                 y = (((result.data[i][5] - lat_origin)*(0.01745329251*6371))*0.539957)
                 x = (((result.data[i][4] - long_origin)*(0.01745329251*6371)*Math.cos(result.data[i][5]*0.01745329251))*0.539957)
-                //console.log(i,' x: ', x , ' y: ', y)
-                // if(i-num === 0){
-                //     this.state.arr[j].data.push([])
-                //     this.state.arr[j].name = result.data[i][1]
-                //     this.state.arr[j].data[i-num].push(0) 
-                //     this.state.arr[j].data[i-num].push(0) 
-                // }
+
                 if( (y>-20 && y<2) && (x>-4 && x<12) ){
                     //console.log(i)
                     this.state.arr[j].data.push([])
                     this.state.arr[j].name = result.data[i][1]
                     this.state.arr[j].data[i-num].push(x)
                     this.state.arr[j].data[i-num].push(y)
+                    if(i-num > 0){
+                        dist[j].name = result.data[i][1]
+                        dist[j].data.push([])
+                        var dis = this.distance_xy(this.state.arr[j].data[i-num-1][0],x,this.state.arr[j].data[i-num-1][1],y)
+                        dist[j].data[i-num].push(dis)
+                        dist[j].data[i-num].push([x,y])
+                    }
                 }
             }
-            // for(var i=0;i<distribute.length;i++){
-            //     this.closest(this.state.arr[j].data,distribute[i].dis,distribute,i)
-            // }
+            //console.log(dist)
+            for(var i=0;i<distribute.length;i++){
+                this.closest_xy(dist[j].data,distribute[i].dis,distribute,i)
+            }
+            //console.log(distribute)
             if(j < count-1){
                 this.state.arr.push({name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]})
+                dist.push({name:'',data:[[]]})
             }
         }
-        // this.state.avg_arr.data.push([0,0])
-        // for(var i=0;i<distribute.length;i++){
-        //     // average(distribute[i].data)
-        //     this.state.avg_arr.data.push([])
-        //     this.state.avg_arr.data[i+1].push(distribute[i].dis,this.average(distribute[i].data))
-        // }
-        //console.log(this.state.arr)
+        console.log(distribute)
         this.state.avg_arr.data = []
+        this.state.avg_arr.data.push([0,0])
+        for(var i=0;i<distribute.length;i++){
+            this.state.avg_arr.data.push([])
+            this.state.avg_arr.data[i+1].push(this.average(distribute[i].x),this.average(distribute[i].y))
+        }
+        console.log(this.state.avg_arr)
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr});
         //console.log(this.state.data)
     }
 
-    data_linegraph(result){
+    data_linegraph(result,value){
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
         var num = 2
         var list;
@@ -175,8 +216,6 @@ class Flightpath extends React.Component {
             var ground = 0
             for(var i=num;i<=result.data.length;i++){
                 ground = ground + this.distance(result.data[i-1][5], result.data[i-1][4], result.data[i][5], result.data[i][4], "N")
-                //console.log(i, ":" ,ground) 
-                // ground = ground + this.distance(result.data[i-1][5], result.data[i-1][4], result.data[i][5], result.data[i][4], "N")
                 if(result.data[i][1] === '-'){
                     num = i+2
                     //name = result.data[i][1]
@@ -195,13 +234,11 @@ class Flightpath extends React.Component {
                 if(ground < 15){
                     this.state.arr[j].data.push([])
                     this.state.arr[j].name = result.data[i][1]
-                    // this.state.arr[j].type = 'line'
-                    // this.state.arr[j].lineStyle = {color:'#A9CCE3'}
-                    // this.state.arr[j].showSymbol = false
-                    // this.state.arr[j].data[i-num].push(result.data[i][7])
-                    // var ground = this.distance(result.data[num][5], result.data[num][4], result.data[i][5], result.data[i][4], "N")
                     this.state.arr[j].data[i-num+1].push(ground)
-                    this.state.arr[j].data[i-num+1].push(result.data[i][7])
+                    if (value === 'Speed')
+                        this.state.arr[j].data[i-num+1].push(result.data[i][8])
+                    else
+                        this.state.arr[j].data[i-num+1].push(result.data[i][7]) 
                     //console.log(this.state.arr)
                 }
             }
@@ -212,13 +249,13 @@ class Flightpath extends React.Component {
                 this.state.arr.push({name:'', type: 'line',showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]})
             }
         }
+        this.state.avg_arr.data = []
         this.state.avg_arr.data.push([0,0])
         for(var i=0;i<distribute.length;i++){
             // average(distribute[i].data)
             this.state.avg_arr.data.push([])
             this.state.avg_arr.data[i+1].push(distribute[i].dis,this.average(distribute[i].data))
         }
-        /////=================avg===============
         this.state.arr.push(this.state.avg_arr)
         //console.log(this.state.arr)
         this.setState({data: this.state.arr});
@@ -252,7 +289,7 @@ class Flightpath extends React.Component {
     
     getOption = () => ({
         title: {
-            text: 'Departure Attitude'
+            text: 'Departure ' + this.state.select
         },
         tooltip: {
             trigger: 'axis'
@@ -292,6 +329,7 @@ class Flightpath extends React.Component {
                 <Select defaultValue="Attitude" style={{ width: 120 }} onChange={this.handleChange}>
                     <Option value="Attitude">Attitude</Option>
                     <Option value="Lateral">Lateral</Option>
+                    <Option value="Speed">Speed</Option>
                 </Select>
                 <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
             </React.Fragment>
