@@ -18,10 +18,10 @@ class Flightpath extends React.Component {
         super(props);
 
         this.state = {
+            rawdata : null,
             data : [],
-            arr : [{name:'', type: 'line',showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}],
+            arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}],
             avg_arr : {name:'avg', type: 'line',lineStyle:{color:'#CB4335'},showSymbol:false,data:[]},
-            // avg_data : [{name:'avg',data:[]}]
         };
 
         this.getData = this.getData.bind(this);
@@ -30,11 +30,15 @@ class Flightpath extends React.Component {
 
     componentWillMount() {
         this.getCsvData();
-        // console.log(this.distance(13.692002, 100.75988, 13.48842, 100.7064, "N"))
     }
 
     handleChange(value) {
-        console.log(`selected ${value}`);
+        if(value == 'Attitude'){
+            this.data_linegraph(this.state.rawdata)
+        }
+        else if (value == 'Lateral'){
+            this.data_lateral(this.state.rawdata)
+        }
     }
 
     fetchCsv() {
@@ -100,13 +104,72 @@ class Flightpath extends React.Component {
 
     average = list => list.reduce((prev, curr) => prev + curr) / list.length;
 
+    data_lateral(result){
+        this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
+        var num = 1
+        var list;
+        var long_origin = 100.7541404;
+        var lat_origin = 13.6993272;
+        //var distribute = []
+        //this.init_arrdistribute(distribute)
+        var name = result.data[num][1]
+        var date = result.data[num][2]
+        var count = this.uniqueNameFlight(name,result.data,date)
+        for(var j=0;j<count;j++){
+            var x = 0; var y = 0;
+            for(var i=num;i<=result.data.length;i++){
+                if(result.data[i][1] === '-'){
+                    num = i+1
+                    //console.log('break')
+                    //name = result.data[i][1]
+                    this.state.arr[j].data.pop()
+                    break;
+                }
+                y = (((result.data[i][5] - lat_origin)*(0.01745329251*6371))*0.539957)
+                x = (((result.data[i][4] - long_origin)*(0.01745329251*6371)*Math.cos(result.data[i][5]*0.01745329251))*0.539957)
+                //console.log(i,' x: ', x , ' y: ', y)
+                // if(i-num === 0){
+                //     this.state.arr[j].data.push([])
+                //     this.state.arr[j].name = result.data[i][1]
+                //     this.state.arr[j].data[i-num].push(0) 
+                //     this.state.arr[j].data[i-num].push(0) 
+                // }
+                if( (y>-20 && y<2) && (x>-4 && x<12) ){
+                    //console.log(i)
+                    this.state.arr[j].data.push([])
+                    this.state.arr[j].name = result.data[i][1]
+                    this.state.arr[j].data[i-num].push(x)
+                    this.state.arr[j].data[i-num].push(y)
+                }
+            }
+            // for(var i=0;i<distribute.length;i++){
+            //     this.closest(this.state.arr[j].data,distribute[i].dis,distribute,i)
+            // }
+            if(j < count-1){
+                this.state.arr.push({name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]})
+            }
+        }
+        // this.state.avg_arr.data.push([0,0])
+        // for(var i=0;i<distribute.length;i++){
+        //     // average(distribute[i].data)
+        //     this.state.avg_arr.data.push([])
+        //     this.state.avg_arr.data[i+1].push(distribute[i].dis,this.average(distribute[i].data))
+        // }
+        //console.log(this.state.arr)
+        this.state.avg_arr.data = []
+        this.state.arr.push(this.state.avg_arr)
+        this.setState({data: this.state.arr});
+        //console.log(this.state.data)
+    }
+
     data_linegraph(result){
+        this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
         var num = 2
         var list;
         var distribute = []
         this.init_arrdistribute(distribute)
         var name = result.data[1][1]
-        var date = result.data[1][1]
+        var date = result.data[1][2]
         var count = this.uniqueNameFlight(name,result.data,date)
         for(var j=0;j<count;j++){
             var ground = 0
@@ -155,10 +218,13 @@ class Flightpath extends React.Component {
             this.state.avg_arr.data.push([])
             this.state.avg_arr.data[i+1].push(distribute[i].dis,this.average(distribute[i].data))
         }
+        /////=================avg===============
         this.state.arr.push(this.state.avg_arr)
-        console.log(this.state.arr)
+        //console.log(this.state.arr)
         this.setState({data: this.state.arr});
+        //console.log(this.state.data)
     }
+
     uniqueNameFlight(name,data,date){
         var count = 0
         for(var i=1;i<data.length;i++){
@@ -171,7 +237,8 @@ class Flightpath extends React.Component {
     }
 
     getData(result) {
-        this.data_linegraph(result)
+        this.setState({rawdata: result});
+        this.data_linegraph(this.state.rawdata)
     }
 
 
@@ -216,6 +283,7 @@ class Flightpath extends React.Component {
         },
         series: this.state.data
     });
+
     
     render() {
         return (
@@ -223,7 +291,7 @@ class Flightpath extends React.Component {
                 <p>Offset Analytics</p>
                 <Select defaultValue="Attitude" style={{ width: 120 }} onChange={this.handleChange}>
                     <Option value="Attitude">Attitude</Option>
-                    <Option value="Speed">Speed</Option>
+                    <Option value="Lateral">Lateral</Option>
                 </Select>
                 <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
             </React.Fragment>
