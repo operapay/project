@@ -3,10 +3,10 @@ import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
-import './offset.css'
+import './holding.css'
 import * as d3 from 'd3-request';
-import url from '../data/data_flight.csv';
-//import url from '../data/data_arrival.csv';
+// import url from '../data/data_28.10.62.csv';
+import url from '../data/data_test.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 
@@ -131,30 +131,30 @@ class Flightpath extends React.Component {
     getOption = () => ({
         maptalks3D: map, 
         series: [
-            {
-                type: 'lines3D',
-                coordinateSystem: 'maptalks3D',
-                polyline: true,
-                // silent: true,
-                lineStyle: {
-                    width: 50,
-                    color: 'red',
-                    opacity: 0.3,
-                },
-                data: dataplane
-            },
-            {
-                type: 'lines3D',
-                coordinateSystem: 'maptalks3D',
-                polyline: true,
-                // silent: true,
-                lineStyle: {
-                    width: 5,
-                    color: 'red',
-                    opacity: 0.3,
-                },
-                data: dataplane
-            },
+            // {
+            //     type: 'lines3D',
+            //     coordinateSystem: 'maptalks3D',
+            //     polyline: true,
+            //     // silent: true,
+            //     lineStyle: {
+            //         width: 50,
+            //         color: 'red',
+            //         opacity: 0.3,
+            //     },
+            //     data: dataplane
+            // },
+            // {
+            //     type: 'lines3D',
+            //     coordinateSystem: 'maptalks3D',
+            //     polyline: true,
+            //     // silent: true,
+            //     lineStyle: {
+            //         width: 5,
+            //         color: 'red',
+            //         opacity: 0.3,
+            //     },
+            //     data: dataplane
+            // },
             {
                 type: 'bar3D',
                 coordinateSystem: 'maptalks3D',
