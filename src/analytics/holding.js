@@ -105,25 +105,57 @@ class Flightpath extends React.Component {
         var data_dist = []
         var data_time = []
         var ground = 0
+        var ground_non = 0
+        var dis = 100000
+        var dist
+        var first = false
         for(var i=0;i<data.length;i++){
             if(data[i].name === value){
                 data_select.push(data[i])
                 console.log(data[i])
             }
         }
-
-        for(var i=1;i<data_select[0].coords.length;i++){
-            ground = ground + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
-        }
-        // console.log(data_select[0].date[0][1])
         var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
         var timeEnd = new Date("01/01/2007 " + data_select[0].date[data_select[0].date.length-1][1]);
 
         var Diff = timeEnd - timeStart;
+        var Diff_non = Diff
+
+        for(var i=1;i<data_select[0].coords.length;i++){
+            ground = ground + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+            dist = this.distance(13.6567,100.7518,data_select[0].coords[i][1],data_select[0].coords[i][0],"N")
+            if(dist > dis && (dist > 20 & dist < 100)){
+                ground_non = ground_non + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+                if(first == false){
+                    var timeStart_non = new Date("01/01/2007 " + data_select[0].date[i][1]);
+                    first = true
+                }
+                var timeEnd_non = new Date("01/01/2007 " + data_select[0].date[i+1][1]);
+                // console.log(data_select[0].date[i+1][1])
+                // Diff_non = Diff_non - (timeEnd_non - timeStart_non);
+                // sum = sum + 1
+                // if(sum > 10){
+                //     // console.log(sum)
+                //     check = true
+                //     name = result.data[i][1]
+                // }
+                
+            }
+            // else{
+            //     ground_non = ground_non + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+            // }
+            dis = this.distance(13.6567,100.7518,data_select[0].coords[i][1],data_select[0].coords[i][0],"N")
+        }
+        Diff_non = Diff_non - (timeEnd_non - timeStart_non);
         var time_hold = Diff * 0.16666666666667 * 0.0001
-        data_dist.push(['Holding',ground])
-        data_time.push(['Holding',time_hold])
-        // console.log(time_hold)
+        var time_non = Diff_non * 0.16666666666667 * 0.0001
+        console.log(time_non, ',' , time_hold)
+        ground_non = ground - ground_non
+        console.log(ground_non, ',' , ground)
+        data_dist.push(['Not holding',Math.round(ground_non)])
+        data_dist.push(['Holding',Math.round(ground)])
+        data_time.push(['Not holding',Math.round(time_non)])
+        data_time.push(['Holding',Math.round(time_hold)])
         this.setState({dataHoldingDist : data_dist, dataHoldingTime : data_time})
     }
 
@@ -219,28 +251,78 @@ class Flightpath extends React.Component {
     getOption = () => ({
         xAxis: {
             type: 'category',
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 22,
+            }
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            name: 'distance (nmi)',
+            nameLocation: 'center',
+            nameGap: 100,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 22,
+            }
         },
         series: [
             {
                 data: this.state.dataHoldingDist,
-                type: 'bar'
+                type: 'bar',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        fontSize: 20
+                    }
+                },
             }
         ]      
     });
     getOptiontime = () => ({
         xAxis: {
             type: 'category',
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 22,
+            }
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            name: 'time (min)',
+            nameLocation: 'center',
+            nameGap: 100,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 22,
+            }
         },
         series: [
             {
                 data: this.state.dataHoldingTime,
-                type: 'bar'
+                type: 'bar',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside',
+                        fontSize: 20
+                    }
+                },
             }
         ]      
     });
