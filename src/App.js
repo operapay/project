@@ -4,6 +4,7 @@ import logo from './logo.svg';
 import Offset from './visualize/offset';
 import OffsetAnalyze from './analytics/offset'
 import Holding from './visualize/holding';
+import HoldingAnalyze from './analytics/holding'
 import './App.css';
 
 const App = () => (
@@ -19,7 +20,7 @@ const App = () => (
         <Holding/>
       </Route>
       <Route path="/holding/analyze">
-        <OffsetAnalyze/>
+        <HoldingAnalyze/>
       </Route>
     </Switch>
   </BrowserRouter>
