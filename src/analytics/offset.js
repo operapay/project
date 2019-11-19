@@ -20,6 +20,9 @@ class Flightpath extends React.Component {
             data : [],
             arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}],
             avg_arr : {name:'avg', type: 'line',smooth: true,lineStyle:{color:'#CB4335'},showSymbol:false,data:[]},
+            distribute3nmi : [],
+            distribute5nmi : [],
+            distribute8nmi : []
         };
 
         this.getData = this.getData.bind(this);
@@ -259,7 +262,58 @@ class Flightpath extends React.Component {
         this.state.arr.push(this.state.avg_arr)
         //console.log(this.state.arr)
         this.setState({data: this.state.arr});
-        //console.log(this.state.data)
+        this.distributed(distribute)
+        // console.log('distribute', distribute)
+    }
+
+    distributed(distribute){
+        var arr3nmi = [0,0,0,0,0,0,0,0,0,0,0,0]
+        var arr5nmi = [0,0,0,0,0,0,0,0,0,0,0,0]
+        var arr8nmi = [0,0,0,0,0,0,0,0,0,0,0,0]
+        for(var i=0;i<distribute[4].data.length;i++){
+            if(distribute[4].data[i] >= 0 && distribute[4].data[i] < 500) arr3nmi[0] += 1;
+            else if(distribute[4].data[i] >= 500 && distribute[4].data[i] < 1000) arr3nmi[1] += 1;
+            else if(distribute[4].data[i] >= 1000 && distribute[4].data[i] < 1500) arr3nmi[2] += 1;
+            else if(distribute[4].data[i] >= 1500 && distribute[4].data[i] < 2000) arr3nmi[3] += 1;
+            else if(distribute[4].data[i] >= 2000 && distribute[4].data[i] < 2500) arr3nmi[4] += 1;
+            else if(distribute[4].data[i] >= 2500 && distribute[4].data[i] < 3000) arr3nmi[5] += 1;
+            else if(distribute[4].data[i] >= 3000 && distribute[4].data[i] < 3500) arr3nmi[6] += 1;
+            else if(distribute[4].data[i] >= 3500 && distribute[4].data[i] < 4000) arr3nmi[7] += 1;
+            else if(distribute[4].data[i] >= 4000 && distribute[4].data[i] < 4500) arr3nmi[8] += 1;
+            else if(distribute[4].data[i] >= 4500 && distribute[4].data[i] < 5000) arr3nmi[9] += 1;
+            else if(distribute[4].data[i] >= 5000 && distribute[4].data[i] < 5500) arr3nmi[10] += 1;
+            else if(distribute[4].data[i] >= 5500 && distribute[4].data[i] < 6000) arr3nmi[11] += 1;
+        }
+        for(var i=0;i<distribute[8].data.length;i++){
+            if(distribute[8].data[i] >= 0 && distribute[8].data[i] < 500) arr5nmi[0] += 1;
+            else if(distribute[8].data[i] >= 500 && distribute[8].data[i] < 1000) arr5nmi[1] += 1;
+            else if(distribute[8].data[i] >= 1000 && distribute[8].data[i] < 1500) arr5nmi[2] += 1;
+            else if(distribute[8].data[i] >= 1500 && distribute[8].data[i] < 2000) arr5nmi[3] += 1;
+            else if(distribute[8].data[i] >= 2000 && distribute[8].data[i] < 2500) arr5nmi[4] += 1;
+            else if(distribute[8].data[i] >= 2500 && distribute[8].data[i] < 3000) arr5nmi[5] += 1;
+            else if(distribute[8].data[i] >= 3000 && distribute[8].data[i] < 3500) arr5nmi[6] += 1;
+            else if(distribute[8].data[i] >= 3500 && distribute[8].data[i] < 4000) arr5nmi[7] += 1;
+            else if(distribute[8].data[i] >= 4000 && distribute[8].data[i] < 4500) arr5nmi[8] += 1;
+            else if(distribute[8].data[i] >= 4500 && distribute[8].data[i] < 5000) arr5nmi[9] += 1;
+            else if(distribute[8].data[i] >= 5000 && distribute[8].data[i] < 5500) arr5nmi[10] += 1;
+            else if(distribute[8].data[i] >= 5500 && distribute[8].data[i] < 6000) arr5nmi[11] += 1;
+        }
+        for(var i=0;i<distribute[14].data.length;i++){
+            if(distribute[14].data[i] >= 0 && distribute[14].data[i] < 500) arr8nmi[0] += 1;
+            else if(distribute[14].data[i] >= 500 && distribute[14].data[i] < 1000) arr8nmi[1] += 1;
+            else if(distribute[14].data[i] >= 1000 && distribute[14].data[i] < 1500) arr8nmi[2] += 1;
+            else if(distribute[14].data[i] >= 1500 && distribute[14].data[i] < 2000) arr8nmi[3] += 1;
+            else if(distribute[14].data[i] >= 2000 && distribute[14].data[i] < 2500) arr8nmi[4] += 1;
+            else if(distribute[14].data[i] >= 2500 && distribute[14].data[i] < 3000) arr8nmi[5] += 1;
+            else if(distribute[14].data[i] >= 3000 && distribute[14].data[i] < 3500) arr8nmi[6] += 1;
+            else if(distribute[14].data[i] >= 3500 && distribute[14].data[i] < 4000) arr8nmi[7] += 1;
+            else if(distribute[14].data[i] >= 4000 && distribute[14].data[i] < 4500) arr8nmi[8] += 1;
+            else if(distribute[14].data[i] >= 4500 && distribute[14].data[i] < 5000) arr8nmi[9] += 1;
+            else if(distribute[14].data[i] >= 5000 && distribute[14].data[i] < 5500) arr8nmi[10] += 1;
+            else if(distribute[14].data[i] >= 5500 && distribute[14].data[i] < 6000) arr8nmi[11] += 1;
+        }
+        this.setState({distribute3nmi : arr3nmi , distribute5nmi : arr5nmi , distribute8nmi : arr8nmi})
+        // console.log(this.state.distribute3nmi)
     }
 
     uniqueNameFlight(name,data,date){
@@ -321,6 +375,129 @@ class Flightpath extends React.Component {
         series: this.state.data
     });
 
+    Option3nmi = () => ({
+        xAxis: {
+            type: 'category',
+            data: ['0-500','500-1000','1000-1500','1500-2000','2000-2500','2500-3000','3000-3500','3500-4000',
+            '4000-4500','4500-5000','5000-5500','5500-6000'],
+            name: 'ground distance (nmi)',
+            nameLocation: 'center',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 15,
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'number of flight',
+            nameLocation: 'center',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 22,
+            }
+        },
+        series: [
+            {
+                data: this.state.distribute3nmi,
+                type: 'bar',
+            }
+        ]      
+    });
+
+    Option5nmi = () => ({
+        xAxis: {
+            type: 'category',
+            data: ['0-500','500-1000','1000-1500','1500-2000','2000-2500','2500-3000','3000-3500','3500-4000',
+            '4000-4500','4500-5000','5000-5500','5500-6000'],
+            name: 'ground distance (nmi)',
+            nameLocation: 'center',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 15,
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'number of flight',
+            nameLocation: 'center',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 22,
+            }
+        },
+        series: [
+            {
+                data: this.state.distribute5nmi,
+                type: 'bar',
+            }
+        ]      
+    });
+
+    Option8nmi = () => ({
+        xAxis: {
+            type: 'category',
+            data: ['0-500','500-1000','1000-1500','1500-2000','2000-2500','2500-3000','3000-3500','3500-4000',
+            '4000-4500','4500-5000','5000-5500','5500-6000'],
+            name: 'ground distance (nmi)',
+            nameLocation: 'center',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 15,
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'number of flight',
+            nameLocation: 'center',
+            nameGap: 50,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 22,
+            }
+        },
+        series: [
+            {
+                data: this.state.distribute8nmi,
+                type: 'bar',
+            }
+        ]      
+    });
+
     
     render() {
         return (
@@ -332,6 +509,9 @@ class Flightpath extends React.Component {
                     <Option value="Speed">Speed</Option>
                 </Select>
                 <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
+                <ReactEcharts option={this.Option3nmi()} style={{width:1500, height:700}} />
+                <ReactEcharts option={this.Option5nmi()} style={{width:1500, height:700}} />
+                <ReactEcharts option={this.Option8nmi()} style={{width:1500, height:700}} />
             </React.Fragment>
         );
     }
