@@ -5,12 +5,16 @@ import Offset from './visualize/offset';
 import OffsetAnalyze from './analytics/offset'
 import Holding from './visualize/holding';
 import HoldingAnalyze from './analytics/holding'
+import Narbar from './navbar'
 import './App.css';
 
 const App = () => (
   <BrowserRouter>
     <Switch>
-      <Route path="/offset/visualize">
+      <Route path="">
+        <Narbar/>
+      </Route>
+      {/* <Route path="/offset/visualize">
         <Offset/>
       </Route>
       <Route path="/offset/analyze">
@@ -21,7 +25,7 @@ const App = () => (
       </Route>
       <Route path="/holding/analyze">
         <HoldingAnalyze/>
-      </Route>
+      </Route> */}
     </Switch>
   </BrowserRouter>
 );

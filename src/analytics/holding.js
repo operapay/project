@@ -331,14 +331,14 @@ class Flightpath extends React.Component {
         // this.state.map.remove()
         return (
             <React.Fragment>
-                <p>Holding Visualization</p>
-                <Select placeholder="Select Flight" style={{ width: 120 }} onChange={e => this.handleChange(e,this.state.dataAll)}>
+                <h1>Holding Visualization</h1>
+                <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.handleChange(e,this.state.dataAll)}>
                     {this.state.arr_select.map(flight => (
-                        <Option key={flight}>{flight}</Option>
+                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
-                <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
-                <ReactEcharts option={this.getOptiontime()} style={{width:1500, height:700}} />
+                <ReactEcharts option={this.getOption()} style={{width:1300, height:500}} />
+                <ReactEcharts option={this.getOptiontime()} style={{width:1300, height:500}} />
             </React.Fragment>
             // <p>test</p>
         );

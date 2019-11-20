@@ -194,8 +194,8 @@ class Flightpath extends React.Component {
         // this.state.map.remove()
         return (
             <React.Fragment>
-                <p>Offset Visualization</p>
-                <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
+                <h1>Offset Visualization</h1>
+                <ReactEcharts option={this.getOption()} style={{width:2400, height:1100}} />
             </React.Fragment>
             // <p>test</p>
         );

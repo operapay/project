@@ -342,9 +342,9 @@ class Flightpath extends React.Component {
     }
     
     getOption = () => ({
-        title: {
-            text: 'Departure ' + this.state.select
-        },
+        // title: {
+        //     text: 'Departure ' + this.state.select
+        // },
         tooltip: {
             trigger: 'axis'
         },
@@ -368,9 +368,33 @@ class Flightpath extends React.Component {
         },
         xAxis: {
             type: 'value',
+            name: 'ground distance (nmi)',
+            nameLocation: 'center',
+            nameGap: 30,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 20,
+            }
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            name: this.state.select,
+            nameLocation: 'center',
+            nameGap: 90,
+            nameTextStyle: {
+                fontSize: 20
+            },
+            axisLabel: {
+                show: true,
+                interval: 'auto',
+                inside: false,
+                fontSize: 20,
+            }
         },
         series: this.state.data
     });
@@ -382,7 +406,7 @@ class Flightpath extends React.Component {
             '4000-4500','4500-5000','5000-5500','5500-6000'],
             name: 'ground distance (nmi)',
             nameLocation: 'center',
-            nameGap: 50,
+            nameGap: 40,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -423,7 +447,7 @@ class Flightpath extends React.Component {
             '4000-4500','4500-5000','5000-5500','5500-6000'],
             name: 'ground distance (nmi)',
             nameLocation: 'center',
-            nameGap: 50,
+            nameGap: 40,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -464,7 +488,7 @@ class Flightpath extends React.Component {
             '4000-4500','4500-5000','5000-5500','5500-6000'],
             name: 'ground distance (nmi)',
             nameLocation: 'center',
-            nameGap: 50,
+            nameGap: 40,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -502,16 +526,16 @@ class Flightpath extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <p>Offset Analytics</p>
-                <Select defaultValue="Attitude" style={{ width: 120 }} onChange={this.handleChange}>
-                    <Option value="Attitude">Attitude</Option>
-                    <Option value="Lateral">Lateral</Option>
-                    <Option value="Speed">Speed</Option>
+                <h1>Offset Analytics</h1>
+                <Select defaultValue="Attitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={this.handleChange}>
+                    <Option value="Attitude" style={{ fontSize: "1rem" }}>Attitude</Option>
+                    <Option value="Lateral" style={{ fontSize: "1rem" }}>Lateral</Option>
+                    <Option value="Speed" style={{ fontSize: "1rem" }}>Speed</Option>
                 </Select>
-                <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
-                <ReactEcharts option={this.Option3nmi()} style={{width:1500, height:700}} />
-                <ReactEcharts option={this.Option5nmi()} style={{width:1500, height:700}} />
-                <ReactEcharts option={this.Option8nmi()} style={{width:1500, height:700}} />
+                <ReactEcharts option={this.getOption()} style={{width:2000, height:900}} />
+                <ReactEcharts option={this.Option3nmi()} style={{width:2000, height:700}} />
+                <ReactEcharts option={this.Option5nmi()} style={{width:2000, height:700}} />
+                <ReactEcharts option={this.Option8nmi()} style={{width:2000, height:700}} />
             </React.Fragment>
         );
     }
