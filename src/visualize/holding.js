@@ -204,19 +204,19 @@ class Flightpath extends React.Component {
     getOption = () => ({
         maptalks3D: map, 
         series: [
-            {
-                type: 'bar3D',
-                coordinateSystem: 'maptalks3D',
-                shading: 'lambert',
-                data: centrallocat,
-                barSize: 1.2,
-                minHeight: 0.2,
-                silent: true,
-                itemStyle: {
-                    color: 'orange'
-                    // opacity: 0.8
-                }
-            },
+            // {
+            //     type: 'bar3D',
+            //     coordinateSystem: 'maptalks3D',
+            //     shading: 'lambert',
+            //     data: centrallocat,
+            //     barSize: 1.2,
+            //     minHeight: 0.2,
+            //     silent: true,
+            //     itemStyle: {
+            //         color: 'orange'
+            //         // opacity: 0.8
+            //     }
+            // },
             {
                 type: 'lines3D',
                 coordinateSystem: 'maptalks3D',

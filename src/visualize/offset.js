@@ -28,8 +28,8 @@ var dataplane = [
     // [100.7858,13.86579,762],
     // [100.8056,13.94083,1066.8]]},
     {name:'LOUIS-BS902', coords: [[100.7518,13.6567,0],
-    [100.7369,13.59995,0],
-    [100.798,13.51101,0],
+    [100.7369,13.59995,10],
+    [100.798,13.51101,10],
     [100.8975,13.51687,1828.8]]}
 ]
 
@@ -131,18 +131,18 @@ class Flightpath extends React.Component {
     getOption = () => ({
         maptalks3D: map, 
         series: [
-            {
-                type: 'lines3D',
-                coordinateSystem: 'maptalks3D',
-                polyline: true,
-                // silent: true,
-                lineStyle: {
-                    width: 50,
-                    color: 'red',
-                    opacity: 0.3,
-                },
-                data: dataplane
-            },
+            // {
+            //     type: 'lines3D',
+            //     coordinateSystem: 'maptalks3D',
+            //     polyline: true,
+            //     // silent: true,
+            //     lineStyle: {
+            //         width: 50,
+            //         color: 'red',
+            //         opacity: 0.3,
+            //     },
+            //     data: dataplane
+            // },
             {
                 type: 'lines3D',
                 coordinateSystem: 'maptalks3D',
@@ -151,7 +151,7 @@ class Flightpath extends React.Component {
                 lineStyle: {
                     width: 5,
                     color: 'red',
-                    opacity: 0.3,
+                    opacity: 0.7,
                 },
                 data: dataplane
             },

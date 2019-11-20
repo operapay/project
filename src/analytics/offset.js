@@ -36,7 +36,7 @@ class Flightpath extends React.Component {
     handleChange(value) {
         this.setState({select : value})
         if (value == 'Lateral'){
-            this.data_lateral(this.state.rawdata)
+            this.data_lateral(this.state.rawdata,value)
         }
         else{
             this.data_linegraph(this.state.rawdata,value)
@@ -80,8 +80,7 @@ class Flightpath extends React.Component {
     distance_xy(x1,y1,x2,y2){
         var diff_x = Math.pow(x1-x2,2)
         var diff_y = Math.pow(y1-y2,2)
-        return Math.pow(diff_x+diff_y, 0.5)
-        
+        return Math.pow(diff_x+diff_y, 0.5) 
     }
 
     closest(array,num,distribute,param){
@@ -137,14 +136,14 @@ class Flightpath extends React.Component {
 
     init_arrdistribute_xy(distribute){
         // distribute.push({dis:0,data:[]})
-        for(var i=1;i<30;i+=2){
+        for(var i=1;i<30;i+=1){
             distribute.push({dis:i,x:[],y:[],data:[]})
         }
     }
 
     average = list => list.reduce((prev, curr) => prev + curr) / list.length;
 
-    data_lateral(result){
+    data_lateral(result,value){
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
         var num = 1
         var long_origin = 100.7541404;
@@ -202,7 +201,8 @@ class Flightpath extends React.Component {
         }
         console.log(this.state.avg_arr)
         this.state.arr.push(this.state.avg_arr)
-        this.setState({data: this.state.arr});
+        this.setState({data: this.state.arr})
+        this.distributed(distribute,value,this.state.avg_arr)
         //console.log(this.state.data)
     }
 
@@ -262,58 +262,73 @@ class Flightpath extends React.Component {
         this.state.arr.push(this.state.avg_arr)
         //console.log(this.state.arr)
         this.setState({data: this.state.arr});
-        this.distributed(distribute)
+        this.distributed(distribute,value,this.state.avg_arr)
         // console.log('distribute', distribute)
     }
 
-    distributed(distribute){
-        var arr3nmi = [0,0,0,0,0,0,0,0,0,0,0,0]
-        var arr5nmi = [0,0,0,0,0,0,0,0,0,0,0,0]
-        var arr8nmi = [0,0,0,0,0,0,0,0,0,0,0,0]
-        for(var i=0;i<distribute[4].data.length;i++){
-            if(distribute[4].data[i] >= 0 && distribute[4].data[i] < 500) arr3nmi[0] += 1;
-            else if(distribute[4].data[i] >= 500 && distribute[4].data[i] < 1000) arr3nmi[1] += 1;
-            else if(distribute[4].data[i] >= 1000 && distribute[4].data[i] < 1500) arr3nmi[2] += 1;
-            else if(distribute[4].data[i] >= 1500 && distribute[4].data[i] < 2000) arr3nmi[3] += 1;
-            else if(distribute[4].data[i] >= 2000 && distribute[4].data[i] < 2500) arr3nmi[4] += 1;
-            else if(distribute[4].data[i] >= 2500 && distribute[4].data[i] < 3000) arr3nmi[5] += 1;
-            else if(distribute[4].data[i] >= 3000 && distribute[4].data[i] < 3500) arr3nmi[6] += 1;
-            else if(distribute[4].data[i] >= 3500 && distribute[4].data[i] < 4000) arr3nmi[7] += 1;
-            else if(distribute[4].data[i] >= 4000 && distribute[4].data[i] < 4500) arr3nmi[8] += 1;
-            else if(distribute[4].data[i] >= 4500 && distribute[4].data[i] < 5000) arr3nmi[9] += 1;
-            else if(distribute[4].data[i] >= 5000 && distribute[4].data[i] < 5500) arr3nmi[10] += 1;
-            else if(distribute[4].data[i] >= 5500 && distribute[4].data[i] < 6000) arr3nmi[11] += 1;
+    distributed(distribute,value,avg){
+        var attitude = [4,8,14]
+        var lateral = [2,4,7]
+        if (value === "Speed"){
+            for(var j=0;j<3;j++){
+                var attitude_nmi = [['0-50',0],['50-100',0],['100-150',0],['150-200',0],['200-250',0],['250-300',0]]
+                for(var i=0;i<distribute[attitude[j]].data.length;i++){
+                    if(distribute[attitude[j]].data[i] >= 0 && distribute[attitude[j]].data[i] < 50) attitude_nmi[0][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 50 && distribute[attitude[j]].data[i] < 100) attitude_nmi[1][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 100 && distribute[attitude[j]].data[i] < 150) attitude_nmi[2][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 150 && distribute[attitude[j]].data[i] < 200) attitude_nmi[3][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 200 && distribute[attitude[j]].data[i] < 250) attitude_nmi[4][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 250 && distribute[attitude[j]].data[i] < 300) attitude_nmi[5][1] += 1;
+                }
+                if(j == 0) this.setState({distribute3nmi : attitude_nmi})
+                else if (j == 1) this.setState({distribute5nmi : attitude_nmi})
+                else if (j == 2) this.setState({distribute8nmi : attitude_nmi})
+            }
         }
-        for(var i=0;i<distribute[8].data.length;i++){
-            if(distribute[8].data[i] >= 0 && distribute[8].data[i] < 500) arr5nmi[0] += 1;
-            else if(distribute[8].data[i] >= 500 && distribute[8].data[i] < 1000) arr5nmi[1] += 1;
-            else if(distribute[8].data[i] >= 1000 && distribute[8].data[i] < 1500) arr5nmi[2] += 1;
-            else if(distribute[8].data[i] >= 1500 && distribute[8].data[i] < 2000) arr5nmi[3] += 1;
-            else if(distribute[8].data[i] >= 2000 && distribute[8].data[i] < 2500) arr5nmi[4] += 1;
-            else if(distribute[8].data[i] >= 2500 && distribute[8].data[i] < 3000) arr5nmi[5] += 1;
-            else if(distribute[8].data[i] >= 3000 && distribute[8].data[i] < 3500) arr5nmi[6] += 1;
-            else if(distribute[8].data[i] >= 3500 && distribute[8].data[i] < 4000) arr5nmi[7] += 1;
-            else if(distribute[8].data[i] >= 4000 && distribute[8].data[i] < 4500) arr5nmi[8] += 1;
-            else if(distribute[8].data[i] >= 4500 && distribute[8].data[i] < 5000) arr5nmi[9] += 1;
-            else if(distribute[8].data[i] >= 5000 && distribute[8].data[i] < 5500) arr5nmi[10] += 1;
-            else if(distribute[8].data[i] >= 5500 && distribute[8].data[i] < 6000) arr5nmi[11] += 1;
+        else if (value === "Lateral"){
+            var dist
+            for(var j=0;j<3;j++){
+                var lateral_nmi = [['-4,-3',0],['-3,-2',0],['-2,-1',0],['-1,0',0],['0,1',0],['1,2',0],['2,3',0],['3,4',0]]
+                for(var i=0;i<distribute[lateral[j]].data.length;i++){
+                    dist = this.distance_xy(avg.data[lateral[j]+1][0],avg.data[lateral[j]+1][1],distribute[lateral[j]].data[i][0],distribute[lateral[j]].data[i][1])
+                    // console.log(j , '=' ,dist, "y1 ", avg.data[lateral[j]+1][1] , 'y2 ' , distribute[lateral[j]].data[i][1])
+                    if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[0][1] += 1;
+                    else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[1][1] += 1;
+                    else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[2][1] += 1;
+                    else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[3][1] += 1;
+                    else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[4][1] += 1;
+                    else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[5][1] += 1;
+                    else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[6][1] += 1;
+                    else if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[7][1] += 1;
+                }
+                if(j == 0) this.setState({distribute3nmi : lateral_nmi})
+                else if (j == 1) this.setState({distribute5nmi : lateral_nmi})
+                else if (j == 2) this.setState({distribute8nmi : lateral_nmi})
+            }
         }
-        for(var i=0;i<distribute[14].data.length;i++){
-            if(distribute[14].data[i] >= 0 && distribute[14].data[i] < 500) arr8nmi[0] += 1;
-            else if(distribute[14].data[i] >= 500 && distribute[14].data[i] < 1000) arr8nmi[1] += 1;
-            else if(distribute[14].data[i] >= 1000 && distribute[14].data[i] < 1500) arr8nmi[2] += 1;
-            else if(distribute[14].data[i] >= 1500 && distribute[14].data[i] < 2000) arr8nmi[3] += 1;
-            else if(distribute[14].data[i] >= 2000 && distribute[14].data[i] < 2500) arr8nmi[4] += 1;
-            else if(distribute[14].data[i] >= 2500 && distribute[14].data[i] < 3000) arr8nmi[5] += 1;
-            else if(distribute[14].data[i] >= 3000 && distribute[14].data[i] < 3500) arr8nmi[6] += 1;
-            else if(distribute[14].data[i] >= 3500 && distribute[14].data[i] < 4000) arr8nmi[7] += 1;
-            else if(distribute[14].data[i] >= 4000 && distribute[14].data[i] < 4500) arr8nmi[8] += 1;
-            else if(distribute[14].data[i] >= 4500 && distribute[14].data[i] < 5000) arr8nmi[9] += 1;
-            else if(distribute[14].data[i] >= 5000 && distribute[14].data[i] < 5500) arr8nmi[10] += 1;
-            else if(distribute[14].data[i] >= 5500 && distribute[14].data[i] < 6000) arr8nmi[11] += 1;
+        else{
+            for(var j=0;j<3;j++){
+                var attitude_nmi = [['0-500',0],['500-1000',0],['1000-1500',0],['1500-2000',0],['2000-2500',0],['2500-3000',0],['3000-3500',0],['3500-4000',0],
+            ['4000-4500',0],['4500-5000',0],['5000-5500',0],['5500-6000',0]]
+                for(var i=0;i<distribute[attitude[j]].data.length;i++){
+                    if(distribute[attitude[j]].data[i] >= 0 && distribute[attitude[j]].data[i] < 500) attitude_nmi[0][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 500 && distribute[attitude[j]].data[i] < 1000) attitude_nmi[1][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 1000 && distribute[attitude[j]].data[i] < 1500) attitude_nmi[2][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 1500 && distribute[attitude[j]].data[i] < 2000) attitude_nmi[3][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 2000 && distribute[attitude[j]].data[i] < 2500) attitude_nmi[4][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 2500 && distribute[attitude[j]].data[i] < 3000) attitude_nmi[5][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 3000 && distribute[attitude[j]].data[i] < 3500) attitude_nmi[6][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 3500 && distribute[attitude[j]].data[i] < 4000) attitude_nmi[7][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 4000 && distribute[attitude[j]].data[i] < 4500) attitude_nmi[8][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 4500 && distribute[attitude[j]].data[i] < 5000) attitude_nmi[9][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 5000 && distribute[attitude[j]].data[i] < 5500) attitude_nmi[10][1] += 1;
+                    else if(distribute[attitude[j]].data[i] >= 5500 && distribute[attitude[j]].data[i] < 6000) attitude_nmi[11][1] += 1;
+                }
+                if(j == 0) this.setState({distribute3nmi : attitude_nmi})
+                else if (j == 1) this.setState({distribute5nmi : attitude_nmi})
+                else if (j == 2) this.setState({distribute8nmi : attitude_nmi})
+            }
         }
-        this.setState({distribute3nmi : arr3nmi , distribute5nmi : arr5nmi , distribute8nmi : arr8nmi})
-        // console.log(this.state.distribute3nmi)
     }
 
     uniqueNameFlight(name,data,date){
@@ -348,12 +363,12 @@ class Flightpath extends React.Component {
         tooltip: {
             trigger: 'axis'
         },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
+        // grid: {
+        //     left: '3%',
+        //     right: '4%',
+        //     bottom: '3%',
+        //     containLabel: true
+        // },
         toolbox: {
             feature: {
                 saveAsImage: {
@@ -402,9 +417,7 @@ class Flightpath extends React.Component {
     Option3nmi = () => ({
         xAxis: {
             type: 'category',
-            data: ['0-500','500-1000','1000-1500','1500-2000','2000-2500','2500-3000','3000-3500','3500-4000',
-            '4000-4500','4500-5000','5000-5500','5500-6000'],
-            name: 'ground distance (nmi)',
+            name: this.state.select,
             nameLocation: 'center',
             nameGap: 40,
             nameTextStyle: {
@@ -443,9 +456,7 @@ class Flightpath extends React.Component {
     Option5nmi = () => ({
         xAxis: {
             type: 'category',
-            data: ['0-500','500-1000','1000-1500','1500-2000','2000-2500','2500-3000','3000-3500','3500-4000',
-            '4000-4500','4500-5000','5000-5500','5500-6000'],
-            name: 'ground distance (nmi)',
+            name: this.state.select,
             nameLocation: 'center',
             nameGap: 40,
             nameTextStyle: {
@@ -484,9 +495,7 @@ class Flightpath extends React.Component {
     Option8nmi = () => ({
         xAxis: {
             type: 'category',
-            data: ['0-500','500-1000','1000-1500','1500-2000','2000-2500','2500-3000','3000-3500','3500-4000',
-            '4000-4500','4500-5000','5000-5500','5500-6000'],
-            name: 'ground distance (nmi)',
+            name: this.state.select,
             nameLocation: 'center',
             nameGap: 40,
             nameTextStyle: {
