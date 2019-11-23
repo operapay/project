@@ -22,6 +22,7 @@ class FileReader extends React.Component {
             rawdata : null,
             select : "Attitude",
             data : [],
+            plot : [],
             arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}],
             avg_arr : {name:'avg', type: 'line',smooth: true,lineStyle:{color:'#CB4335'},showSymbol:false,data:[]},
             distribute3nmi : [],
@@ -49,6 +50,7 @@ class FileReader extends React.Component {
   
     updateData(result) {
       var data = result.data;
+    //   this.setState({arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]})
       this.getData(data)
       console.log('update')
     }
@@ -165,8 +167,9 @@ class FileReader extends React.Component {
     average = list => list.reduce((prev, curr) => prev + curr) / list.length;
 
     data_lateral(result,value){
+        // this.setState({arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]})
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
-        var num = 0
+        var num = 1
         var long_origin = 100.7541404;
         var lat_origin = 13.6993272;
         var dist = [{name:'',data:[[]]}]
@@ -175,6 +178,7 @@ class FileReader extends React.Component {
         var name = result[0].name
         var date = result[0].date
         var count = this.uniqueNameFlight(name,result,date)
+        console.log('count',count)
         for(var j=0;j<count;j++){
             var x = 0; var y = 0;
             for(var i=num;i<=result.length;i++){
@@ -213,14 +217,14 @@ class FileReader extends React.Component {
                 dist.push({name:'',data:[[]]})
             }
         }
-        console.log(distribute)
+        // console.log(distribute)
         this.state.avg_arr.data = []
         this.state.avg_arr.data.push([0,0])
         for(var i=0;i<distribute.length;i++){
             this.state.avg_arr.data.push([])
             this.state.avg_arr.data[i+1].push(this.average(distribute[i].x),this.average(distribute[i].y))
         }
-        console.log(this.state.avg_arr)
+        // console.log(this.state.avg_arr)
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr})
         this.distributed(distribute,value,this.state.avg_arr)
@@ -228,7 +232,9 @@ class FileReader extends React.Component {
     }
 
     data_linegraph(result,value){
+        // this.state.arr = []
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
+        // this.setState({arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]})
         var num = 1
         var list;
         var distribute = []
@@ -236,6 +242,7 @@ class FileReader extends React.Component {
         var name = result[0].name
         var date = result[0].date
         var count = this.uniqueNameFlight(name,result,date)
+        // console.log('count',count)
         for(var j=0;j<count;j++){
             var ground = 0
             for(var i=num;i<=result.length;i++){
@@ -281,7 +288,6 @@ class FileReader extends React.Component {
             this.state.avg_arr.data[i+1].push(distribute[i].dis,this.average(distribute[i].data))
         }
         this.state.arr.push(this.state.avg_arr)
-        //console.log(this.state.arr)
         this.setState({data: this.state.arr});
         this.distributed(distribute,value,this.state.avg_arr)
         // console.log('distribute', distribute)
@@ -354,7 +360,7 @@ class FileReader extends React.Component {
 
     getData(result) {
         this.setState({rawdata: result});
-        this.data_linegraph(this.state.rawdata)
+        this.data_linegraph(this.state.rawdata,0)
     }
 
     getOption = () => ({
@@ -533,7 +539,7 @@ class FileReader extends React.Component {
     });
 
     render() {
-      console.log(this.state.csvfile);
+      console.log(this.state.data);
       return (
         <div className="App">
             <h2>Import CSV File!</h2>
