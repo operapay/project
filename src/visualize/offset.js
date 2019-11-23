@@ -5,10 +5,13 @@ import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './offset.css'
 import * as d3 from 'd3-request';
-import url from '../data/data_flight.csv';
+// import url from '../data/data_flight.csv';
 //import url from '../data/data_arrival.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
+import { Select } from 'antd';
+
+const { Option } = Select;
 
 var map = {
     center: [100.7395539,13.6983666], //mahamek
@@ -36,11 +39,11 @@ var dataplane = [
 
 var centrallocat = [[100.7415433,13.6383389,23]]
 
-class Flightpath extends React.Component {
-    constructor(props) {
-        super(props);
-
+class FileReader extends React.Component {
+    constructor() {
+        super();
         this.state = {
+            csvfile: undefined,
             dataAll : [{name:'', coords: [['', '', '']]}],
             data: [{name:'aaa', coords:[["100.759529", "13.692165", "0"],
             ["100.759804", "13.69202", "0"],
@@ -55,57 +58,67 @@ class Flightpath extends React.Component {
         };
 
         this.getData = this.getData.bind(this);
-        // this.renderItem = this.renderItem.bind(this)
+        this.updateData = this.updateData.bind(this);
     }
-
-    componentWillMount() {
-        this.getCsvData();
-    }
-
-    fetchCsv() {
-        return fetch(url).then(function (response) {
-            let reader = response.body.getReader();
-            let decoder = new TextDecoder('utf-8');
-
-            return reader.read().then(function (result) {
-                return decoder.decode(result.value);
-            });
-        });
+  
+    handleChange = event => {
+      this.setState({
+        csvfile: event.target.files[0]
+      });
+    };
+  
+    importCSV = () => {
+      const { csvfile } = this.state;
+      Papa.parse(csvfile, {
+        complete: this.updateData,
+        header: true
+      });
+    };
+  
+    updateData(result) {
+      var data = result.data;
+      this.getData(data)
+      console.log('update')
     }
 
     uniqueNameFlight(name,data,date){
         var count = 0
+        console.log(data.length)
         for(var i=1;i<data.length;i++){
-            if (data[i][1] === '-'){
+            if (data[i].name === '-'){
                 count += 1
-                console.log(i)
+                // console.log(i)
             }
         }
         return count
     }
 
     getData(result) {
-        var num = 1
-        var name = result.data[1][1]
-        var date = result.data[1][1]
-        var count = this.uniqueNameFlight(name,result.data,date)
+        this.state.arr = [{
+            name:'',
+            coords: [[]]
+        }]
+        var num = 0
+        var name = result[0].name
+        var date = result[0].name
+        var count = this.uniqueNameFlight(name,result,date)
         console.log(count)
 
         for(var j=0;j<count;j++){
             //console.log(j)
-            for(var i=num;i<=result.data.length;i++){
+            for(var i=num;i<=result.length;i++){
                 // console.log(num)
-                if(result.data[i][1] === '-'){
+                if(result[i].name === '-'){
                     num = i+1
                     //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
                     break;
                 }
                 this.state.arr[j].coords.push([])
-                this.state.arr[j].name = result.data[i][1]
-                this.state.arr[j].coords[i-num].push(result.data[i][4])
-                this.state.arr[j].coords[i-num].push(result.data[i][5])
-                this.state.arr[j].coords[i-num].push(result.data[i][6])
+                this.state.arr[j].name = result[i].name
+                this.state.arr[j].coords[i-num].push(result[i].long)
+                this.state.arr[j].coords[i-num].push(result[i].lat)
+                this.state.arr[j].coords[i-num].push(result[i].attitude)
             }
             // console.log(j)
             if(j < count-1){
@@ -119,15 +132,6 @@ class Flightpath extends React.Component {
         this.setState({dataAll: this.state.arr});
     }
 
-
-    async getCsvData() {
-        let csvData = await this.fetchCsv();
-
-        Papa.parse(csvData, {
-            complete: this.getData
-        });
-    }
-    
     getOption = () => ({
         maptalks3D: map, 
         series: [
@@ -189,16 +193,29 @@ class Flightpath extends React.Component {
             }
         ],
     });
-    
+  
     render() {
-        // this.state.map.remove()
-        return (
-            <React.Fragment>
-                <h1>Offset Visualization</h1>
-                <ReactEcharts option={this.getOption()} style={{width:2400, height:1100}} />
-            </React.Fragment>
-            // <p>test</p>
-        );
+      console.log(this.state.csvfile);
+      return (
+        <div className="App">
+            <h2>Import CSV File!</h2>
+            <input
+                className="csv-input"
+                type="file"
+                ref={input => {
+                this.filesInput = input;
+                }}
+                name="file"
+                placeholder={null}
+                onChange={this.handleChange}
+            />
+            <p />
+            <button onClick={this.importCSV}> Upload now!</button>
+            <h1>Offset Visualization</h1>
+            <ReactEcharts option={this.getOption()} style={{width:1800, height:600}} />
+        </div>
+      );
     }
-}
-export default Flightpath;
+  }
+  
+  export default FileReader;

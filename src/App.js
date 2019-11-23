@@ -6,11 +6,15 @@ import OffsetAnalyze from './analytics/offset'
 import Holding from './visualize/holding';
 import HoldingAnalyze from './analytics/holding'
 import Narbar from './navbar'
+import Test from './test'
 import './App.css';
 
 const App = () => (
   <BrowserRouter>
     <Switch>
+      <Route path="/test">
+        <Test/>
+      </Route>
       <Route path="">
         <Narbar/>
       </Route>

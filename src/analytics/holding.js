@@ -5,14 +5,13 @@ import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './holding.css'
 import * as d3 from 'd3-request';
-import url from '../data/data_28.10.62.csv';
-// import url from '../data/data_test.csv';
+// import url from '../data/data_flight.csv';
+//import url from '../data/data_arrival.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 import { Select } from 'antd';
 
 const { Option } = Select;
-
 
 var map = {
     center: [100.7395539,13.6983666], //mahamek
@@ -29,11 +28,11 @@ var map = {
 
 var centrallocat = [[100.7415433,13.6383389,23]]
 
-class Flightpath extends React.Component {
-    constructor(props) {
-        super(props);
-
+class FileReader extends React.Component {
+    constructor() {
+        super();
         this.state = {
+            csvfile: undefined,
             dataAll : [{name:'', coords: [['', '', '']], date: [['','']] }],
             arr: [{
                 name:'',
@@ -47,29 +46,33 @@ class Flightpath extends React.Component {
         };
 
         this.getData = this.getData.bind(this);
-        // this.renderItem = this.renderItem.bind(this)
+        this.updateData = this.updateData.bind(this);
     }
-
-    componentWillMount() {
-        this.getCsvData();
-    }
-
-    fetchCsv() {
-        return fetch(url).then(function (response) {
-            let reader = response.body.getReader();
-            let decoder = new TextDecoder('utf-8');
-
-            return reader.read().then(function (result) {
-                return decoder.decode(result.value);
-            });
-        });
+  
+    handleChange = event => {
+      this.setState({
+        csvfile: event.target.files[0]
+      });
+    };
+  
+    importCSV = () => {
+      const { csvfile } = this.state;
+      Papa.parse(csvfile, {
+        complete: this.updateData,
+        header: true
+      });
+    };
+  
+    updateData(result) {
+      var data = result.data;
+      this.getData(data)
     }
 
     uniqueNameFlight(name,data,date){
         var count = 0
         console.log(data.length)
         for(var i=1;i<data.length;i++){
-            if (data[i][1] === '-'){
+            if (data[i].name === '-'){
                 count += 1
                 // console.log(i)
             }
@@ -100,7 +103,7 @@ class Flightpath extends React.Component {
         }
     }
 
-    handleChange(value,data) {
+    onhandleChange(value,data) {
         var data_select = []
         var data_dist = []
         var data_time = []
@@ -165,18 +168,24 @@ class Flightpath extends React.Component {
             for(var j=0;j<flighthold.length;j++){
                 if(data[i].name === flighthold[j]){
                     data_holding.push(data[i])
+                    // console.log(data[i].name)
                 }
             }
         }
+        // console.log(this.state.data_holding)
         this.setState({dataAll: data_holding});
     }
-
     getData(result) {
-        console.log(result.data.length)
-        var num = 1
-        var name = result.data[1][1]
-        var date = result.data[1][1]
-        var count = this.uniqueNameFlight(name,result.data,date)
+        this.state.arr = [{
+            name:'',
+            coords: [[]],
+            date: [[]]
+        }]
+        // console.log(result.length)
+        var num = 0
+        var name = result[0].name
+        var date = result[0].name
+        var count = this.uniqueNameFlight(name,result,date)
         var dis = 100000
         var arr = []
         var check = false
@@ -188,9 +197,9 @@ class Flightpath extends React.Component {
             dis = 100000
             check = false
             sum = 0
-            for(var i=num;i<=result.data.length;i++){
+            for(var i=num;i<=result.length;i++){
                 // console.log(num)
-                if(result.data[i][1] === '-'){
+                if(result[i].name === '-'){
                     num = i+1
                     //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
@@ -199,25 +208,25 @@ class Flightpath extends React.Component {
                 }
                 this.state.arr[j].coords.push([])
                 this.state.arr[j].date.push([])
-                this.state.arr[j].name = result.data[i][1]
-                this.state.arr[j].coords[i-num].push(result.data[i][4])
-                this.state.arr[j].coords[i-num].push(result.data[i][5])
-                this.state.arr[j].coords[i-num].push(result.data[i][6])
-                this.state.arr[j].date[i-num].push(result.data[i][2])
-                this.state.arr[j].date[i-num].push(result.data[i][3])
+                this.state.arr[j].name = result[i].name
+                this.state.arr[j].coords[i-num].push(result[i].long)
+                this.state.arr[j].coords[i-num].push(result[i].lat)
+                this.state.arr[j].coords[i-num].push(result[i].attitude)
+                this.state.arr[j].date[i-num].push(result[i].date)
+                this.state.arr[j].date[i-num].push(result[i].time)
                 if(check == false){
-                    dist = this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N")
-                    if(dist > dis && (dist > 20 & dist < 50)){
+                    dist = this.distance(13.6567,100.7518,result[i].lat,result[i].long,"N")
+                    if(dist > dis && (dist > 30 & dist < 50)){
                         // console.log(result.data[i][1]," ", dist)
                         sum = sum + 1
-                        if(sum > 10){
+                        if(sum > 15){
                             // console.log(sum)
                             check = true
-                            name = result.data[i][1]
+                            name = result[i].name
                         }
                         
                     }
-                    dis = this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N")
+                    dis = this.distance(13.6567,100.7518,result[i].lat,result[i].long,"N")
                     // console.log(result.data[i][1]," ", this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N"))
                 }
             }
@@ -239,15 +248,6 @@ class Flightpath extends React.Component {
         // this.setState({dataAll: this.state.arr});
     }
 
-
-    async getCsvData() {
-        let csvData = await this.fetchCsv();
-
-        Papa.parse(csvData, {
-            complete: this.getData
-        });
-    }
-    
     getOption = () => ({
         xAxis: {
             type: 'category',
@@ -326,22 +326,35 @@ class Flightpath extends React.Component {
             }
         ]      
     });
-    
+  
     render() {
-        // this.state.map.remove()
-        return (
-            <React.Fragment>
-                <h1>Holding Visualization</h1>
-                <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.handleChange(e,this.state.dataAll)}>
-                    {this.state.arr_select.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                    ))}
-                </Select>
-                <ReactEcharts option={this.getOption()} style={{width:1300, height:500}} />
+      console.log(this.state.csvfile);
+      return (
+        <div className="App">
+          <h2>Import CSV File!</h2>
+          <input
+            className="csv-input"
+            type="file"
+            ref={input => {
+              this.filesInput = input;
+            }}
+            name="file"
+            placeholder={null}
+            onChange={this.handleChange}
+          />
+          <p />
+          <button onClick={this.importCSV}> Upload now!</button>
+          <h1>Holding Analyze</h1>
+            <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
+                {this.state.arr_select.map(flight => (
+                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                ))}
+            </Select>
+            <ReactEcharts option={this.getOption()} style={{width:1300, height:500}} />
                 <ReactEcharts option={this.getOptiontime()} style={{width:1300, height:500}} />
-            </React.Fragment>
-            // <p>test</p>
-        );
+        </div>
+      );
     }
-}
-export default Flightpath;
+  }
+  
+  export default FileReader;
