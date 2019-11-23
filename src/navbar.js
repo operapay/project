@@ -1,4 +1,5 @@
 import { Card } from 'antd';
+// import 'antd/dist/antd.css';
 import React from "react";
 import Offset from './mode/offset';
 import Holding from './mode/holding';

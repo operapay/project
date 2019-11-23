@@ -4,6 +4,7 @@ import './index.css';
 import Offset from './visualize/offset'
 import * as serviceWorker from './serviceWorker';
 import App from './App'
+import 'antd/dist/antd.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

@@ -10,6 +10,7 @@ import * as d3 from 'd3-request';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 import { Select } from 'antd';
+// import 'antd/dist/antd.css';
 
 const { Option } = Select;
 
