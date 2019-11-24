@@ -1,20 +1,19 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import logo from './logo.svg';
-import Offset from './visualize/offset';
-import OffsetAnalyze from './analytics/offset'
-import Holding from './visualize/holding';
-import HoldingAnalyze from './analytics/holding'
+// import logo from './logo.svg';
+// import Offset from './visualize/offset';
+// import OffsetAnalyze from './analytics/offset'
+// import Holding from './visualize/holding';
+// import HoldingAnalyze from './analytics/holding'
 import Narbar from './navbar'
-import Test from './backup'
 import './App.css';
 
 const App = () => (
   <BrowserRouter>
     <Switch>
-      <Route path="/test">
+      {/* <Route path="/test">
         <Test/>
-      </Route>
+      </Route> */}
       <Route path="">
         <Narbar/>
       </Route>

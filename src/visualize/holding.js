@@ -4,7 +4,6 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './holding.css'
-import Papa from 'papaparse'
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 
@@ -54,7 +53,7 @@ class FileReader2 extends React.Component {
     }
 
     componentWillUpdate(nextPorps){
-        if(nextPorps.check != this.check && nextPorps.test != this.test){
+        if(nextPorps.check !== this.check && nextPorps.test !== this.test){
             console.log(this.check , 'next ', nextPorps.check )
             if(this.check === true){
                 this.getData(nextPorps.test)
@@ -76,7 +75,7 @@ class FileReader2 extends React.Component {
     }
 
     distance(lat1, lon1, lat2, lon2, unit) {
-        if ((lat1 == lat2) && (lon1 == lon2)) {
+        if ((lat1 === lat2) && (lon1 === lon2)) {
             return 0;
         }
         else {
@@ -161,7 +160,7 @@ class FileReader2 extends React.Component {
                 this.state.arr[j].coords[i-num].push(result[i].attitude)
                 // dist = this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"K")
                 // console.log(result.data[i][1]," ", dist)
-                if(check == false){
+                if(check === false){
                     dist = this.distance(13.6567,100.7518,result[i].lat,result[i].long,"N")
                     if(dist > dis && (dist > 30 & dist < 50)){
                         // console.log(result.data[i][1]," ", dist)
@@ -177,7 +176,7 @@ class FileReader2 extends React.Component {
                     // console.log(result.data[i][1]," ", this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N"))
                 }
             }
-            if(check == true){
+            if(check === true){
                 arr.push(name)
             }
             // console.log(j)

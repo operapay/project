@@ -296,9 +296,9 @@ class OffsetAnalyze extends React.Component {
                     else if(distribute[attitude[j]].data[i] >= 200 && distribute[attitude[j]].data[i] < 250) attitude_nmi[4][1] += 1;
                     else if(distribute[attitude[j]].data[i] >= 250 && distribute[attitude[j]].data[i] < 300) attitude_nmi[5][1] += 1;
                 }
-                if(j == 0) this.setState({distribute3nmi : attitude_nmi})
-                else if (j == 1) this.setState({distribute5nmi : attitude_nmi})
-                else if (j == 2) this.setState({distribute8nmi : attitude_nmi})
+                if(j === 0) this.setState({distribute3nmi : attitude_nmi})
+                else if (j === 1) this.setState({distribute5nmi : attitude_nmi})
+                else if (j === 2) this.setState({distribute8nmi : attitude_nmi})
             }
         }
         else if (value === "Lateral"){
@@ -317,9 +317,9 @@ class OffsetAnalyze extends React.Component {
                     else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[6][1] += 1;
                     else if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[7][1] += 1;
                 }
-                if(j == 0) this.setState({distribute3nmi : lateral_nmi})
-                else if (j == 1) this.setState({distribute5nmi : lateral_nmi})
-                else if (j == 2) this.setState({distribute8nmi : lateral_nmi})
+                if(j === 0) this.setState({distribute3nmi : lateral_nmi})
+                else if (j === 1) this.setState({distribute5nmi : lateral_nmi})
+                else if (j === 2) this.setState({distribute8nmi : lateral_nmi})
             }
         }
         else{
@@ -340,9 +340,9 @@ class OffsetAnalyze extends React.Component {
                     else if(distribute[attitude[j]].data[i] >= 5000 && distribute[attitude[j]].data[i] < 5500) attitude_nmi[10][1] += 1;
                     else if(distribute[attitude[j]].data[i] >= 5500 && distribute[attitude[j]].data[i] < 6000) attitude_nmi[11][1] += 1;
                 }
-                if(j == 0) this.setState({distribute3nmi : attitude_nmi})
-                else if (j == 1) this.setState({distribute5nmi : attitude_nmi})
-                else if (j == 2) this.setState({distribute8nmi : attitude_nmi})
+                if(j === 0) this.setState({distribute3nmi : attitude_nmi})
+                else if (j === 1) this.setState({distribute5nmi : attitude_nmi})
+                else if (j === 2) this.setState({distribute8nmi : attitude_nmi})
             }
         }
     }
@@ -410,6 +410,9 @@ class OffsetAnalyze extends React.Component {
     });
 
     Option3nmi = () => ({
+        title: {
+            text: 'distribution of ' + this.state.select + ' at 3 nmi'
+        },
         xAxis: {
             type: 'category',
             name: this.state.select,
@@ -449,6 +452,9 @@ class OffsetAnalyze extends React.Component {
     });
 
     Option5nmi = () => ({
+        title: {
+            text: 'distribution of ' + this.state.select + ' at 5 nmi'
+        },
         xAxis: {
             type: 'category',
             name: this.state.select,
@@ -488,6 +494,9 @@ class OffsetAnalyze extends React.Component {
     });
 
     Option8nmi = () => ({
+        title: {
+            text: 'distribution of ' + this.state.select + ' at 8 nmi'
+        },
         xAxis: {
             type: 'category',
             name: this.state.select,

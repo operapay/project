@@ -2,12 +2,8 @@ import React from "react";
 import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
-import * as maptalks from 'maptalks'
 import './holding.css'
-import * as d3 from 'd3-request';
-import url from '../data/reference/reference.csv';
 import Papa from 'papaparse'
-import echarts from 'echarts'
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 
@@ -28,6 +24,7 @@ class FileReader1 extends React.Component {
             select : "",
             dataHoldingDist : [],
             dataHoldingTime : [],
+            status : true
         };
 
         this.test = props.data
@@ -39,7 +36,7 @@ class FileReader1 extends React.Component {
     handleChange = event => {
         this.setState({
           csvfile: event.target.files[0],
-          check: false
+        //   check: false
         });
     };
     
@@ -54,8 +51,8 @@ class FileReader1 extends React.Component {
     
     updateData(result) {
         var rawdata = result.data;
-        this.setState({data : rawdata})
-        console.log('data:' , result.data)
+        this.setState({data : rawdata, status:false})
+        // console.log('data:' , result.data)
         // this.forceUpdate();
     }
   
@@ -68,7 +65,7 @@ class FileReader1 extends React.Component {
 
     uniqueNameFlight(name,data,date){
         var count = 0
-        console.log(data.length)
+        // console.log(data.length)
         for(var i=1;i<data.length;i++){
             if (data[i].name === '-'){
                 count += 1
@@ -79,7 +76,7 @@ class FileReader1 extends React.Component {
     }
 
     distance(lat1, lon1, lat2, lon2, unit) {
-        if ((lat1 == lat2) && (lon1 == lon2)) {
+        if ((lat1 === lat2) && (lon1 === lon2)) {
             return 0;
         }
         else {
@@ -146,7 +143,7 @@ class FileReader1 extends React.Component {
                 num = i
                 // console.log('----')
             }
-            if(check == false && i < selectdata.length-1){
+            if(check === false && i < selectdata.length-1){
                 dist = this.distance(13.6567,100.7518,selectdata[i].lat,selectdata[i].long,"N")
                 if(dist > dis && (dist > 30 & dist < 50)){
                     // console.log(result.data[i][1]," ", dist)
@@ -164,7 +161,7 @@ class FileReader1 extends React.Component {
                 }
                 // console.log(result.data[i][1]," ", this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N"))
             }
-            if(check == true){
+            if(check === true){
                 count = 0
             }
             // console.log('count',count)
@@ -253,7 +250,7 @@ class FileReader1 extends React.Component {
                 this.state.arr[j].coords[i-num].push(result[i].attitude)
                 this.state.arr[j].date[i-num].push(result[i].date)
                 this.state.arr[j].date[i-num].push(result[i].time)
-                if(check == false){
+                if(check === false){
                     dist = this.distance(13.6567,100.7518,result[i].lat,result[i].long,"N")
                     if(dist > dis && (dist > 30 & dist < 50)){
                         // console.log(result.data[i][1]," ", dist)
@@ -269,7 +266,7 @@ class FileReader1 extends React.Component {
                     // console.log(result.data[i][1]," ", this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N"))
                 }
             }
-            if(check == true){
+            if(check === true){
                 arr.push(name)
             }
             // console.log(j)
@@ -277,10 +274,10 @@ class FileReader1 extends React.Component {
                 this.state.arr.push({name:'', coords: [[]], date:[[]]})
             }
         }
-        console.log(arr)
+        // console.log(arr)
         //console.log(result.data)
         // this.setState({test: result.data});
-        console.log(this.state.arr)
+        // console.log(this.state.arr)
         //this.test()
         this.setState({arr_select : arr})
         this.selectdata(arr,this.state.arr)
@@ -384,7 +381,7 @@ class FileReader1 extends React.Component {
           <p />
           <button onClick={this.importCSV}> Upload now!</button>
           <h1>Holding Analyze</h1>
-            <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
+            <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)} disabled={this.state.status}>
                 {this.state.arr_select.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}

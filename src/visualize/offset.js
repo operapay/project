@@ -4,11 +4,6 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './offset.css'
-import * as d3 from 'd3-request';
-// import url from '../data/data_flight.csv';
-//import url from '../data/data_arrival.csv';
-import Papa from 'papaparse'
-import echarts from 'echarts'
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 
@@ -197,7 +192,7 @@ class FileReader extends React.Component {
     });
   
     render(props) {
-    //   console.log(this.test);
+    //   console.log(this);
       return (
         <div className="App">
             <h1>Offset Visualization</h1>

@@ -2,7 +2,6 @@ import { Card } from 'antd';
 import React from "react";
 import Offset from '../visualize/offset';
 import OffsetAnalyze from '../analytics/offset'
-import PropTypes from 'prop-types';
 import Papa from 'papaparse'
 
 const tabList = [
