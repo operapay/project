@@ -4,19 +4,16 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './holding.css'
-import * as d3 from 'd3-request';
-// import url from '../data/data_flight.csv';
-//import url from '../data/data_arrival.csv';
 import Papa from 'papaparse'
-import echarts from 'echarts'
 import { Select } from 'antd';
+import PropTypes from 'prop-types';
 
 const { Option } = Select;
 
 var map = {
     center: [100.7395539,13.6983666], //mahamek
-    zoom: 12,
-    pitch: 100,
+    zoom: 10,
+    // pitch: 100,
     altitudeScale: 3.28,
     baseLayer: new maptalks.TileLayer('base', {
         urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
@@ -26,11 +23,9 @@ var map = {
 }
 
 
-var centrallocat = [[100.7415433,13.6383389,23]]
-
-class FileReader extends React.Component {
-    constructor() {
-        super();
+class FileReader2 extends React.Component {
+    constructor(props) {
+        super(props);
         this.state = {
             csvfile: undefined,
             dataAll : [{name:'', coords: [['', '', '']]}],
@@ -42,28 +37,30 @@ class FileReader extends React.Component {
             select : "",
             dataHolding : [{name:'', coords: [['', '', '']]}],
         };
-
+        this.test = props.data
+        this.check = props.check
+        
         this.getData = this.getData.bind(this);
-        this.updateData = this.updateData.bind(this);
+        // this.updateData = this.updateData.bind(this);
     }
   
-    handleChange = event => {
-      this.setState({
-        csvfile: event.target.files[0]
-      });
-    };
-  
-    importCSV = () => {
-      const { csvfile } = this.state;
-      Papa.parse(csvfile, {
-        complete: this.updateData,
-        header: true
-      });
-    };
-  
-    updateData(result) {
-      var data = result.data;
-      this.getData(data)
+    componentWillMount(){
+        if(this.check === true){
+            this.getData(this.test)
+        }
+        // console.log('mount')
+        console.log(this.check)
+        console.log(this.test)
+    }
+
+    componentWillUpdate(nextPorps){
+        if(nextPorps.check != this.check && nextPorps.test != this.test){
+            console.log(this.check , 'next ', nextPorps.check )
+            if(this.check === true){
+                this.getData(nextPorps.test)
+            }
+        }
+        // console.log('willl')
     }
 
     uniqueNameFlight(name,data,date){
@@ -223,33 +220,25 @@ class FileReader extends React.Component {
         ],
     });
   
-    render() {
-      console.log(this.state.csvfile);
+    render(props) {
+    //   console.log(this.state.csvfile);
       return (
         <div className="App">
-          <h2>Import CSV File!</h2>
-          <input
-            className="csv-input"
-            type="file"
-            ref={input => {
-              this.filesInput = input;
-            }}
-            name="file"
-            placeholder={null}
-            onChange={this.handleChange}
-          />
-          <p />
-          <button onClick={this.importCSV}> Upload now!</button>
           <h1>Holding Visualization</h1>
             <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
                 {this.state.arr_select.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
             </Select>
-            <ReactEcharts option={this.getOption()}  style={{width:1800, height:600}} />
+            <ReactEcharts option={this.getOption()}  style={{width:1760, height:900}} />
         </div>
       );
     }
   }
+  FileReader2.propTypes = {
+    data: PropTypes.array,
+    check: PropTypes.bool
+  };
   
-  export default FileReader;
+  
+  export default FileReader2;

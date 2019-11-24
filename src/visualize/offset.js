@@ -201,7 +201,7 @@ class FileReader extends React.Component {
       return (
         <div className="App">
             <h1>Offset Visualization</h1>
-            <ReactEcharts option={this.getOption()} style={{width:1600, height:600}} />
+            <ReactEcharts option={this.getOption()} style={{width:1760, height:600}} />
         </div>
       );
     }

@@ -65,7 +65,7 @@ class Mode extends React.Component {
       // console.log(this.state.csvfile)
       return (
         <div>
-          <h2>Import CSV File!</h2>
+          <h2>Import offset .csv file</h2>
           <input
               className="csv-input"
               type="file"

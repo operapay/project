@@ -10,6 +10,7 @@ import * as d3 from 'd3-request';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 import { Select } from 'antd';
+import PropTypes from 'prop-types';
 
 const { Option } = Select;
 
@@ -28,9 +29,9 @@ var map = {
 
 var centrallocat = [[100.7415433,13.6383389,23]]
 
-class FileReader extends React.Component {
-    constructor() {
-        super();
+class FileReader1 extends React.Component {
+    constructor(props) {
+        super(props);
         this.state = {
             csvfile: undefined,
             dataAll : [{name:'', coords: [['', '', '']], date: [['','']] }],
@@ -45,27 +46,16 @@ class FileReader extends React.Component {
             dataHoldingTime : [],
         };
 
+        this.test = props.data
+        this.check = props.check
+
         this.getData = this.getData.bind(this);
-        this.updateData = this.updateData.bind(this);
     }
   
-    handleChange = event => {
-      this.setState({
-        csvfile: event.target.files[0]
-      });
-    };
-  
-    importCSV = () => {
-      const { csvfile } = this.state;
-      Papa.parse(csvfile, {
-        complete: this.updateData,
-        header: true
-      });
-    };
-  
-    updateData(result) {
-      var data = result.data;
-      this.getData(data)
+    componentWillMount(){
+        if(this.check === true){
+            this.getData(this.test)
+        }
     }
 
     uniqueNameFlight(name,data,date){
@@ -327,23 +317,10 @@ class FileReader extends React.Component {
         ]      
     });
   
-    render() {
-      console.log(this.state.csvfile);
+    render(props) {
+    //   console.log(this.state.csvfile);
       return (
         <div className="App">
-          <h2>Import CSV File!</h2>
-          <input
-            className="csv-input"
-            type="file"
-            ref={input => {
-              this.filesInput = input;
-            }}
-            name="file"
-            placeholder={null}
-            onChange={this.handleChange}
-          />
-          <p />
-          <button onClick={this.importCSV}> Upload now!</button>
           <h1>Holding Analyze</h1>
             <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
                 {this.state.arr_select.map(flight => (
@@ -356,5 +333,11 @@ class FileReader extends React.Component {
       );
     }
   }
+
+  FileReader1.propTypes = {
+    data: PropTypes.array,
+    check: PropTypes.bool
+  };
   
-  export default FileReader;
+  
+  export default FileReader1;
