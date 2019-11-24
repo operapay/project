@@ -10,6 +10,7 @@ import * as d3 from 'd3-request';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 import { Select } from 'antd';
+import PropTypes from 'prop-types';
 
 const { Option } = Select;
 
@@ -40,10 +41,10 @@ var dataplane = [
 var centrallocat = [[100.7415433,13.6383389,23]]
 
 class FileReader extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            csvfile: undefined,
+            // csvfile: undefined,
             dataAll : [{name:'', coords: [['', '', '']]}],
             data: [{name:'aaa', coords:[["100.759529", "13.692165", "0"],
             ["100.759804", "13.69202", "0"],
@@ -56,29 +57,30 @@ class FileReader extends React.Component {
                 coords: [[]]
             }],
         };
+        this.test = props.data
+        this.check = props.check
 
         this.getData = this.getData.bind(this);
-        this.updateData = this.updateData.bind(this);
     }
   
-    handleChange = event => {
-      this.setState({
-        csvfile: event.target.files[0]
-      });
-    };
-  
-    importCSV = () => {
-      const { csvfile } = this.state;
-      Papa.parse(csvfile, {
-        complete: this.updateData,
-        header: true
-      });
-    };
-  
-    updateData(result) {
-      var data = result.data;
-      this.getData(data)
-      console.log('update')
+
+    componentWillMount(){
+        if(this.check === true){
+            this.getData(this.test)
+        }
+        // console.log('mount')
+        // console.log(this.check)
+        // console.log(this.test)
+    }
+
+    componentWillUpdate(nextPorps){
+        if(nextPorps.check != this.check && nextPorps.test != this.test){
+            console.log(this.check , 'next ', nextPorps.check )
+            if(this.check === true){
+                this.getData(nextPorps.test)
+            }
+        }
+        // console.log('willl')
     }
 
     uniqueNameFlight(name,data,date){
@@ -194,28 +196,21 @@ class FileReader extends React.Component {
         ],
     });
   
-    render() {
-      console.log(this.state.csvfile);
+    render(props) {
+    //   console.log(this.test);
       return (
         <div className="App">
-            <h2>Import CSV File!</h2>
-            <input
-                className="csv-input"
-                type="file"
-                ref={input => {
-                this.filesInput = input;
-                }}
-                name="file"
-                placeholder={null}
-                onChange={this.handleChange}
-            />
-            <p />
-            <button onClick={this.importCSV}> Upload now!</button>
             <h1>Offset Visualization</h1>
-            <ReactEcharts option={this.getOption()} style={{width:1800, height:600}} />
+            <ReactEcharts option={this.getOption()} style={{width:1600, height:600}} />
         </div>
       );
     }
   }
+
+  FileReader.propTypes = {
+    data: PropTypes.array,
+    check: PropTypes.bool
+  };
+  
   
   export default FileReader;

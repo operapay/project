@@ -10,13 +10,14 @@ import * as d3 from 'd3-request';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 import { Select } from 'antd';
+import PropTypes from 'prop-types';
 // import 'antd/dist/antd.css';
 
 const { Option } = Select;
 
-class FileReader extends React.Component {
-    constructor() {
-        super();
+class OffsetAnalyze extends React.Component {
+    constructor(props) {
+        super(props);
         this.state = {
             csvfile: undefined,
             rawdata : null,
@@ -30,29 +31,17 @@ class FileReader extends React.Component {
             distribute8nmi : []
         };
 
+        this.test = props.data
+        this.check = props.check
+
         this.getData = this.getData.bind(this);
-        this.updateData = this.updateData.bind(this);
+        // this.updateData = this.updateData.bind(this);
     }
-  
-    handleChange = event => {
-      this.setState({
-        csvfile: event.target.files[0]
-      });
-    };
-  
-    importCSV = () => {
-      const { csvfile } = this.state;
-      Papa.parse(csvfile, {
-        complete: this.updateData,
-        header: true
-      });
-    };
-  
-    updateData(result) {
-      var data = result.data;
-    //   this.setState({arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]})
-      this.getData(data)
-      console.log('update')
+
+    componentWillMount(){
+        if(this.check === true){
+            this.getData()
+        }
     }
 
     uniqueNameFlight(name,data,date){
@@ -70,10 +59,10 @@ class FileReader extends React.Component {
     onhandleChange(value) {
         this.setState({select : value})
         if (value == 'Lateral'){
-            this.data_lateral(this.state.rawdata,value)
+            this.data_lateral(this.test,value)
         }
         else{
-            this.data_linegraph(this.state.rawdata,value)
+            this.data_linegraph(this.test,value)
         }
     }
 
@@ -358,9 +347,8 @@ class FileReader extends React.Component {
         }
     }
 
-    getData(result) {
-        this.setState({rawdata: result});
-        this.data_linegraph(this.state.rawdata,0)
+    getData() {
+        this.data_linegraph(this.test,0)
     }
 
     getOption = () => ({
@@ -538,23 +526,10 @@ class FileReader extends React.Component {
         ]      
     });
 
-    render() {
-      console.log(this.state.data);
+    render(props) {
+    //   console.log(this.state.data);
       return (
         <div className="App">
-            <h2>Import CSV File!</h2>
-            <input
-                className="csv-input"
-                type="file"
-                ref={input => {
-                this.filesInput = input;
-                }}
-                name="file"
-                placeholder={null}
-                onChange={this.handleChange}
-            />
-            <p />
-            <button onClick={this.importCSV}> Upload now!</button>
             <h1>Offset Analytics</h1>
                 <Select defaultValue="Attitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
                     <Option value="Attitude" style={{ fontSize: "1rem" }}>Attitude</Option>
@@ -570,4 +545,9 @@ class FileReader extends React.Component {
     }
   }
   
-  export default FileReader;
+  OffsetAnalyze.propTypes = {
+    data: PropTypes.array,
+    check: PropTypes.bool
+  };
+
+  export default OffsetAnalyze;
