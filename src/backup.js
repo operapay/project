@@ -3,15 +3,31 @@ import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
-import './holding.css'
+// import './holding.css'
 import * as d3 from 'd3-request';
-import url from '../data/reference/reference.csv';
+// import url from '../data/data_flight.csv';
+//import url from '../data/data_arrival.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 
 const { Option } = Select;
+
+var map = {
+    center: [100.7395539,13.6983666], //mahamek
+    zoom: 12,
+    pitch: 100,
+    altitudeScale: 3.28,
+    baseLayer: new maptalks.TileLayer('base', {
+        urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+        subdomains: ['a','b','c','d'],
+        attribution: '&copy; <a href="http://osm.org">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/">CARTO</a>'
+    }),
+}
+
+
+var centrallocat = [[100.7415433,13.6383389,23]]
 
 class FileReader1 extends React.Component {
     constructor(props) {
@@ -34,35 +50,11 @@ class FileReader1 extends React.Component {
         this.check = props.check
 
         this.getData = this.getData.bind(this);
-        this.updateData = this.updateData.bind(this)
-    }
-    handleChange = event => {
-        this.setState({
-          csvfile: event.target.files[0],
-          check: false
-        });
-    };
-    
-
-    importCSV = () => {
-        const { csvfile } = this.state;
-        Papa.parse(csvfile, {
-          complete: this.updateData,
-          header: true
-        });
-    };
-    
-    updateData(result) {
-        var rawdata = result.data;
-        this.setState({data : rawdata})
-        console.log('data:' , result.data)
-        // this.forceUpdate();
     }
   
     componentWillMount(){
         if(this.check === true){
             this.getData(this.test)
-            // this.importCSV()
         }
     }
 
@@ -101,100 +93,59 @@ class FileReader1 extends React.Component {
         }
     }
 
-    average = list => list.reduce((prev, curr) => prev + curr) / list.length;
-
-    alldata(value,data){
-        // console.log(data)
-        var avg = []
-        var avg_time = []
-        var res = []
-        var selectdata = []
-        var count = 0
-        var dis = 100000
-        var check = false
-        var sum = 0
-        var dist
-        var num = 0
-        for(var i=0;i<data.length-1;i++){
-            if(data[i].name === value){
-                if(data[i+1].name === '-'){
-                    // console.log(i)
-                    selectdata.push('-')
-                    // avg.push(sum)
-                    // sum = 0
-                }
-                else{
-                    selectdata.push(data[i])
-                    // sum = sum + this.distance(data[i].lat,data[i].long,data[i+1].lat,data[i+1].long,"N")
-                }
-            }
-        }
-        // console.log('selct',selectdata)
-        for(var i=0;i<selectdata.length-1;i++){
-            if(selectdata[i+1] === '-'){
-                check = false
-                dis = 100000
-                sum = 0
-                if(count != 0){
-                    avg.push(count)
-                    count = 0
-                    var timeEnd = new Date("01/01/2007 " + selectdata[i].time);
-                    var Diff = timeEnd - timeStart;
-                    avg_time.push(Diff)
-                }
-                i = i+2
-                num = i
-                // console.log('----')
-            }
-            if(check == false && i < selectdata.length-1){
-                dist = this.distance(13.6567,100.7518,selectdata[i].lat,selectdata[i].long,"N")
-                if(dist > dis && (dist > 30 & dist < 50)){
-                    // console.log(result.data[i][1]," ", dist)
-                    sum = sum + 1
-                    if(sum > 15){
-                        check = true
-                        // console.log(sum)
-                    }
-                    
-                }
-                dis = this.distance(13.6567,100.7518,selectdata[i].lat,selectdata[i].long,"N")
-                count = count + this.distance(selectdata[i].lat,selectdata[i].long,selectdata[i+1].lat,selectdata[i+1].long,"N")
-                if(num === i){
-                    var timeStart = new Date("01/01/2007 " + selectdata[num].time);
-                }
-                // console.log(result.data[i][1]," ", this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N"))
-            }
-            if(check == true){
-                count = 0
-            }
-            // console.log('count',count)
-        }
-        res.push(this.average(avg),this.average(avg_time))
-        return res
-    }
-
     onhandleChange(value,data) {
         var data_select = []
         var data_dist = []
         var data_time = []
         var ground = 0
-        var res = this.alldata(value,this.state.data)
+        var ground_non = 0
+        var dis = 100000
+        var dist
+        var first = false
         for(var i=0;i<data.length;i++){
             if(data[i].name === value){
                 data_select.push(data[i])
+                console.log(data[i])
             }
         }
         var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
         var timeEnd = new Date("01/01/2007 " + data_select[0].date[data_select[0].date.length-1][1]);
 
         var Diff = timeEnd - timeStart;
+        var Diff_non = Diff
 
         for(var i=1;i<data_select[0].coords.length;i++){
             ground = ground + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+            dist = this.distance(13.6567,100.7518,data_select[0].coords[i][1],data_select[0].coords[i][0],"N")
+            if(dist > dis && (dist > 20 & dist < 100)){
+                ground_non = ground_non + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+                if(first == false){
+                    var timeStart_non = new Date("01/01/2007 " + data_select[0].date[i][1]);
+                    first = true
+                }
+                var timeEnd_non = new Date("01/01/2007 " + data_select[0].date[i+1][1]);
+                // console.log(data_select[0].date[i+1][1])
+                // Diff_non = Diff_non - (timeEnd_non - timeStart_non);
+                // sum = sum + 1
+                // if(sum > 10){
+                //     // console.log(sum)
+                //     check = true
+                //     name = result.data[i][1]
+                // }
+                
+            }
+            // else{
+            //     ground_non = ground_non + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+            // }
+            dis = this.distance(13.6567,100.7518,data_select[0].coords[i][1],data_select[0].coords[i][0],"N")
         }
+        Diff_non = Diff_non - (timeEnd_non - timeStart_non);
         var time_hold = Diff * 0.16666666666667 * 0.0001
-        var time_non = res[1] * 0.16666666666667 * 0.0001
-        data_dist.push(['Not holding',Math.round(res[0])])
+        var time_non = Diff_non * 0.16666666666667 * 0.0001
+        console.log(time_non, ',' , time_hold)
+        ground_non = ground - ground_non
+        console.log(ground_non, ',' , ground)
+        data_dist.push(['Not holding',Math.round(ground_non)])
         data_dist.push(['Holding',Math.round(ground)])
         data_time.push(['Not holding',Math.round(time_non)])
         data_time.push(['Holding',Math.round(time_hold)])
@@ -370,19 +321,6 @@ class FileReader1 extends React.Component {
     //   console.log(this.state.csvfile);
       return (
         <div className="App">
-            <h2>Import reference .csv file</h2>
-          <input
-              className="csv-input"
-              type="file"
-              ref={input => {
-              this.filesInput = input;
-              }}
-              name="file"
-              placeholder={null}
-              onChange={this.handleChange}
-          />
-          <p />
-          <button onClick={this.importCSV}> Upload now!</button>
           <h1>Holding Analyze</h1>
             <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
                 {this.state.arr_select.map(flight => (

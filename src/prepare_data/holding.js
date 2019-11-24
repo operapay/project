@@ -5,6 +5,7 @@ import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './holding.css'
 import * as d3 from 'd3-request';
+// import url from '../data/data_flight.csv';
 import url from '../data/reference/reference.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
@@ -13,7 +14,7 @@ import PropTypes from 'prop-types';
 
 const { Option } = Select;
 
-class FileReader1 extends React.Component {
+class HoldingPre extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -28,43 +29,36 @@ class FileReader1 extends React.Component {
             select : "",
             dataHoldingDist : [],
             dataHoldingTime : [],
+            data: []
         };
 
         this.test = props.data
         this.check = props.check
 
         this.getData = this.getData.bind(this);
-        this.updateData = this.updateData.bind(this)
+        this.updateData = this.updateData.bind(this);
     }
-    handleChange = event => {
-        this.setState({
-          csvfile: event.target.files[0],
-          check: false
-        });
-    };
-    
 
-    importCSV = () => {
-        const { csvfile } = this.state;
-        Papa.parse(csvfile, {
+      importCSV = () => {
+        // const { csvfile } = this.state;
+        Papa.parse(url, {
           complete: this.updateData,
           header: true
         });
-    };
+      };
     
-    updateData(result) {
+      updateData(result) {
         var rawdata = result.data;
         this.setState({data : rawdata})
-        console.log('data:' , result.data)
+        this.getData(rawdata)
         // this.forceUpdate();
-    }
+      }
   
-    componentWillMount(){
-        if(this.check === true){
-            this.getData(this.test)
-            // this.importCSV()
-        }
-    }
+    // componentWillMount(){
+    //     if(this.check === true){
+    //         this.getData(this.test)
+    //     }
+    // }
 
     uniqueNameFlight(name,data,date){
         var count = 0
@@ -101,100 +95,48 @@ class FileReader1 extends React.Component {
         }
     }
 
-    average = list => list.reduce((prev, curr) => prev + curr) / list.length;
-
-    alldata(value,data){
-        // console.log(data)
-        var avg = []
-        var avg_time = []
-        var res = []
-        var selectdata = []
-        var count = 0
-        var dis = 100000
-        var check = false
-        var sum = 0
-        var dist
-        var num = 0
-        for(var i=0;i<data.length-1;i++){
-            if(data[i].name === value){
-                if(data[i+1].name === '-'){
-                    // console.log(i)
-                    selectdata.push('-')
-                    // avg.push(sum)
-                    // sum = 0
-                }
-                else{
-                    selectdata.push(data[i])
-                    // sum = sum + this.distance(data[i].lat,data[i].long,data[i+1].lat,data[i+1].long,"N")
-                }
-            }
-        }
-        // console.log('selct',selectdata)
-        for(var i=0;i<selectdata.length-1;i++){
-            if(selectdata[i+1] === '-'){
-                check = false
-                dis = 100000
-                sum = 0
-                if(count != 0){
-                    avg.push(count)
-                    count = 0
-                    var timeEnd = new Date("01/01/2007 " + selectdata[i].time);
-                    var Diff = timeEnd - timeStart;
-                    avg_time.push(Diff)
-                }
-                i = i+2
-                num = i
-                // console.log('----')
-            }
-            if(check == false && i < selectdata.length-1){
-                dist = this.distance(13.6567,100.7518,selectdata[i].lat,selectdata[i].long,"N")
-                if(dist > dis && (dist > 30 & dist < 50)){
-                    // console.log(result.data[i][1]," ", dist)
-                    sum = sum + 1
-                    if(sum > 15){
-                        check = true
-                        // console.log(sum)
-                    }
-                    
-                }
-                dis = this.distance(13.6567,100.7518,selectdata[i].lat,selectdata[i].long,"N")
-                count = count + this.distance(selectdata[i].lat,selectdata[i].long,selectdata[i+1].lat,selectdata[i+1].long,"N")
-                if(num === i){
-                    var timeStart = new Date("01/01/2007 " + selectdata[num].time);
-                }
-                // console.log(result.data[i][1]," ", this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"N"))
-            }
-            if(check == true){
-                count = 0
-            }
-            // console.log('count',count)
-        }
-        res.push(this.average(avg),this.average(avg_time))
-        return res
-    }
-
     onhandleChange(value,data) {
         var data_select = []
         var data_dist = []
         var data_time = []
         var ground = 0
-        var res = this.alldata(value,this.state.data)
+        var ground_non = 0
+        var dis = 100000
+        var dist
+        var first = false
         for(var i=0;i<data.length;i++){
             if(data[i].name === value){
                 data_select.push(data[i])
+                console.log(data[i])
             }
         }
         var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
         var timeEnd = new Date("01/01/2007 " + data_select[0].date[data_select[0].date.length-1][1]);
 
         var Diff = timeEnd - timeStart;
+        var Diff_non = Diff
 
         for(var i=1;i<data_select[0].coords.length;i++){
             ground = ground + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+            dist = this.distance(13.6567,100.7518,data_select[0].coords[i][1],data_select[0].coords[i][0],"N")
+            if(dist > dis && (dist > 20 & dist < 100)){
+                ground_non = ground_non + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+                if(first == false){
+                    var timeStart_non = new Date("01/01/2007 " + data_select[0].date[i][1]);
+                    first = true
+                }
+                var timeEnd_non = new Date("01/01/2007 " + data_select[0].date[i+1][1]);
+                
+            }
+            dis = this.distance(13.6567,100.7518,data_select[0].coords[i][1],data_select[0].coords[i][0],"N")
         }
+        Diff_non = Diff_non - (timeEnd_non - timeStart_non);
         var time_hold = Diff * 0.16666666666667 * 0.0001
-        var time_non = res[1] * 0.16666666666667 * 0.0001
-        data_dist.push(['Not holding',Math.round(res[0])])
+        var time_non = Diff_non * 0.16666666666667 * 0.0001
+        console.log(time_non, ',' , time_hold)
+        ground_non = ground - ground_non
+        console.log(ground_non, ',' , ground)
+        data_dist.push(['Not holding',Math.round(ground_non)])
         data_dist.push(['Holding',Math.round(ground)])
         data_time.push(['Not holding',Math.round(time_non)])
         data_time.push(['Holding',Math.round(time_hold)])
@@ -287,119 +229,19 @@ class FileReader1 extends React.Component {
         // this.setState({dataAll: this.state.arr});
     }
 
-    getOption = () => ({
-        xAxis: {
-            type: 'category',
-            axisLabel: {
-                show: true,
-                interval: 'auto',
-                inside: false,
-                fontSize: 22,
-            }
-        },
-        yAxis: {
-            type: 'value',
-            name: 'distance (nmi)',
-            nameLocation: 'center',
-            nameGap: 100,
-            nameTextStyle: {
-                fontSize: 20
-            },
-            axisLabel: {
-                show: true,
-                interval: 'auto',
-                inside: false,
-                fontSize: 22,
-            }
-        },
-        series: [
-            {
-                data: this.state.dataHoldingDist,
-                type: 'bar',
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'inside',
-                        fontSize: 20
-                    }
-                },
-            }
-        ]      
-    });
-    getOptiontime = () => ({
-        xAxis: {
-            type: 'category',
-            axisLabel: {
-                show: true,
-                interval: 'auto',
-                inside: false,
-                fontSize: 22,
-            }
-        },
-        yAxis: {
-            type: 'value',
-            name: 'time (min)',
-            nameLocation: 'center',
-            nameGap: 100,
-            nameTextStyle: {
-                fontSize: 20
-            },
-            axisLabel: {
-                show: true,
-                interval: 'auto',
-                inside: false,
-                fontSize: 22,
-            }
-        },
-        series: [
-            {
-                data: this.state.dataHoldingTime,
-                type: 'bar',
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'inside',
-                        fontSize: 20
-                    }
-                },
-            }
-        ]      
-    });
-  
     render(props) {
     //   console.log(this.state.csvfile);
       return (
         <div className="App">
-            <h2>Import reference .csv file</h2>
-          <input
-              className="csv-input"
-              type="file"
-              ref={input => {
-              this.filesInput = input;
-              }}
-              name="file"
-              placeholder={null}
-              onChange={this.handleChange}
-          />
-          <p />
-          <button onClick={this.importCSV}> Upload now!</button>
-          <h1>Holding Analyze</h1>
-            <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
-                {this.state.arr_select.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select>
-            <ReactEcharts option={this.getOption()} style={{width:1300, height:500}} />
-                <ReactEcharts option={this.getOptiontime()} style={{width:1300, height:500}} />
         </div>
       );
     }
   }
 
-  FileReader1.propTypes = {
+  HoldingPre.propTypes = {
     data: PropTypes.array,
     check: PropTypes.bool
   };
   
   
-  export default FileReader1;
+  export default HoldingPre;

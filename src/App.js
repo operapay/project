@@ -6,7 +6,7 @@ import OffsetAnalyze from './analytics/offset'
 import Holding from './visualize/holding';
 import HoldingAnalyze from './analytics/holding'
 import Narbar from './navbar'
-import Test from './test'
+import Test from './backup'
 import './App.css';
 
 const App = () => (
