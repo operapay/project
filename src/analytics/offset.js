@@ -21,7 +21,7 @@ class OffsetAnalyze extends React.Component {
         this.state = {
             csvfile: undefined,
             rawdata : null,
-            select : "Attitude",
+            select : "altitude",
             data : [],
             plot : [],
             arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}],
@@ -58,7 +58,7 @@ class OffsetAnalyze extends React.Component {
 
     onhandleChange(value) {
         this.setState({select : value})
-        if (value == 'Lateral'){
+        if (value == 'lateral'){
             this.data_lateral(this.test,value)
         }
         else{
@@ -255,7 +255,7 @@ class OffsetAnalyze extends React.Component {
                     this.state.arr[j].data.push([])
                     this.state.arr[j].name = result[i].name
                     this.state.arr[j].data[i-num+1].push(ground)
-                    if (value === 'Speed')
+                    if (value === 'speed')
                         this.state.arr[j].data[i-num+1].push(result[i].speed)
                     else
                         this.state.arr[j].data[i-num+1].push(result[i].attitude_ft) 
@@ -285,7 +285,7 @@ class OffsetAnalyze extends React.Component {
     distributed(distribute,value,avg){
         var attitude = [4,8,14]
         var lateral = [2,4,7]
-        if (value === "Speed"){
+        if (value === "speed"){
             for(var j=0;j<3;j++){
                 var attitude_nmi = [['0-50',0],['50-100',0],['100-150',0],['150-200',0],['200-250',0],['250-300',0]]
                 for(var i=0;i<distribute[attitude[j]].data.length;i++){
@@ -301,7 +301,7 @@ class OffsetAnalyze extends React.Component {
                 else if (j === 2) this.setState({distribute8nmi : attitude_nmi})
             }
         }
-        else if (value === "Lateral"){
+        else if (value === "lateral"){
             var dist
             for(var j=0;j<3;j++){
                 var lateral_nmi = [['-4,-3',0],['-3,-2',0],['-2,-1',0],['-1,0',0],['0,1',0],['1,2',0],['2,3',0],['3,4',0]]
@@ -540,10 +540,10 @@ class OffsetAnalyze extends React.Component {
       return (
         <div className="App">
             <h1>Offset Analytics</h1>
-                <Select defaultValue="Altitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
-                    <Option value="Altitude" style={{ fontSize: "1rem" }}>Attitude</Option>
-                    <Option value="Lateral" style={{ fontSize: "1rem" }}>Lateral</Option>
-                    <Option value="Speed" style={{ fontSize: "1rem" }}>Speed</Option>
+                <Select defaultValue="altitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
+                    <Option value="altitude" style={{ fontSize: "1rem" }}>Altitude</Option>
+                    <Option value="lateral" style={{ fontSize: "1rem" }}>Lateral</Option>
+                    <Option value="speed" style={{ fontSize: "1rem" }}>Speed</Option>
                 </Select>
                 <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
                 <ReactEcharts option={this.Option3nmi()} style={{width:1500, height:500}} />
