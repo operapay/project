@@ -159,8 +159,8 @@ class OffsetAnalyze extends React.Component {
         // this.setState({arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]})
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
         var num = 1
-        var long_origin = 100.7541404;
-        var lat_origin = 13.6993272;
+        var long_origin = 100.743178;
+        var lat_origin = 13.703669;
         var dist = [{name:'',data:[[]]}]
         var distribute = []
         this.init_arrdistribute_xy(distribute)
@@ -540,8 +540,8 @@ class OffsetAnalyze extends React.Component {
       return (
         <div className="App">
             <h1>Offset Analytics</h1>
-                <Select defaultValue="Attitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
-                    <Option value="Attitude" style={{ fontSize: "1rem" }}>Attitude</Option>
+                <Select defaultValue="Altitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
+                    <Option value="Altitude" style={{ fontSize: "1rem" }}>Attitude</Option>
                     <Option value="Lateral" style={{ fontSize: "1rem" }}>Lateral</Option>
                     <Option value="Speed" style={{ fontSize: "1rem" }}>Speed</Option>
                 </Select>

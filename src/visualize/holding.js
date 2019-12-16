@@ -4,8 +4,9 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './holding.css'
-import { Select } from 'antd';
+import { Select,Checkbox,Col } from 'antd';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -27,6 +28,7 @@ class FileReader2 extends React.Component {
         super(props);
         this.state = {
             csvfile: undefined,
+            checkedList: [],
             dataAll : [{name:'', coords: [['', '', '']]}],
             arr: [{
                 name:'',
@@ -35,6 +37,10 @@ class FileReader2 extends React.Component {
             arr_select : [],
             select : "",
             dataHolding : [{name:'', coords: [['', '', '']]}],
+            time_select : '',
+            distinct_time : [],
+            data_select_time: [],
+            name_holding : []
         };
         this.test = props.data
         this.check = props.check
@@ -99,16 +105,34 @@ class FileReader2 extends React.Component {
 
     onhandleChange(value,data) {
         var data_select = []
-        //console.log(value,data)
-        // this.setState({select : value})
-        for(var i=0;i<data.length;i++){
-            if(data[i].name === value){
-                data_select.push(data[i])
-                console.log(data[i])
+        // console.log(value)
+        this.setState({checkedList : value})
+        for(var j=0;j<value.length;j++){
+            for(var i=0;i<data.length;i++){
+                if(data[i].name === value[j]){
+                    data_select.push(data[i])
+                    console.log(data[i])
+                }
             }
         }
         console.log(data_select)
         this.setState({dataHolding : data_select})
+    }
+
+    Time_onhandleChange(value,data) {
+        var data_select = []
+        this.setState({dataHolding : [], checkedList:[]})
+        // console.log(value,data)
+        // this.setState({select : value})
+        for(var i=0;i<data.length;i++){
+            // console.log(data[i].time_1.getHours())
+            if(data[i].time_1.getHours() === parseInt(value) || data[i].time_2.getHours() === parseInt(value)){
+                data_select.push(data[i].name)
+                console.log(data[i])
+            }
+        }
+        console.log(data_select)
+        this.setState({name_holding : data_select})
     }
 
     selectdata(flighthold,data){
@@ -139,12 +163,17 @@ class FileReader2 extends React.Component {
         var check = false
         var sum = 0
         var dist
+        var time_first
+        var time_last
+        var arr_time = []
         console.log(count)
 
         for(var j=0;j<count;j++){
             dis = 100000
             check = false
             sum = 0
+            time_first = 0
+            time_last = 0
             for(var i=num;i<=result.length;i++){
                 // console.log(num)
                 if(result[i].name === '-'){
@@ -165,10 +194,18 @@ class FileReader2 extends React.Component {
                     if(dist > dis && (dist > 30 & dist < 50)){
                         // console.log(result.data[i][1]," ", dist)
                         sum = sum + 1
+                        // var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
+                        if(sum === 1){
+                            var mydate = moment(String(result[i].date), 'DD/MM/YYYY');
+                            time_first = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
+                            // console.log('test' + String(result[i].date))
+                        }
                         if(sum > 15){
                             // console.log(sum)
                             check = true
                             name = result[i].name
+                            var mydate = moment(String(result[i].date), 'DD/MM/YYYY');
+                            time_last = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
                         }
                         
                     }
@@ -178,20 +215,28 @@ class FileReader2 extends React.Component {
             }
             if(check === true){
                 arr.push(name)
+                arr_time.push({name:name,time_1:time_first,time_2:time_last})
+                // console.log(name, ':' ,time_first, ' & ', time_last)
             }
             // console.log(j)
             if(j < count-1){
                 this.state.arr.push({name:'', coords: [[]]})
             }
         }
-        console.log(arr)
-        //console.log(result.data)
+        // console.log(arr_time)
+        var select_time = []
+        for(var i=0;i<arr_time.length;i++){
+            select_time.push(arr_time[i].time_1.getHours())
+        }
+        // console.log(select_time)
+        var distinct = [...new Set(select_time)].sort()
+        // console.log(distinct)
         // this.setState({test: result.data});
-        console.log(this.state.arr)
+        // console.log(this.state.arr)
         //this.test()
         this.setState({arr_select : arr})
         this.selectdata(arr,this.state.arr)
-        this.setState({dataAll: this.state.arr});
+        this.setState({dataAll: this.state.arr, distinct_time:distinct,data_select_time:arr_time});
     }
 
     getOption = () => ({
@@ -224,11 +269,26 @@ class FileReader2 extends React.Component {
       return (
         <div className="App">
           <h1>Holding Visualization</h1>
-            <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
+            <Col>
+                <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} onChange={e => this.Time_onhandleChange(e,this.state.data_select_time)}>
+                    {this.state.distinct_time.map(flight => (
+                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
+                    ))}
+                </Select>
+            </Col>
+            <Col>
+                <Checkbox.Group options={this.state.name_holding}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.state.dataAll)}/>
+            </Col>
+            {/* <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem" }} disabled={true} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
+                {this.state.distinct_time.map(flight => (
+                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                ))}
+            </Select> */}
+            {/* <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
                 {this.state.arr_select.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
-            </Select>
+            </Select> */}
             <ReactEcharts option={this.getOption()}  style={{width:1760, height:900}} />
         </div>
       );
