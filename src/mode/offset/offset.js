@@ -1,7 +1,8 @@
 import { Card } from 'antd';
 import React from "react";
-import Holding from '../visualize/holding';
-import HoldingAnalyze from '../analytics/holding'
+// import Offset from '../../visualize/offset';
+import Offset from './select_data'
+import OffsetAnalyze from '../../analytics/offset'
 import Papa from 'papaparse'
 
 const tabList = [
@@ -14,11 +15,6 @@ const tabList = [
       tab: 'analyze',
     },
 ];
-
-// const contentList = {
-//     tab1: <Holding/>,
-//     tab2: <HoldingAnalyze/>,
-// };
 
 class Mode extends React.Component {
   constructor(props) {
@@ -34,7 +30,7 @@ class Mode extends React.Component {
     // this.getData = this.getData.bind(this);
     this.updateData = this.updateData.bind(this);
   }
-  
+
     onTabChange = (key, type) => {
       console.log(key, type);
       this.setState({ [type]: key });
@@ -63,12 +59,13 @@ class Mode extends React.Component {
   
     render() {
       const contentList = {
-        tab1: <Holding check={this.state.check} data={this.state.data}/>,
-        tab2: <HoldingAnalyze check={this.state.check} data={this.state.data}/>,
+        tab1: <Offset check={this.state.check} data={this.state.data}/>,
+        tab2: <OffsetAnalyze check={this.state.check} data={this.state.data}/>,
       };
+      // console.log(this.state.csvfile)
       return (
         <div>
-          <h2>Import holding .csv file</h2>
+          <h2>Import offset .csv file</h2>
           <input
               className="csv-input"
               type="file"
@@ -98,6 +95,6 @@ class Mode extends React.Component {
       );
     }
   }
-  
-export default Mode;  
+
+  export default Mode;  
 

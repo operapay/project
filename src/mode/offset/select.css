@@ -1,0 +1,4 @@
+.App .ant-select-selection__placeholder{
+    color: black !important;
+    opacity: 0.7;
+}

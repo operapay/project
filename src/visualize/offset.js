@@ -40,157 +40,80 @@ class FileReader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // csvfile: undefined,
-            dataAll : [{name:'', coords: [['', '', '']],date:'',time_1:'',time_2:''}],
-            data: [{name:'aaa', coords:[["100.759529", "13.692165", "0"],
-            ["100.759804", "13.69202", "0"],
-            ["100.759804", "13.69202", "0"],
-            ["100.760376", "13.69186", "0"],
-            ["100.760818", "13.691106", "0"],
-            ["100.757057", "13.676116", "144.78"]]}],
-            arr: [{
-                name:'',
-                coords: [[]],
-                date:'',
-                time_1:'',
-                time_2:''
-            }],
-            distinct_date : [],
-            distinct_time : [],
-            select_date : false,
-            date_time : [],
-            date_name : [],
-            time_name : [],
-            flight : []
+            data : []
         };
-        this.test = props.data
-        this.check = props.check
+        this.flight = props.flight
+        this.check = props.check_data
 
-        this.getData = this.getData.bind(this);
+        // this.getData = this.getData.bind(this);
     }
   
 
     componentWillMount(){
-        if(this.check === true){
-            this.getData(this.test)
-        }
-        // console.log('mount')
-        // console.log(this.check)
-        // console.log(this.test)
+        this.getData(this.flight)
     }
 
     componentWillUpdate(nextPorps){
-        if(nextPorps.check != this.check && nextPorps.test != this.test){
+        if(nextPorps.check != this.check && nextPorps.flight != this.flight){
             console.log(this.check , 'next ', nextPorps.check )
             if(this.check === true){
-                this.getData(nextPorps.test)
+                // console.log(this.flgiht , 'next_fl ', nextPorps.flgiht)
+                this.getData(nextPorps.flight);
             }
         }
         // console.log('willl')
     }
 
-    uniqueNameFlight(name,data,date){
-        var count = 0
-        console.log(data.length)
-        for(var i=1;i<data.length;i++){
-            if (data[i].name === '-'){
-                count += 1
-                // console.log(i)
-            }
-        }
-        return count
-    }
+    // uniqueNameFlight(name,data,date){
+    //     var count = 0
+    //     console.log(data.length)
+    //     for(var i=1;i<data.length;i++){
+    //         if (data[i].name === '-'){
+    //             count += 1
+    //             // console.log(i)
+    //         }
+    //     }
+    //     return count
+    // }
 
-    Date_onhandleChange(value,data) {
-        var data_select = []
-        var data_time = []
-        this.setState({select_date:true})
-        // console.log(value,data)
-        // this.setState({select : value})
-        for(var i=0;i<data.length;i++){
-            // console.log(data[i].date, String(value))
-            if(data[i].date === String(value)){
-                data_select.push(data[i])
-                data_time.push(data[i].time_1.getHours())
-                // console.log(data[i])
-            }
-        }
-        var distinct = [...new Set(data_time)].sort()
-        // console.log(data_select)
-        this.setState({distinct_time : distinct,date_name:data_select})
-    }
+    // Date_onhandleChange(value,data) {
+    //     var data_select = []
+    //     var data_time = []
+    //     this.setState({select_date:true})
+    //     // console.log(value,data)
+    //     // this.setState({select : value})
+    //     for(var i=0;i<data.length;i++){
+    //         // console.log(data[i].date, String(value))
+    //         if(data[i].date === String(value)){
+    //             data_select.push(data[i])
+    //             data_time.push(data[i].time_1.getHours())
+    //             // console.log(data[i])
+    //         }
+    //     }
+    //     var distinct = [...new Set(data_time)].sort()
+    //     // console.log(data_select)
+    //     this.setState({distinct_time : distinct,date_name:data_select})
+    // }
 
-    Time_onhandleChange(value,data) {
-        var data_select = []
-        // this.setState({dataHolding : [], checkedList:[]})
-        // console.log(value,data)
-        // this.setState({select : value})
-        for(var i=0;i<data.length;i++){
-            // console.log(data[i].time_1.getHours())
-            if(data[i].time_1.getHours() === parseInt(value) || data[i].time_2.getHours() === parseInt(value)){
-                data_select.push(data[i])
-                console.log(data[i])
-            }
-        }
-        console.log(data_select)
-        this.setState({flight : data_select})
-    }
+    // Time_onhandleChange(value,data) {
+    //     var data_select = []
+    //     // this.setState({dataHolding : [], checkedList:[]})
+    //     // console.log(value,data)
+    //     // this.setState({select : value})
+    //     for(var i=0;i<data.length;i++){
+    //         // console.log(data[i].time_1.getHours())
+    //         if(data[i].time_1.getHours() === parseInt(value) || data[i].time_2.getHours() === parseInt(value)){
+    //             data_select.push(data[i])
+    //             console.log(data[i])
+    //         }
+    //     }
+    //     console.log(data_select)
+    //     this.setState({flight : data_select})
+    // }
 
     getData(result) {
-        this.state.arr = [{
-            name:'',
-            coords: [[]]
-        }]
-        var num = 0
-        var name = result[0].name
-        var date = result[0].name
-        var count = this.uniqueNameFlight(name,result,date)
-        var dataall_date = []
-        var data_check_time_date = []
-        console.log(count)
-
-        for(var j=0;j<count;j++){
-            //console.log(j)
-            var mydate = moment(String(result[num].date), 'DD/MM/YYYY');
-            var date = moment(mydate).format("DD/MM/YYYY");
-            dataall_date.push(date)
-            for(var i=num;i<=result.length;i++){
-                // console.log(num)
-                if(result[i].name === '-'){
-                    var time1 = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[num].time);
-                    var time2 = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i-1].time);
-                    this.state.arr[j].date = date
-                    this.state.arr[j].time_1 = time1
-                    this.state.arr[j].time_2 = time2
-                    // data_check_time_date.push({name: result[num].name,date: date,time_1:time1,time_2:time2})
-                    num = i+1
-                    //name = result.data[i][1]
-                    this.state.arr[j].coords.pop()
-                    break;
-                }
-                this.state.arr[j].coords.push([])
-                this.state.arr[j].name = result[i].name
-                this.state.arr[j].coords[i-num].push(result[i].long)
-                this.state.arr[j].coords[i-num].push(result[i].lat)
-                this.state.arr[j].coords[i-num].push(result[i].attitude)
-            }
-            // console.log(j)
-            if(j < count-1){
-                this.state.arr.push({name:'', coords: [[]],date:'',time_1:'',time_2:''})
-            }
-        }
-        console.log(data_check_time_date)
-        // this.setState({test: result.data});
-        // console.log(this.state.arr)
-        var distinct = [...new Set(dataall_date)]
-        distinct.sort(function(a, b){
-            var aa = a.split('/').reverse().join(),
-                bb = b.split('/').reverse().join();
-            return aa < bb ? -1 : (aa > bb ? 1 : 0);
-        });
-        // console.log('date: ',distinct)
-        //this.test()
-        this.setState({dataAll: this.state.arr,distinct_date:distinct});
+        console.log('result: ',result)
+        this.setState({data: result});
     }
 
     getOption = () => ({
@@ -250,7 +173,7 @@ class FileReader extends React.Component {
                     color: 'rgb(50, 60, 170)',
                     opacity: 0.5
                 },
-                data: this.state.flight
+                data: this.state.data
             }
         ],
     });
@@ -259,8 +182,8 @@ class FileReader extends React.Component {
     //   console.log(this);
       return (
         <div className="App">
-            <h1>Offset Visualization</h1>
-            <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} onChange={e => this.Date_onhandleChange(e,this.state.dataAll)}>
+            {/* <h1>Offset Visualization</h1> */}
+            {/* <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} onChange={e => this.Date_onhandleChange(e,this.state.dataAll)}>
                 {this.state.distinct_date.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
@@ -271,7 +194,7 @@ class FileReader extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
                     ))}
                 </Select>: null
-            }
+            } */}
             <ReactEcharts option={this.getOption()} style={{width:1760, height:600}} />
         </div>
       );
@@ -279,8 +202,8 @@ class FileReader extends React.Component {
   }
 
   FileReader.propTypes = {
-    data: PropTypes.array,
-    check: PropTypes.bool
+    flight: PropTypes.array,
+    check_data: PropTypes.bool
   };
   
   
