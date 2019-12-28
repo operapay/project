@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './offset.css'
-import { Select } from 'antd';
+import { Select,Checkbox } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
@@ -40,80 +40,29 @@ class FileReader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data : []
+            data : [],
+            checkedList: [],
         };
-        this.flight = props.flight
-        this.check = props.check_data
+        this.flight = props.data
+        this.check = props.name
 
         // this.getData = this.getData.bind(this);
     }
-  
 
-    componentWillMount(){
-        this.getData(this.flight)
-    }
-
-    componentWillUpdate(nextPorps){
-        if(nextPorps.check != this.check && nextPorps.flight != this.flight){
-            console.log(this.check , 'next ', nextPorps.check )
-            if(this.check === true){
-                // console.log(this.flgiht , 'next_fl ', nextPorps.flgiht)
-                this.getData(nextPorps.flight);
+    onhandleChange(value,data) {
+        var data_select = []
+        // console.log(value)
+        this.setState({checkedList : value})
+        for(var j=0;j<value.length;j++){
+            for(var i=0;i<data.length;i++){
+                if(data[i].name === value[j]){
+                    data_select.push(data[i])
+                    console.log(data[i])
+                }
             }
         }
-        // console.log('willl')
-    }
-
-    // uniqueNameFlight(name,data,date){
-    //     var count = 0
-    //     console.log(data.length)
-    //     for(var i=1;i<data.length;i++){
-    //         if (data[i].name === '-'){
-    //             count += 1
-    //             // console.log(i)
-    //         }
-    //     }
-    //     return count
-    // }
-
-    // Date_onhandleChange(value,data) {
-    //     var data_select = []
-    //     var data_time = []
-    //     this.setState({select_date:true})
-    //     // console.log(value,data)
-    //     // this.setState({select : value})
-    //     for(var i=0;i<data.length;i++){
-    //         // console.log(data[i].date, String(value))
-    //         if(data[i].date === String(value)){
-    //             data_select.push(data[i])
-    //             data_time.push(data[i].time_1.getHours())
-    //             // console.log(data[i])
-    //         }
-    //     }
-    //     var distinct = [...new Set(data_time)].sort()
-    //     // console.log(data_select)
-    //     this.setState({distinct_time : distinct,date_name:data_select})
-    // }
-
-    // Time_onhandleChange(value,data) {
-    //     var data_select = []
-    //     // this.setState({dataHolding : [], checkedList:[]})
-    //     // console.log(value,data)
-    //     // this.setState({select : value})
-    //     for(var i=0;i<data.length;i++){
-    //         // console.log(data[i].time_1.getHours())
-    //         if(data[i].time_1.getHours() === parseInt(value) || data[i].time_2.getHours() === parseInt(value)){
-    //             data_select.push(data[i])
-    //             console.log(data[i])
-    //         }
-    //     }
-    //     console.log(data_select)
-    //     this.setState({flight : data_select})
-    // }
-
-    getData(result) {
-        console.log('result: ',result)
-        this.setState({data: result});
+        console.log(data_select)
+        this.setState({data : data_select})
     }
 
     getOption = () => ({
@@ -131,31 +80,31 @@ class FileReader extends React.Component {
             //     },
             //     data: dataplane
             // },
-            {
-                type: 'lines3D',
-                coordinateSystem: 'maptalks3D',
-                polyline: true,
-                // silent: true,
-                lineStyle: {
-                    width: 5,
-                    color: 'red',
-                    opacity: 0.7,
-                },
-                data: dataplane
-            },
-            {
-                type: 'bar3D',
-                coordinateSystem: 'maptalks3D',
-                shading: 'lambert',
-                data: centrallocat,
-                barSize: 1.2,
-                minHeight: 0.2,
-                silent: true,
-                itemStyle: {
-                    color: 'orange'
-                    // opacity: 0.8
-                }
-            },
+            // {
+            //     type: 'lines3D',
+            //     coordinateSystem: 'maptalks3D',
+            //     polyline: true,
+            //     // silent: true,
+            //     lineStyle: {
+            //         width: 5,
+            //         color: 'red',
+            //         opacity: 0.7,
+            //     },
+            //     data: dataplane
+            // },
+            // {
+            //     type: 'bar3D',
+            //     coordinateSystem: 'maptalks3D',
+            //     shading: 'lambert',
+            //     data: centrallocat,
+            //     barSize: 1.2,
+            //     minHeight: 0.2,
+            //     silent: true,
+            //     itemStyle: {
+            //         color: 'orange'
+            //         // opacity: 0.8
+            //     }
+            // },
             {
                 type: 'lines3D',
                 coordinateSystem: 'maptalks3D',
@@ -173,7 +122,7 @@ class FileReader extends React.Component {
                     color: 'rgb(50, 60, 170)',
                     opacity: 0.5
                 },
-                data: this.state.data
+                data: this.state.data 
             }
         ],
     });
@@ -182,19 +131,7 @@ class FileReader extends React.Component {
     //   console.log(this);
       return (
         <div className="App">
-            {/* <h1>Offset Visualization</h1> */}
-            {/* <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} onChange={e => this.Date_onhandleChange(e,this.state.dataAll)}>
-                {this.state.distinct_date.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select>
-            {this.state.select_date === true ? 
-                <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} onChange={e => this.Time_onhandleChange(e,this.state.date_name)}>
-                    {this.state.distinct_time.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
-                    ))}
-                </Select>: null
-            } */}
+            <Checkbox.Group options={this.check}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.flight)}/>
             <ReactEcharts option={this.getOption()} style={{width:1760, height:600}} />
         </div>
       );
@@ -202,8 +139,9 @@ class FileReader extends React.Component {
   }
 
   FileReader.propTypes = {
-    flight: PropTypes.array,
-    check_data: PropTypes.bool
+    data: PropTypes.array,
+    name: PropTypes.array
+    // check_data: PropTypes.bool
   };
   
   
