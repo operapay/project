@@ -42,6 +42,7 @@ class FileReader extends React.Component {
         this.state = {
             data : [],
             checkedList: [],
+            list: []
         };
         this.flight = props.data
         this.check = props.name
@@ -50,6 +51,7 @@ class FileReader extends React.Component {
     }
 
     onhandleChange(value,data) {
+        // console.log(`selected ${value}`);
         var data_select = []
         // console.log(value)
         this.setState({checkedList : value})
@@ -131,7 +133,20 @@ class FileReader extends React.Component {
     //   console.log(this);
       return (
         <div className="App">
-            <Checkbox.Group options={this.check}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.flight)}/>
+            <Select
+                mode="multiple"
+                style={{ width: '50%' }}
+                placeholder="Please select flight"
+                value={this.state.checkedList}
+                // defaultValue={['a10', 'c12']}
+                onChange={e => this.onhandleChange(e,this.flight)}
+                //options={this.check}
+            >
+                {this.check.map(flight => (
+                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                ))}
+            </Select>
+            {/* <Checkbox.Group options={this.check}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.flight)}/> */}
             <ReactEcharts option={this.getOption()} style={{width:1760, height:600}} />
         </div>
       );
