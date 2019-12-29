@@ -46,8 +46,16 @@ class FileReader extends React.Component {
         };
         this.flight = props.data
         this.check = props.name
+        this.what = props.what
 
-        // this.getData = this.getData.bind(this);
+        this.getData = this.getData.bind(this);
+    }
+
+    componentWillMount(){
+        if(this.what === "Flight no"){
+            this.getData(this.flight)
+        }
+
     }
 
     onhandleChange(value,data) {
@@ -65,6 +73,10 @@ class FileReader extends React.Component {
         }
         console.log(data_select)
         this.setState({data : data_select})
+    }
+
+    getData(result){
+        this.setState({data : result})
     }
 
     getOption = () => ({
@@ -130,9 +142,10 @@ class FileReader extends React.Component {
     });
   
     render(props) {
-    //   console.log(this);
+      console.log(this.flight);
       return (
         <div className="App">
+            {this.what === "Date" ?
             <Select
                 mode="multiple"
                 style={{ width: '50%' }}
@@ -146,6 +159,9 @@ class FileReader extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
             </Select>
+            :
+                null
+            }
             {/* <Checkbox.Group options={this.check}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.flight)}/> */}
             <ReactEcharts option={this.getOption()} style={{width:1760, height:600}} />
         </div>
@@ -155,7 +171,8 @@ class FileReader extends React.Component {
 
   FileReader.propTypes = {
     data: PropTypes.array,
-    name: PropTypes.array
+    name: PropTypes.array,
+    what: PropTypes.string
     // check_data: PropTypes.bool
   };
   

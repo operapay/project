@@ -45,6 +45,7 @@ class FileReader extends React.Component {
             real : [],
             click : false,
             checkbox : [],
+            what_select : "Date"
             // checkedList: [],
         };
         this.data = props.data
@@ -175,7 +176,7 @@ class FileReader extends React.Component {
             </div>
             <div>
                 {this.state.click === true ? 
-                <Offset data={this.state.real} name={this.state.checkbox}/>
+                <Offset data={this.state.real} name={this.state.checkbox} what={this.state.what_select}/>
                 : null}
             </div>
 

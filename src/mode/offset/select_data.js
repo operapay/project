@@ -8,6 +8,7 @@ import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import SelectDate from './select_date';
+import SelectFlight from './select_flight';
 
 const { Option } = Select;
 
@@ -166,23 +167,7 @@ class FileReader extends React.Component {
             { this.state.select_feature === 'Date' ?
             <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date}/>
             : 
-            <div>
-            <Select placeholder="Select Flight no" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Date_onhandleChange(e,this.state.dataAll)}>
-                {this.state.distinct_name.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select>
-            <Select placeholder="Select Unit" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.unit_default} onChange={e => this.Time_onhandleChange(e,this.state.date_name)}>
-                {this.state.unit.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select>
-            <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.unit_default} onChange={e => this.Time_onhandleChange(e,this.state.date_name)}>
-                {this.state.unit.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select>
-            </div>
+            <SelectFlight check={this.state.check} data={this.state.dataAll} name={this.state.distinct_name}/>
             }
             
             {/* {this.state.check_data === true ?
