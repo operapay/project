@@ -71,7 +71,7 @@ class FileReader extends React.Component {
                 }
             }
         }
-        console.log(data_select)
+        // console.log(data_select)
         this.setState({data : data_select})
     }
 
@@ -142,7 +142,7 @@ class FileReader extends React.Component {
     });
   
     render(props) {
-      console.log(this.flight);
+    //   console.log(this.flight);
       return (
         <div className="App">
             {this.what === "Date" ?

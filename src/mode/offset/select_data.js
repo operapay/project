@@ -72,7 +72,7 @@ class FileReader extends React.Component {
 
     uniqueNameFlight(name,data,date){
         var count = 0
-        console.log(data.length)
+        // console.log(data.length)
         for(var i=1;i<data.length;i++){
             if (data[i].name === '-'){
                 count += 1
@@ -100,12 +100,12 @@ class FileReader extends React.Component {
         var dataall_date = []
         var dataall_name = []
         var data_check_time_date = []
-        console.log(count)
+        // console.log(count)
 
         for(var j=0;j<count;j++){
             //console.log(j)
-            var mydate = moment(String(result[num].date), 'DD/MM/YYYY');
-
+            var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
+            console.log(mydate)
             dataall_name.push(result[num].name)
             for(var i=num;i<=result.length;i++){
                 // console.log(num)

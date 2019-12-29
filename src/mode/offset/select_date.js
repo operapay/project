@@ -77,7 +77,8 @@ class FileReader extends React.Component {
             dist = dist * 60 * 1.1515;
             if (unit==="K") { dist = dist * 1.609344 }
             if (unit==="N") { dist = dist * 0.8684
-            console.log('nmi') }
+            // console.log('nmi') 
+            }
             return dist;
         }
     }
@@ -88,14 +89,14 @@ class FileReader extends React.Component {
         this.setState({date_default:value,click:false})
         // console.log(data)
         for(var i=0;i<data.length;i++){
-            console.log(data[i].date, String(value))
+            // console.log(data[i].date, String(value))
             if(data[i].date === String(value)){
                 data_select.push(data[i])
                 data_time.push(data[i].time_1.getHours())
                 // console.log(data[i])
             }
         }
-        console.log(data_time)
+        // console.log(data_time)
         // console.log(data_time.sort(function(a, b){return a-b}))
         var distinct = [...new Set(data_time)].sort(function(a, b){return a-b})
 
@@ -109,7 +110,7 @@ class FileReader extends React.Component {
         for(var i=0;i<data.length;i++){
             if(data[i].time_1.getHours() === parseInt(value) || data[i].time_2.getHours() === parseInt(value)){
                 data_select.push(data[i])
-                console.log(data[i])
+                // console.log(data[i])
             }
         }
         // console.log(data_select)

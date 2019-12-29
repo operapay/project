@@ -137,7 +137,7 @@ class FileReader1 extends React.Component {
                 if(count != 0){
                     avg.push(count)
                     count = 0
-                    var mydate = moment(String(selectdata[i].date), 'DD/MM/YYYY');
+                    var mydate = moment(String(selectdata[i].date), 'YYYY-MM-DD');
                     console.log(mydate)
                     var timeEnd = new Date(moment(mydate).format("MM/DD/YYYY")+" " + selectdata[i].time);
                     // var timeEnd = new Date("01/01/2007 " + selectdata[i].time);
@@ -162,7 +162,7 @@ class FileReader1 extends React.Component {
                 dis = this.distance(13.6567,100.7518,selectdata[i].lat,selectdata[i].long,"N")
                 count = count + this.distance(selectdata[i].lat,selectdata[i].long,selectdata[i+1].lat,selectdata[i+1].long,"N")
                 if(num === i){
-                    var mydate = moment(String(selectdata[num].date), 'DD/MM/YYYY');
+                    var mydate = moment(String(selectdata[num].date), 'YYYY-MM-DD');
                     var timeStart = new Date(moment(mydate).format("MM/DD/YYYY")+" " + selectdata[num].time);
                     // var timeStart = new Date("01/01/2007 " + selectdata[num].time);
                 }
@@ -189,7 +189,7 @@ class FileReader1 extends React.Component {
             }
         }
 
-        var mydate = moment(String(data_select[0].date[0][0]), 'DD/MM/YYYY');
+        var mydate = moment(String(data_select[0].date[0][0]), 'YYYY-MM-DD');
         var timeStart = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[0][1]);
         // var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
         var timeEnd = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[data_select[0].date.length-1][1]);

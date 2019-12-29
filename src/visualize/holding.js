@@ -196,7 +196,7 @@ class FileReader2 extends React.Component {
                         sum = sum + 1
                         // var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
                         if(sum === 1){
-                            var mydate = moment(String(result[i].date), 'DD/MM/YYYY');
+                            var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
                             time_first = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
                             // console.log('test' + String(result[i].date))
                         }
@@ -204,7 +204,7 @@ class FileReader2 extends React.Component {
                             // console.log(sum)
                             check = true
                             name = result[i].name
-                            var mydate = moment(String(result[i].date), 'DD/MM/YYYY');
+                            var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
                             time_last = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
                         }
                         

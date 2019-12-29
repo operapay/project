@@ -66,7 +66,7 @@ class FileReader extends React.Component {
                 // console.log(data[i])
             }
         }
-        console.log(data_select)
+        // console.log(data_select)
         // console.log(data_time.sort(function(a, b){return a-b}))
         var distinctMonth = [...new Set(data_month)]
         var distinctWeek = [...new Set(data_week)]
@@ -92,7 +92,7 @@ class FileReader extends React.Component {
         var data_select = []
         if(this.state.unit_default === "Week"){
             for(var i=0;i<data.length;i++){
-                console.log(data[i].week, "vs" , value)
+                // console.log(data[i].week, "vs" , value)
                 if(String(data[i].week) === value){
                     data_select.push(data[i])
                 }
@@ -100,14 +100,14 @@ class FileReader extends React.Component {
         }
         else{
             for(var i=0;i<data.length;i++){
-                console.log(data[i].time_1.getMonth(), "vs" , value)
+                // console.log(data[i].time_1.getMonth(), "vs" , value)
                 if(String(data[i].time_1.getMonth()) === value){
                     data_select.push(data[i])
                 }
             }
         }
 
-        console.log(data_select)
+        // console.log(data_select)
         this.setState({real : data_select})
 
     }
