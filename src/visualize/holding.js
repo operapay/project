@@ -27,37 +27,32 @@ class FileReader2 extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data : []
+            data : [],
+            checkedList: [],
         };
         this.test = props.data
-        this.check = props.check
+        this.name = props.name
         
-        this.getData = this.getData.bind(this);
+        // this.getData = this.getData.bind(this);
         // this.updateData = this.updateData.bind(this);
     }
   
-    componentWillMount(){
-        if(this.check.length !== 0){
-            this.getData(this.test)
+
+    onhandleChange(value,data) {
+        // console.log(`selected ${value}`);
+        var data_select = []
+        // console.log(value)
+        this.setState({checkedList : value})
+        for(var j=0;j<value.length;j++){
+            for(var i=0;i<data.length;i++){
+                if(data[i].name === value[j]){
+                    data_select.push(data[i])
+                    console.log(data[i])
+                }
+            }
         }
-        // console.log('mount')
-        // console.log(this.check)
-        // console.log(this.test)
-    }
-
-    // componentWillUpdate(nextPorps){
-    //     if(nextPorps.check !== this.check && nextPorps.test !== this.test){
-    //         console.log(this.check , 'next ', nextPorps.check )
-    //         console.log(this.test , 'next ', nextPorps.test)
-    //         if(nextPorps.check.length !== 0 && nextPorps.test !== undefined){
-    //             this.getData(nextPorps.test)
-    //         }
-    //     }
-    //     // console.log('willl')
-    // }
-
-    getData(result){
-        this.setState({data:result})
+        // console.log(data_select)
+        this.setState({data : data_select})
     }
 
     getOption = () => ({
@@ -84,32 +79,27 @@ class FileReader2 extends React.Component {
             }
         ],
     });
+
   
     render(props) {
     //   console.log(this.state.csvfile);
       return (
         <div className="App">
-          {/* <h1>Holding Visualization</h1>
             <Col>
-                <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} onChange={e => this.Time_onhandleChange(e,this.state.data_select_time)}>
-                    {this.state.distinct_time.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
+                <Select
+                    mode="multiple"
+                    style={{ width: '50%' }}
+                    placeholder="Please select flight"
+                    value={this.state.checkedList}
+                    // defaultValue={['a10', 'c12']}
+                    onChange={e => this.onhandleChange(e,this.test)}
+                    //options={this.check}
+                >
+                    {this.name.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
             </Col>
-            <Col>
-                <Checkbox.Group options={this.state.name_holding}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.state.dataAll)}/>
-            </Col> */}
-            {/* <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem" }} disabled={true} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
-                {this.state.distinct_time.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select> */}
-            {/* <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.state.dataAll)}>
-                {this.state.arr_select.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select> */}
             <ReactEcharts option={this.getOption()}  style={{width:1760, height:900}} />
         </div>
       );
@@ -117,7 +107,7 @@ class FileReader2 extends React.Component {
   }
   FileReader2.propTypes = {
     data: PropTypes.array,
-    check: PropTypes.array
+    name: PropTypes.array
   };
   
   

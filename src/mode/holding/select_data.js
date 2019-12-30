@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 // import './holding.css'
-import { Select,Checkbox,Col } from 'antd';
+import { Select,Button} from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Holding from '../../visualize/holding'
@@ -24,7 +24,8 @@ class FileReader2 extends React.Component {
             date_name : [],
             data_time : [],
             name : [],
-            data : []
+            data : [],
+            click : false
         };
         this.data = props.data
         this.date = props.date
@@ -33,27 +34,15 @@ class FileReader2 extends React.Component {
         // this.updateData = this.updateData.bind(this);
     }
 
-    onhandleChange(value,data) {
-        // console.log(`selected ${value}`);
-        var data_select = []
-        // console.log(value)
-        this.setState({checkedList : value})
-        for(var j=0;j<value.length;j++){
-            for(var i=0;i<data.length;i++){
-                if(data[i].name === value[j]){
-                    data_select.push(data[i])
-                    console.log(data[i])
-                }
-            }
-        }
-        // console.log(data_select)
-        this.setState({data : data_select})
-    }
+
+    search = () => {
+        this.setState({ click: true });
+    };
 
     Date_onhandleChange(value,data) {
         var data_select = []
         var data_time = []
-        this.setState({date_default:value,checkedList: []})
+        this.setState({date_default:value,click:false})
         // console.log(data)
         for(var i=0;i<data.length;i++){
             // console.log(data[i].date, String(value))
@@ -71,7 +60,7 @@ class FileReader2 extends React.Component {
     }
 
     Time_onhandleChange(value,data) {
-        this.setState({time_default:value,checkedList: []})
+        this.setState({time_default:value,click:false})
         var data_select = []
         var data_name = []
         // console.log(data)
@@ -90,7 +79,7 @@ class FileReader2 extends React.Component {
     //   console.log(this.state.csvfile);
       return (
         <div className="App">
-            <Col>
+            <div>
                 <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.date_default} onChange={e => this.Date_onhandleChange(e,this.data)}>
                     {this.date.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
@@ -101,25 +90,13 @@ class FileReader2 extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
                     ))}
                 </Select>
-            </Col>
-            <Col>
-                <Select
-                    mode="multiple"
-                    style={{ width: '50%' }}
-                    placeholder="Please select flight"
-                    value={this.state.checkedList}
-                    // defaultValue={['a10', 'c12']}
-                    onChange={e => this.onhandleChange(e,this.state.data_time)}
-                    //options={this.check}
-                >
-                    {this.state.name.map(flight => (
-                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                    ))}
-                </Select>
-            </Col>
-            {this.state.checkedList.length !== 0 ?
-            <Holding data={this.state.data} check={this.state.checkedList}/> 
-            : null}
+                <Button onClick={this.search}>Search</Button>
+            </div>
+            <div>
+                {this.state.click === true ? 
+                    <Holding data={this.state.data_time} name={this.state.name}/>
+                : null}
+            </div>
         </div>
       );
     }
