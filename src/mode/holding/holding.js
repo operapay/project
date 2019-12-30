@@ -1,6 +1,7 @@
 import { Card } from 'antd';
 import React from "react";
-import Holding from '../../visualize/holding';
+// import Holding from '../../visualize/holding';
+import Holding from './detect_holding';
 import HoldingAnalyze from '../../analytics/holding'
 import Papa from 'papaparse'
 
