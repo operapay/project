@@ -356,8 +356,8 @@ class OffsetAnalyze extends React.Component {
         //     text: 'Departure ' + this.state.select
         // },
         tooltip: {
-            trigger: 'axis'
-        },
+           trigger: 'axis'
+        }, 
         // grid: {
         //     left: '3%',
         //     right: '4%',

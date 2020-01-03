@@ -23,18 +23,19 @@ class FileReader2 extends React.Component {
                 time_1:'',
                 time_2:''
             }],
-            distinct_date : [],
+            distinct_name : [],
 
         };
         this.test = props.data
-        this.check = props.check
-        
+        this.check = props.status
+        this.dataref = props.dataref
+
         this.getData = this.getData.bind(this);
         // this.updateData = this.updateData.bind(this);
     }
   
     componentWillMount(){
-        if(this.check === true){
+        if(this.check === false){
             this.getData(this.test)
         }
         // console.log('mount')
@@ -45,7 +46,7 @@ class FileReader2 extends React.Component {
     componentWillUpdate(nextPorps){
         if(nextPorps.check !== this.check && nextPorps.test !== this.test){
             console.log(this.check , 'next ', nextPorps.check )
-            if(this.check === true){
+            if(this.check === false){
                 this.getData(nextPorps.test)
             }
         }
@@ -88,61 +89,53 @@ class FileReader2 extends React.Component {
     }
 
     getData(result) {
+        this.state.arr = [{
+            name:'',
+            coords: [[]],
+            date: [[]]
+        }]
         // console.log(result.length)
-        this.state.arr = [{ name:'',coords: [[]],date:'',time_1:'',time_2:''}]
         var num = 0
         var name = result[0].name
         var date = result[0].name
         var count = this.uniqueNameFlight(name,result,date)
         var dis = 100000
+        var arr_name = []
         var check = false
         var sum = 0
         var dist
-        var time_first
-        var time_last
-        var arr_date = []
-        // console.log(count)
+        console.log(count)
 
         for(var j=0;j<count;j++){
             dis = 100000
             check = false
             sum = 0
-            time_first = 0
-            time_last = 0
             for(var i=num;i<=result.length;i++){
                 // console.log(num)
                 if(result[i].name === '-'){
                     num = i+1
                     //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
+                    this.state.arr[j].date.pop()
                     break;
                 }
-                // console.log('check' , this.state.arr)
                 this.state.arr[j].coords.push([])
-                this.state.arr[j].name = result[i].name
+                this.state.arr[j].date.push([])
+                // this.state.arr[j].name = result[i].name
                 this.state.arr[j].coords[i-num].push(result[i].long)
                 this.state.arr[j].coords[i-num].push(result[i].lat)
                 this.state.arr[j].coords[i-num].push(result[i].attitude)
-                // dist = this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"K")
-                // console.log(result.data[i][1]," ", dist)
+                this.state.arr[j].date[i-num].push(result[i].date)
+                this.state.arr[j].date[i-num].push(result[i].time)
                 if(check === false){
                     dist = this.distance(13.6567,100.7518,result[i].lat,result[i].long,"N")
                     if(dist > dis && (dist > 30 & dist < 50)){
                         // console.log(result.data[i][1]," ", dist)
                         sum = sum + 1
-                        // var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
-                        if(sum === 1){
-                            var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
-                            time_first = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
-                            var local = moment(time_first).format('DD/MM/YYYY');
-                            // console.log('test' + String(result[i].date))
-                        }
                         if(sum > 15){
                             // console.log(sum)
                             check = true
                             name = result[i].name
-                            var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
-                            time_last = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
                         }
                         
                     }
@@ -151,46 +144,35 @@ class FileReader2 extends React.Component {
                 }
             }
             if(check === true){
-                this.state.arr[j].time_1 = time_first
-                this.state.arr[j].time_2 = time_last
-                this.state.arr[j].date = local
-                // arr.push(name)
-                arr_date.push(local)
+                this.state.arr[j].name = name
+                arr_name.push(name)
+                // arr_date.push(local)
                 // console.log(name, ':' ,time_first, ' & ', time_last)
             }
-            // else if(check === false){
-            //     console.log('false')
-            //     this.state.arr.pop()
-            // }
-            // console.log(j)
             if(j < count-1){
-                this.state.arr.push({name:'', coords: [[]],date:'',time_1:'',time_2:''})
+                this.state.arr.push({name:'', coords: [[]], date:[[]]})
             }
         }
 
-        var distinctDate = [...new Set(arr_date)]
-        distinctDate.sort(function(a, b){
-            var aa = a.split('/').reverse().join(),
-                bb = b.split('/').reverse().join();
-            return aa < bb ? -1 : (aa > bb ? 1 : 0);
-        });
-        this.setState({dataAll: this.state.arr, distinct_date:distinctDate});
+        var distinctName = [...new Set(arr_name)]
+        this.setState({dataAll: this.state.arr, distinct_name:distinctName});
     }
 
   
     render(props) {
-    //   console.log(this.state.csvfile);
+      console.log(this.dataref);
       return (
         <div className="App">
-          <h1>Holding Visualization</h1>
-          <Selectdata data={this.state.dataAll} date={this.state.distinct_date}/>
+          <h1>Holding Analyze</h1>
+          <Selectdata data={this.state.dataAll} name={this.state.distinct_name} dataref={this.dataref}/>
         </div>
       );
     }
   }
   FileReader2.propTypes = {
     data: PropTypes.array,
-    check: PropTypes.bool
+    status: PropTypes.bool,
+    dataref: PropTypes.array
   };
   
   
