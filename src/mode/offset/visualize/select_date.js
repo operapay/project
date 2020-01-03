@@ -7,7 +7,7 @@ import './select.css'
 import { Select,Button  } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Offset from '../../visualize/offset';
+import Offset from './offset';
 
 const { Option } = Select;
 

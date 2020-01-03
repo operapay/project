@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import React from "react";
 // import Offset from '../../visualize/offset';
-import Offset from './select_data'
+import Offset from './visualize/select_data'
 import OffsetAnalyze from '../../analytics/offset'
 import Papa from 'papaparse'
 

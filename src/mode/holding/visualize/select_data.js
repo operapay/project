@@ -7,7 +7,7 @@ import * as maptalks from 'maptalks'
 import { Select,Button} from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Holding from '../../visualize/holding'
+import Holding from './echart'
 
 const { Option } = Select;
 
