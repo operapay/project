@@ -15,8 +15,7 @@ class FileReader1 extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // csvfile: undefined,
-            dataAll : [{name:'', coords: [['', '', '']], date: [['','']] }],
+
             arr: [{
                 name:'',
                 coords: [[]],
@@ -26,12 +25,16 @@ class FileReader1 extends React.Component {
             select : "",
             dataHoldingDist : [],
             dataHoldingTime : [],
-            // status : true
+            point : [{name: 'LEBIM',lat:13.087447 ,lon: 100.473475, dis:62.04648723260302},
+            {name: 'NORTA',lat:14.718789 ,lon: 100.639017, dis:57.16186200443073},
+            {name: 'EASTE',lat:14.309667 ,lon: 101.286244, dis:74.06176424138363},
+            {name: 'WILLA',lat:14.404717 ,lon: 100.059822, dis:64.93007258847182},
+            {name: 'DOLNI',lat:13.294339 ,lon: 101.180114, dis:58.124521104594955}]
         };
 
-        this.data = props.data
         this.name = props.name
         this.dataref = props.dataref
+        this.data = props.data
 
     }
 
@@ -86,7 +89,7 @@ class FileReader1 extends React.Component {
                 }
             }
         }
-        console.log('selct',selectdata)
+        // console.log('selct',selectdata)
         if(selectdata.length === 0){
             return 0;
         }
@@ -138,6 +141,31 @@ class FileReader1 extends React.Component {
         return res
     }
 
+    closest(array,point){
+        var i=0;
+        var j=0;
+        var minDiff=1000000;
+        var distance;
+        var value;
+        var res;
+        for(i in array){
+            // console.log('i',array[i])
+            for(j in point){
+                // console.log(point[j])
+                var dis = this.distance(array[i][1],array[i][0],point[j].lat,point[j].lon,"N")
+                // console.log(dis)
+                // var m=Math.abs(dis-array[i][0]);
+                if(dis<minDiff){ 
+                    minDiff=dis; 
+                    value=point[j]
+                }
+            }
+        }
+        // res = (num*value)/distance
+        // distribute[param].data.push(res)
+        return value;
+    }
+
     onhandleChange(value,data) {
         var data_select = []
         var data_dist = []
@@ -149,6 +177,10 @@ class FileReader1 extends React.Component {
                 data_select.push(data[i])
             }
         }
+
+        var close = this.closest(data_select[0].coords,this.state.point)
+        var ideal = this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N") + close.dis
+        console.log(ideal)
 
         var mydate = moment(String(data_select[0].date[0][0]), 'YYYY-MM-DD');
         var timeStart = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[0][1]);
