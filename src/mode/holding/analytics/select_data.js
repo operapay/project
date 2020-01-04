@@ -25,6 +25,7 @@ class FileReader1 extends React.Component {
             select : "",
             dataHoldingDist : [],
             dataHoldingTime : [],
+            Idealdis: [],
             point : [{name: 'LEBIM',lat:13.087447 ,lon: 100.473475, dis:62.04648723260302},
             {name: 'NORTA',lat:14.718789 ,lon: 100.639017, dis:57.16186200443073},
             {name: 'EASTE',lat:14.309667 ,lon: 101.286244, dis:74.06176424138363},
@@ -179,8 +180,10 @@ class FileReader1 extends React.Component {
         }
 
         var close = this.closest(data_select[0].coords,this.state.point)
-        var ideal = this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N") + close.dis
-        console.log(ideal)
+        var ideal = Math.round(this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N") + close.dis)
+        // console.log(ideal)
+        var resIdeal = [['Not holding',ideal],['Holding',ideal]]
+        this.setState({Idealdis:resIdeal})
 
         var mydate = moment(String(data_select[0].date[0][0]), 'YYYY-MM-DD');
         var timeStart = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[0][1]);
@@ -238,6 +241,28 @@ class FileReader1 extends React.Component {
                         fontSize: 20
                     }
                 },
+            },
+            {
+                type: 'line',
+                data: this.state.Idealdis,
+                lineStyle: {
+                    opacity : 0
+                },
+                symbol : 'none',
+                markLine: {
+                    data: [
+                        {type: 'average', name: 'Ideal'}
+                    ],
+                    lineStyle: {
+                        width : 2
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            fontSize: 20
+                        }
+                    },
+                }
             }
         ]      
     });
