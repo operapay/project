@@ -2,7 +2,7 @@ import { Card } from 'antd';
 import React from "react";
 // import Offset from '../../visualize/offset';
 import Offset from './visualize/select_data'
-import OffsetAnalyze from '../../analytics/offset'
+import OffsetAnalyze from './analytics/predata'
 import Papa from 'papaparse'
 
 const tabList = [

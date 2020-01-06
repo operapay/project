@@ -3,12 +3,11 @@ import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
-import './select.css'
+import './offset.css'
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import SelectDate from './select_date';
-import SelectFlight from './select_flight';
+import SelectData from './select_data';
 
 const { Option } = Select;
 
@@ -18,33 +17,16 @@ class FileReader extends React.Component {
         super(props);
         this.state = {
             // csvfile: undefined,
-            dataAll : [{name:'', coords: [['', '', '']],date:'',time_1:'',time_2:'',week:''}],
+            dataAll : [{name:'', coords: [[]],date:'',time_1:'',time_2:''}],
             arr: [{
                 name:'',
                 coords: [[]],
                 date:'',
                 time_1:'',
-                time_2:'',
-                week:''
+                time_2:''
             }],
             distinct_date : [],
-            distinct_time : [],
-            select_date : false,
-            date_time : [],
-            date_name : [],
-            time_name : [],
-            time_flight : [],
-            check_data : false,
-            time_default : "Select Time",
-            unit_default : "Select Unit",
-            flight_default : "Select Flight no",
-            date_default : "Select Date",
-            type_default : "Select Type",
-            feature : ['Date','Flight no'],
-            unit : ['Week','Month'],
-            type : ['Departure','Arrival'],
-            select_feature : "Date",
-            distinct_name : []
+            pre : false
         };
         this.test = props.data
         this.check = props.check
@@ -60,15 +42,15 @@ class FileReader extends React.Component {
 
     }
 
-    componentWillUpdate(nextPorps){
-        if(nextPorps.check != this.check && nextPorps.test != this.test){
-            console.log(this.check , 'next ', nextPorps.check )
-            if(this.check === true){
-                this.getData(nextPorps.test)
-            }
-        }
-        // console.log('willl')
-    }
+    // componentWillUpdate(nextPorps){
+    //     if(nextPorps.check != this.check && nextPorps.test != this.test){
+    //         console.log(this.check , 'next ', nextPorps.check )
+    //         if(this.check === true){
+    //             this.getData(nextPorps.test)
+    //         }
+    //     }
+    //     // console.log('willl')
+    // }
 
     uniqueNameFlight(name,data,date){
         var count = 0
@@ -82,17 +64,14 @@ class FileReader extends React.Component {
         return count
     }
 
-    Feature_onhandleChange(value) {
-        this.setState({select_feature:value,date_default:"Select Date",flight_default:"Select Flight no",
-    time_default: "Select Time", unit_default:"Select Unit",type_default:"Select Type"})
-    // this.getData(this.test)
-    }
+    // Feature_onhandleChange(value) {
+    //     this.setState({select_feature:value,date_default:"Select Date",flight_default:"Select Flight no",
+    // time_default: "Select Time", unit_default:"Select Unit",type_default:"Select Type"})
+    // // this.getData(this.test)
+    // }
 
     getData(result) {
-        this.state.arr = [{
-            name:'',
-            coords: [[]]
-        }]
+        this.state.arr = [{name:'', coords: [[]],date:'',time_1:'',time_2:''}]
         var num = 0
         var name = result[0].name
         var date = result[0].name
@@ -105,8 +84,8 @@ class FileReader extends React.Component {
         for(var j=0;j<count;j++){
             //console.log(j)
             var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
-            console.log(mydate)
-            dataall_name.push(result[num].name)
+            // console.log(mydate)
+            // dataall_name.push(result[num].name)
             for(var i=num;i<=result.length;i++){
                 // console.log(num)
                 if(result[i].name === '-'){
@@ -118,47 +97,50 @@ class FileReader extends React.Component {
                     dataall_date.push(local)
                     var test2 = moment(mydate).format("MM/DD/YYYY")+" " + result[i-1].time
                     var time2 = moment.utc(test2).toDate();
-                    var onejan = new Date(time1.getFullYear(),0,1);
-                    var week =  Math.ceil((((time1 - onejan) / 86400000) + onejan.getDay())/7);
+                    // var onejan = new Date(time1.getFullYear(),0,1);
+                    // var week =  Math.ceil((((time1 - onejan) / 86400000) + onejan.getDay())/7);
                     // console.log('week ',week)
                     this.state.arr[j].date = local
                     this.state.arr[j].time_1 = time1
                     this.state.arr[j].time_2 = time2
-                    this.state.arr[j].week = week
+                    // this.state.arr[j].week = week
                     // data_check_time_date.push({name: result[num].name,date: date,time_1:time1,time_2:time2})
                     num = i+1
                     //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
                     break;
                 }
-                this.state.arr[j].coords.push([])
+                this.state.arr[j].coords.push([{lat:'',long:'',altitude:'',altitude_ft:'',speed:''}])
                 this.state.arr[j].name = result[i].name
-                this.state.arr[j].coords[i-num].push(result[i].long)
-                this.state.arr[j].coords[i-num].push(result[i].lat)
-                this.state.arr[j].coords[i-num].push(result[i].altitude)
+                this.state.arr[j].coords[i-num].long = result[i].long
+                this.state.arr[j].coords[i-num].lat = result[i].lat
+                this.state.arr[j].coords[i-num].altitude = result[i].altitude
+                this.state.arr[j].coords[i-num].altitude_ft = result[i].altitude_ft
+                this.state.arr[j].coords[i-num].speed = result[i].speed
             }
             // console.log(j)
             if(j < count-1){
-                this.state.arr.push({name:'', coords: [[]],date:'',time_1:'',time_2:'',week:''})
+                this.state.arr.push({name:'', coords: [[]],date:'',time_1:'',time_2:''})
             }
         }
 
+        // console.log(dataall_date)
         var distinct = [...new Set(dataall_date)]
-        var distinctName = [...new Set(dataall_name)]
+        // var distinctName = []
         distinct.sort(function(a, b){
             var aa = a.split('/').reverse().join(),
                 bb = b.split('/').reverse().join();
             return aa < bb ? -1 : (aa > bb ? 1 : 0);
         });
 
-        this.setState({dataAll: this.state.arr,distinct_date:distinct,distinct_name:distinctName});
+        this.setState({dataAll: this.state.arr,distinct_date:distinct, pre:true});
     }
   
     render(props) {
       return (
         <div className="App">
-            <h1>Offset Visualization</h1>
-            <Select placeholder="Select Feature" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.select_feature} onChange={e => this.Feature_onhandleChange(e)}>
+            <h1>Offset Analyze</h1>
+            {/* <Select placeholder="Select Feature" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.select_feature} onChange={e => this.Feature_onhandleChange(e)}>
                 {this.state.feature.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
@@ -168,10 +150,10 @@ class FileReader extends React.Component {
             <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date}/>
             : 
             <SelectFlight check={this.state.check} data={this.state.dataAll} name={this.state.distinct_name}/>
-            }
+            } */}
             
-            {/* {this.state.check_data === true ?
-            <Offset flight={this.state.flight} check_data={this.state.check_data}/>: null } */}
+            {this.state.pre === true ?
+            <SelectData data={this.state.dataAll} date={this.state.distinct_date}/>: null }
 
         </div>
       );

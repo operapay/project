@@ -3,11 +3,11 @@ import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
-import './select.css'
+// import './offset.css'
 import { Select,Button  } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Offset from './offset';
+import Feature from './feature';
 
 const { Option } = Select;
 
@@ -34,10 +34,11 @@ class FileReader extends React.Component {
             time_flight : [],
             check_data : false,
             time_default : "Select Time",
+            turn_default : "Select Turn Direction",
             date_default : "Select Date",
             type_default : "Select Type",
-            turn_default : "Select Turn Direction",
             type : ['Departure','Arrival'],
+            select_feature : "Date",
             real : [],
             click : false,
             checkbox : [],
@@ -45,7 +46,6 @@ class FileReader extends React.Component {
             // checkedList: [],
         };
         this.data = props.data
-        this.check = props.check
         this.date = props.date
 
         // this.getData = this.getData.bind(this);
@@ -96,7 +96,7 @@ class FileReader extends React.Component {
         // console.log(data_time.sort(function(a, b){return a-b}))
         var distinct = [...new Set(data_time)].sort(function(a, b){return a-b})
 
-        this.setState({distinct_time : distinct, date_name:data_select, time_default:"Select Time",type_default:"Select Type"})
+        this.setState({distinct_time : distinct, date_name:data_select, time_default:"Select Time",type_default:"Select Type",turn_default : "Select Turn Direction"})
     }
 
     Time_onhandleChange(value,data) {
@@ -110,7 +110,7 @@ class FileReader extends React.Component {
             }
         }
         // console.log(data_select)
-        this.setState({time_flight : data_select,type_default:"Select Type"})
+        this.setState({time_flight : data_select,type_default:"Select Type",turn_default : "Select Turn Direction"})
     }
 
     Type_onhandleChange(value,data) {
@@ -121,8 +121,7 @@ class FileReader extends React.Component {
         // console.log(value)
         if(value === 'Departure'){
             for(var i=0;i<data.length;i++){
-                // 13.6902099,100.7449953
-                var dis = this.distance(13.6902099,100.7449953,data[i].coords[0][1], data[i].coords[0][0], "N")
+                var dis = this.distance(13.6902099,100.7449953,data[i].coords[0].lat, data[i].coords[0].long, "N")
                 // console.log(dis)
                 if(dis<=5){
                     // console.log('yes: ',dis)
@@ -135,7 +134,7 @@ class FileReader extends React.Component {
         else{
             for(var i=0;i<data.length;i++){
                 // 13.6902099,100.7449953
-                var dis = this.distance(13.6902099,100.7449953,data[i].coords[0][1], data[i].coords[0][0], "N")
+                var dis = this.distance(13.6902099,100.7449953,data[i].coords[0].lat, data[i].coords[0].long, "N")
                 if(dis>5){
                     // console.log('yes: ',dis)
                     data_select.push(data[i])
@@ -145,11 +144,14 @@ class FileReader extends React.Component {
             }
         }
 
-        this.setState({real : data_select ,checkbox:name})
+        console.log('real' , data_select)
+
+        this.setState({real : data_select ,checkbox:name,turn_default : "Select Turn Direction"})
+
     }
   
     render(props) {
-        // console.log(this.data)
+        // console.log(this.date)
       return (
         <div className="App">
             <div>
@@ -168,16 +170,16 @@ class FileReader extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
-                {/* <Select placeholder="Select Turn Direction" disabled style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.type_default} onChange={e => this.Type_onhandleChange(e,this.state.time_flight)}>
+                <Select placeholder="Select Turn Direction" disabled style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.turn_default} onChange={e => this.Type_onhandleChange(e,this.state.time_flight)}>
                     {this.state.type.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
-                </Select> */}
+                </Select>
                 <Button onClick={this.search}>Search</Button>
             </div>
             <div>
                 {this.state.click === true ? 
-                <Offset data={this.state.real} name={this.state.checkbox} what={this.state.what_select}/>
+                <Feature data={this.state.real}/>
                 : null}
             </div>
 
@@ -188,8 +190,7 @@ class FileReader extends React.Component {
 
   FileReader.propTypes = {
     data: PropTypes.array,
-    check: PropTypes.bool,
-    date: PropTypes.array
+    date: PropTypes.array,
   };
   
   

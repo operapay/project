@@ -122,7 +122,7 @@ class FileReader2 extends React.Component {
                 this.state.arr[j].name = result[i].name
                 this.state.arr[j].coords[i-num].push(result[i].long)
                 this.state.arr[j].coords[i-num].push(result[i].lat)
-                this.state.arr[j].coords[i-num].push(result[i].attitude)
+                this.state.arr[j].coords[i-num].push(result[i].altitude)
                 // dist = this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"K")
                 // console.log(result.data[i][1]," ", dist)
                 if(check === false){

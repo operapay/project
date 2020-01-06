@@ -124,7 +124,7 @@ class FileReader2 extends React.Component {
                 // this.state.arr[j].name = result[i].name
                 this.state.arr[j].coords[i-num].push(result[i].long)
                 this.state.arr[j].coords[i-num].push(result[i].lat)
-                this.state.arr[j].coords[i-num].push(result[i].attitude)
+                this.state.arr[j].coords[i-num].push(result[i].altitude)
                 this.state.arr[j].date[i-num].push(result[i].date)
                 this.state.arr[j].date[i-num].push(result[i].time)
                 if(check === false){
