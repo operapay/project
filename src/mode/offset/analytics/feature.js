@@ -42,18 +42,6 @@ class OffsetAnalyze extends React.Component {
         this.getData()
     }
 
-    // uniqueNameFlight(name,data,date){
-    //     var count = 0
-    //     console.log(data.length)
-    //     for(var i=1;i<data.length;i++){
-    //         if (data[i].name === '-'){
-    //             count += 1
-    //             // console.log(i)
-    //         }
-    //     }
-    //     return count
-    // }
-
     onhandleChange(value) {
         this.setState({select : value})
         if (value == 'lateral'){
@@ -81,8 +69,8 @@ class OffsetAnalyze extends React.Component {
             dist = dist * 180/Math.PI;
             dist = dist * 60 * 1.1515;
             if (unit==="K") { dist = dist * 1.609344 }
-            if (unit==="N") { dist = dist * 0.8684
-            console.log('nmi') }
+            if (unit==="N") { dist = dist * 0.8684}
+            // console.log('nmi') }
             return dist;
         }
     }
@@ -93,22 +81,29 @@ class OffsetAnalyze extends React.Component {
         return Math.pow(diff_x+diff_y, 0.5) 
     }
 
+    interpolate(x1,y1,x2,y2,x){
+        var diff = ((y2-y1)/(x2-x1))*(x-x1)
+        var res = diff+y1
+        return res
+    }
+
     closest(array,num,distribute,param){
-        var i=0;
-        var minDiff=1000;
-        var distance;
-        var value;
+        var distance_min;
+        var value_min;
+        var distance_max;
+        var value_max;
         var res;
-        for(i in array){
-            //console.log('i',array[0][i])
-            var m=Math.abs(num-array[i][0]);
-            if(m<minDiff){ 
-                    minDiff=m; 
-                    distance=array[i][0]; 
-                    value=array[i][1];
-                }
+        for(var i=1;i<array.length;i++){
+            // console.log('arr' , array[i],array[i-1])
+            if(num > array[i-1][0] && num < array[i][0]){
+                distance_min=array[i-1][0]; 
+                value_min=array[i-1][1];
+                distance_max=array[i][0]; 
+                value_max=array[i][1];
+            }
         }
-        res = (num*value)/distance
+        // console.log(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
+        res = this.interpolate(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
         distribute[param].data.push(res)
         return distribute;
     }
@@ -137,9 +132,52 @@ class OffsetAnalyze extends React.Component {
         return distribute;
     }
 
+    // closest_xy(array,num,distribute,param){
+    //     var distance_min;
+    //     var value_min;
+    //     var distance_max;
+    //     var value_max;
+    //     var x; var y; 
+    //     var distance;
+    //     var value;
+    //     for(var i=1;i<array.length;i++){
+    //         // console.log('arr' , array[i],array[i-1])
+    //         if(num > array[i-1][0] && num < array[i][0]){
+    //             distance_min=array[i-1][0]; 
+    //             value_min=array[i-1][1];
+    //             distance_max=array[i][0]; 
+    //             value_max=array[i][1];
+    //         }
+    //         else{
+    //             var A = Math.abs(num-array[i-1][0]);
+    //             var B = Math.abs(num-array[i][0]);
+    //             if(A <= B){
+    //                 distance = array[i-1][0]
+    //                 value = array[i-1][1]
+    //             }else{
+    //                 distance = array[i][0]
+    //                 value = array[i][1]
+    //             }
+    //         }
+    //     }
+
+    //     if(value_min === undefined || value_max === undefined){
+    //         x = (num*value[0])/distance
+    //         y = (num*value[1])/distance
+    //     }else{
+    //         x = this.interpolate(distance_min,parseInt(value_min[0]),distance_max,parseInt(value_max[0]),num)
+    //         y = this.interpolate(distance_min,parseInt(value_min[1]),distance_max,parseInt(value_max[1]),num)
+    //     }
+    //     distribute[param].x.push(x)
+    //     distribute[param].y.push(y)
+    //     distribute[param].data.push([x,y])
+    //     // distribute[param].data.push(res)
+    //     return distribute;
+    // }
+
     init_arrdistribute(distribute){
         // distribute.push({dis:0,data:[]})
-        for(var i=1;i<=15;i+=0.5){
+        for(var i=1;i<=17;i+=0.5){
             distribute.push({dis:i,data:[]})
         }
     }
@@ -188,7 +226,7 @@ class OffsetAnalyze extends React.Component {
                     }
                 }
             }
-            //console.log(dist)
+            // console.log(dist)
             for(var j=0;j<distribute.length;j++){
                 this.closest_xy(dist[i].data,distribute[j].dis,distribute,j)
             }
@@ -220,6 +258,7 @@ class OffsetAnalyze extends React.Component {
         var list;
         var distribute = []
         this.init_arrdistribute(distribute)
+        var arr_ref = [{data:[[]]}]
         // var name = result[0].name
         // var date = result[0].date
         // var count = this.uniqueNameFlight(name,result,date)
@@ -236,8 +275,10 @@ class OffsetAnalyze extends React.Component {
                     // this.state.arr[j].showSymbol = false
                     this.state.arr[i].data[j-1].push(0) 
                     this.state.arr[i].data[j-1].push(0) 
+                    arr_ref[i].data[j-1].push(0)
+                    arr_ref[i].data[j-1].push(0)
                 }
-                if(ground < 15){
+                if(ground < 18){
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
                     this.state.arr[i].data[j].push(ground)
@@ -247,15 +288,27 @@ class OffsetAnalyze extends React.Component {
                         this.state.arr[i].data[j].push(result[i].coords[j].altitude_ft) 
                     //console.log(this.state.arr)
                 }
+                if(ground < 30){
+                    arr_ref[i].data.push([])
+                    arr_ref[i].data[j].push(ground)
+                    if (value === 'speed')
+                        arr_ref[i].data[j].push(result[i].coords[j].speed)
+                    else
+                        arr_ref[i].data[j].push(result[i].coords[j].altitude_ft) 
+                    //console.log(this.state.arr)
+                }
             }
+            console.log(arr_ref)
             for(var j=0;j<distribute.length;j++){
-                this.closest(this.state.arr[i].data,distribute[j].dis,distribute,j)
+                this.closest(arr_ref[i].data,distribute[j].dis,distribute,j)
             }
             if(i < result.length-1){
                 this.state.arr.push({name:'', type: 'line',showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]})
+                arr_ref.push({data:[[]]})
             }
         }
-
+        
+        console.log('arr', this.state.arr)
         this.state.avg_arr.data = []
         this.state.avg_arr.data.push([0,0])
         for(var i=0;i<distribute.length;i++){

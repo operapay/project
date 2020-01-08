@@ -105,7 +105,7 @@ class FileReader extends React.Component {
         for(var j=0;j<count;j++){
             //console.log(j)
             var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
-            console.log(mydate)
+            // console.log(mydate)
             dataall_name.push(result[num].name)
             for(var i=num;i<=result.length;i++){
                 // console.log(num)

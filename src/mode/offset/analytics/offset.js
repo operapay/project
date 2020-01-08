@@ -115,29 +115,30 @@ class OffsetAnalyze extends React.Component {
         return distribute;
     }
 
-    closest_xy(array,num,distribute,param){
-        var i=0;
-        var minDiff=1000;
-        var distance;
-        var value;
-        var x;
-        var y;
-        for(i in array){
-            //console.log('i',array[0][i])
-            var m=Math.abs(num-array[i][0]);
-            if(m<minDiff){ 
-                    minDiff=m; 
-                    distance=array[i][0]; 
-                    value=array[i][1];
-                }
-        }
-        x = (num*value[0])/distance
-        y = (num*value[1])/distance
-        distribute[param].x.push(x)
-        distribute[param].y.push(y)
-        distribute[param].data.push([x,y])
-        return distribute;
-    }
+    // closest_xy(array,num,distribute,param){
+    //     var i=0;
+    //     var minDiff=1000;
+    //     var distance;
+    //     var value;
+    //     var x;
+    //     var y;
+    //     for(i in array){
+    //         //console.log('i',array[0][i])
+    //         var m=Math.abs(num-array[i][0]);
+    //         if(m<minDiff){ 
+    //                 minDiff=m; 
+    //                 distance=array[i][0]; 
+    //                 value=array[i][1];
+    //             }
+    //     }
+    //     x = (num*value[0])/distance
+    //     y = (num*value[1])/distance
+    //     distribute[param].x.push(x)
+    //     distribute[param].y.push(y)
+    //     distribute[param].data.push([x,y])
+    //     return distribute;
+    // }
+    
 
     init_arrdistribute(distribute){
         // distribute.push({dis:0,data:[]})
