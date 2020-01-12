@@ -28,7 +28,8 @@ class OffsetAnalyze extends React.Component {
             avg_arr : {name:'avg', type: 'line',smooth: true,lineStyle:{color:'#CB4335'},showSymbol:false,data:[]},
             distribute3nmi : [],
             distribute5nmi : [],
-            distribute8nmi : []
+            distribute8nmi : [],
+            check : false
         };
 
         this.test = props.data
@@ -39,7 +40,10 @@ class OffsetAnalyze extends React.Component {
     }
 
     componentWillMount(){
-        this.getData()
+        if(this.test.length !== 0){
+            this.getData()
+            this.setState({check : true})
+        }
     }
 
     onhandleChange(value) {
@@ -203,24 +207,24 @@ class OffsetAnalyze extends React.Component {
 
         for(var i=0;i<result.length;i++){
             var x = 0; var y = 0;
-            for(var j=1;j<result[i].coords.length;j++){
-            // for(var j=result[i].coords.length;j>1;j--){
+            var no = 0;
+            // for(var j=1;j<result[i].coords.length;j++){
+            for(var j=result[i].coords.length-1;j>1;j--){
                 y = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 x = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
 
-                if( (y>-20 && y<2) && (x>-4 && x<12) ){
-                    //console.log(i)
+                if( (y>-20 && y<6) && (x>-4 && x<20) ){
+                    // console.log((result[i].coords.length-1)-j)
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
-                    this.state.arr[i].data[j-1].push(x)
-                    this.state.arr[i].data[j-1].push(y)
-                    if(j > 0){
-                        dist[i].name = result[i].name
-                        dist[i].data.push([])
-                        var dis = this.distance_xy(this.state.arr[i].data[j-1][0],x,this.state.arr[i].data[j-1][1],y)
-                        dist[i].data[j].push(dis)
-                        dist[i].data[j].push([x,y])
-                    }
+                    this.state.arr[i].data[no].push(x)
+                    this.state.arr[i].data[no].push(y)
+                    dist[i].name = result[i].name
+                    dist[i].data.push([])
+                    var dis = this.distance_xy(this.state.arr[i].data[no][0],x,this.state.arr[i].data[no][1],y)
+                    dist[i].data[no].push(dis)
+                    dist[i].data[no].push([x,y])
+                    no += 1
                 }
             }
             // console.log(dist)
@@ -579,6 +583,8 @@ class OffsetAnalyze extends React.Component {
     //   console.log(this.state.data);
       return (
         <div className="App">
+            {this.state.check === true ?
+            <div>
             <h1>Offset Analytics</h1>
                 <Select defaultValue="altitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
                     <Option value="altitude" style={{ fontSize: "1rem" }}>Altitude</Option>
@@ -589,6 +595,8 @@ class OffsetAnalyze extends React.Component {
                 <ReactEcharts option={this.Option3nmi()} style={{width:1500, height:500}} />
                 <ReactEcharts option={this.Option5nmi()} style={{width:1500, height:500}} />
                 <ReactEcharts option={this.Option8nmi()} style={{width:1500, height:500}} />
+            </div>
+            : <p>No data for Analytics </p>}
         </div>
       );
     }
