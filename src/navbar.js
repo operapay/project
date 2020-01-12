@@ -3,6 +3,7 @@ import { Card } from 'antd';
 import React from "react";
 import Offset from './mode/offset/offset';
 import Holding from './mode/holding/holding';
+import Separate from './mode/separate/separate';
 import './App.css'
 
 const tabList = [
@@ -23,7 +24,7 @@ const tabList = [
 const contentList = {
     tab1: <Offset/>,
     tab2: <Holding/>,
-    tab3: <p>coming soon...</p>,
+    tab3: <Separate/>,
 };
 
 class Home extends React.Component {
