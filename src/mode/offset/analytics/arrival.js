@@ -11,7 +11,6 @@ import Papa from 'papaparse'
 import echarts from 'echarts'
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
-import Arrival from './arrival'
 // import 'antd/dist/antd.css';
 
 const { Option } = Select;
@@ -29,22 +28,18 @@ class OffsetAnalyze extends React.Component {
             avg_arr : {name:'avg', type: 'line',smooth: true,lineStyle:{color:'#CB4335'},showSymbol:false,data:[]},
             distribute3nmi : [],
             distribute5nmi : [],
-            distribute8nmi : [],
-            check : false
+            distribute8nmi : []
         };
 
         this.test = props.data
-        this.type = props.type
+        // this.type = props.type
 
         this.getData = this.getData.bind(this);
         // this.updateData = this.updateData.bind(this);
     }
 
     componentWillMount(){
-        if(this.type === "Departure" && this.test.length !== 0){
-            this.getData()
-            this.setState({check : true})
-        }
+        this.getData()
     }
 
     onhandleChange(value) {
@@ -99,8 +94,8 @@ class OffsetAnalyze extends React.Component {
         var value_max;
         var res;
         for(var i=1;i<array.length;i++){
-            // console.log('arr' , array[i],array[i-1])
-            if(num > array[i-1][0] && num < array[i][0]){
+            // console.log('arr' , array[i],array[i-1] , ' num:' , num)
+            if(num > array[i][0] && num < array[i-1][0]){
                 distance_min=array[i-1][0]; 
                 value_min=array[i-1][1];
                 distance_max=array[i][0]; 
@@ -109,6 +104,7 @@ class OffsetAnalyze extends React.Component {
         }
         // console.log(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
         res = this.interpolate(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
+        // console.log(res)
         distribute[param].data.push(res)
         return distribute;
     }
@@ -182,7 +178,7 @@ class OffsetAnalyze extends React.Component {
 
     init_arrdistribute(distribute){
         // distribute.push({dis:0,data:[]})
-        for(var i=1;i<=17;i+=0.5){
+        for(var i=-1;i>=-17;i-=0.5){
             distribute.push({dis:i,data:[]})
         }
     }
@@ -199,20 +195,16 @@ class OffsetAnalyze extends React.Component {
     data_lateral(result,value){
         // this.setState({arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]})
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
-        var num = 1
         var long_origin = 100.743178;
         var lat_origin = 13.703669;
         var dist = [{name:'',data:[[]]}]
         var distribute = []
         this.init_arrdistribute_xy(distribute)
-        var name = result[0].name
-        var date = result[0].date
-        // var count = this.uniqueNameFlight(name,result,date)
-        // console.log('count',count)
+
         for(var i=0;i<result.length;i++){
             var x = 0; var y = 0;
             for(var j=1;j<result[i].coords.length;j++){
-
+            // for(var j=result[i].coords.length;j>1;j--){
                 y = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 x = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
 
@@ -270,41 +262,42 @@ class OffsetAnalyze extends React.Component {
         // console.log('count',count)
         for(var i=0;i<result.length;i++){
             var ground = 0
-            for(var j=1;j<result[i].coords.length;j++){
+            for(var j=result[i].coords.length-1;j>1;j--){
                 ground = ground + this.distance(result[i].coords[j-1].lat, result[i].coords[j-1].long, result[i].coords[j].lat, result[i].coords[j].long, "N")
-                if(j === 1){
+                if(j === result[i].coords.length-1){
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
                     // this.state.arr[j].type = 'line'
                     // this.state.arr[j].lineStyle = {color:'#A9CCE3'}
                     // this.state.arr[j].showSymbol = false
-                    this.state.arr[i].data[j-1].push(0) 
-                    this.state.arr[i].data[j-1].push(0) 
-                    arr_ref[i].data[j-1].push(0)
-                    arr_ref[i].data[j-1].push(0)
+                    this.state.arr[i].data[(result[i].coords.length-1)-j].push(0) 
+                    this.state.arr[i].data[(result[i].coords.length-1)-j].push(0) 
+                    arr_ref[i].data[(result[i].coords.length-1)-j].push(0)
+                    arr_ref[i].data[(result[i].coords.length-1)-j].push(0)
                 }
                 if(ground < 18){
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
-                    this.state.arr[i].data[j].push(ground)
+                    this.state.arr[i].data[(result[i].coords.length-1)-j+1].push(ground*-1)
                     if (value === 'speed')
-                        this.state.arr[i].data[j].push(result[i].coords[j].speed)
+                        this.state.arr[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].speed)
                     else
-                        this.state.arr[i].data[j].push(result[i].coords[j].altitude_ft) 
+                        this.state.arr[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].altitude_ft) 
                     //console.log(this.state.arr)
                 }
                 if(ground < 30){
                     arr_ref[i].data.push([])
-                    arr_ref[i].data[j].push(ground)
+                    arr_ref[i].data[(result[i].coords.length-1)-j+1].push(ground*-1)
                     if (value === 'speed')
-                        arr_ref[i].data[j].push(result[i].coords[j].speed)
+                        arr_ref[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].speed)
                     else
-                        arr_ref[i].data[j].push(result[i].coords[j].altitude_ft) 
+                        arr_ref[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].altitude_ft) 
                     //console.log(this.state.arr)
                 }
             }
-            console.log(arr_ref)
+            // console.log(arr_ref)
             for(var j=0;j<distribute.length;j++){
+                // console.log(distribute[j].dis)
                 this.closest(arr_ref[i].data,distribute[j].dis,distribute,j)
             }
             if(i < result.length-1){
@@ -323,6 +316,7 @@ class OffsetAnalyze extends React.Component {
         }
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr});
+        console.log(this.state.arr)
         this.distributed(distribute,value,this.state.avg_arr)
         console.log('distribute', distribute)
     }
@@ -457,7 +451,7 @@ class OffsetAnalyze extends React.Component {
 
     Option3nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at 3 nmi'
+            text: 'distribution of ' + this.state.select + ' at -3 nmi'
         },
         xAxis: {
             type: 'category',
@@ -499,7 +493,7 @@ class OffsetAnalyze extends React.Component {
 
     Option5nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at 5 nmi'
+            text: 'distribution of ' + this.state.select + ' at -5 nmi'
         },
         xAxis: {
             type: 'category',
@@ -541,7 +535,7 @@ class OffsetAnalyze extends React.Component {
 
     Option8nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at 8 nmi'
+            text: 'distribution of ' + this.state.select + ' at -8 nmi'
         },
         xAxis: {
             type: 'category',
@@ -585,8 +579,6 @@ class OffsetAnalyze extends React.Component {
     //   console.log(this.state.data);
       return (
         <div className="App">
-            {this.type === "Departure" ? this.state.check === true ?
-            <div>
             <h1>Offset Analytics</h1>
                 <Select defaultValue="altitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
                     <Option value="altitude" style={{ fontSize: "1rem" }}>Altitude</Option>
@@ -597,17 +589,14 @@ class OffsetAnalyze extends React.Component {
                 <ReactEcharts option={this.Option3nmi()} style={{width:1500, height:500}} />
                 <ReactEcharts option={this.Option5nmi()} style={{width:1500, height:500}} />
                 <ReactEcharts option={this.Option8nmi()} style={{width:1500, height:500}} />
-            </div>
-            : <p>No data for Analytics </p>
-            : <Arrival data={this.test}/> }
         </div>
       );
     }
   }
   
   OffsetAnalyze.propTypes = {
-    data: PropTypes.array,
-    type: PropTypes.string
+    data: PropTypes.array
+    // type: PropTypes.string
   };
 
   export default OffsetAnalyze;

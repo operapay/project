@@ -179,7 +179,7 @@ class FileReader extends React.Component {
             </div>
             <div>
                 {this.state.click === true ? 
-                <Feature data={this.state.real}/>
+                <Feature data={this.state.real} type={this.state.type_default}/>
                 : null}
             </div>
 
