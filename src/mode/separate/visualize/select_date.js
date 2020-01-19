@@ -7,7 +7,7 @@ import * as maptalks from 'maptalks'
 import { Select,Button,TimePicker } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-// import Offset from './offset';
+import Separate from './separate';
 
 const { Option } = Select;
 
@@ -38,6 +38,7 @@ class FileReader extends React.Component {
             flight_default : "Select Flight",
             real : '00:00:00',
             click : false,
+            pick : '00:00:00'
             // checkedList: [],
         };
         this.data = props.data
@@ -168,6 +169,15 @@ class FileReader extends React.Component {
         // console.log(data_select)
         this.setState({real : data_select.time})
     }
+
+    onChange_picktime(time) {
+        // console.log(data)
+        // console.log(time);
+        // var test = moment(time).format("MM/DD/YYYY")+" " + timeString
+        var time_pick = moment.utc(time).toDate();
+        // console.log(moment(time_pick).format('HH:mm:ss'))
+        this.setState({real : time_pick,click:false})
+    }
   
     render(props) {
         // console.log(this.data)
@@ -186,17 +196,17 @@ class FileReader extends React.Component {
                 </Select>
                 <Select placeholder="Select Type" style={{ width: 400, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Flight_onhandleChange(e,this.state.time_flight)}>
                     {this.state.distinct_name.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight.name}>{flight.name} time: {moment(flight.time).format('hh:mm:ss')} </Option>
+                        <Option style={{ fontSize: "1rem" }} key={flight.name}>{flight.name} time: {moment(flight.time).format('HH:mm:ss')} </Option>
                     ))}
                 </Select>
-                <TimePicker defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} value={moment(this.state.real, 'HH:mm:ss')}/>
+                <TimePicker defaultValue={moment('00:00:00', 'HH:mm:ss')} value={moment(this.state.real, 'HH:mm:ss')} onChange={e => this.onChange_picktime(e)}/>
                 <Button onClick={this.search}>Search</Button>
             </div>
-            {/* <div>
+            <div>
                 {this.state.click === true ? 
-                <Offset data={this.state.real} name={this.state.checkbox} what={this.state.what_select}/>
+                <Separate data={this.state.time_flight} time_pick={this.state.real}/>
                 : null}
-            </div> */}
+            </div>
 
         </div>
       );
