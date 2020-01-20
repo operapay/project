@@ -49,7 +49,9 @@ class OffsetAnalyze extends React.Component {
 
     onhandleChange(value) {
         this.setState({select : value})
+        console.log(value)
         if (value == 'lateral'){
+            console.log('lateral')
             this.data_lateral(this.test,value)
         }
         else{
@@ -114,71 +116,33 @@ class OffsetAnalyze extends React.Component {
     }
 
     closest_xy(array,num,distribute,param){
-        var i=0;
-        var minDiff=1000;
-        var distance;
-        var value;
-        var x;
-        var y;
-        for(i in array){
-            //console.log('i',array[0][i])
-            var m=Math.abs(num-array[i][0]);
-            if(m<minDiff){ 
-                    minDiff=m; 
-                    distance=array[i][0]; 
-                    value=array[i][1];
-                }
+        // console.log(num)
+        var distance_min;
+        var value_min;
+        var distance_max;
+        var value_max;
+        var x,y;
+        for(var i=1;i<array.length;i++){
+            // console.log('arr' , array[i],array[i-1])
+            if(num > array[i-1][0] && num < array[i][0]){
+                distance_min=array[i-1][0]; 
+                value_min=array[i-1][1];
+                distance_max=array[i][0]; 
+                value_max=array[i][1];
+                break
+            }
         }
-        x = (num*value[0])/distance
-        y = (num*value[1])/distance
+        if(value_min === undefined || value_max === undefined){
+            return distribute;
+        }
+        // console.log(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
+        x = this.interpolate(distance_min,parseFloat(value_min[0]),distance_max,parseFloat(value_max[0]),num)
+        y = this.interpolate(distance_min,parseFloat(value_min[1]),distance_max,parseFloat(value_max[1]),num)
         distribute[param].x.push(x)
         distribute[param].y.push(y)
         distribute[param].data.push([x,y])
         return distribute;
     }
-
-    // closest_xy(array,num,distribute,param){
-    //     var distance_min;
-    //     var value_min;
-    //     var distance_max;
-    //     var value_max;
-    //     var x; var y; 
-    //     var distance;
-    //     var value;
-    //     for(var i=1;i<array.length;i++){
-    //         // console.log('arr' , array[i],array[i-1])
-    //         if(num > array[i-1][0] && num < array[i][0]){
-    //             distance_min=array[i-1][0]; 
-    //             value_min=array[i-1][1];
-    //             distance_max=array[i][0]; 
-    //             value_max=array[i][1];
-    //         }
-    //         else{
-    //             var A = Math.abs(num-array[i-1][0]);
-    //             var B = Math.abs(num-array[i][0]);
-    //             if(A <= B){
-    //                 distance = array[i-1][0]
-    //                 value = array[i-1][1]
-    //             }else{
-    //                 distance = array[i][0]
-    //                 value = array[i][1]
-    //             }
-    //         }
-    //     }
-
-    //     if(value_min === undefined || value_max === undefined){
-    //         x = (num*value[0])/distance
-    //         y = (num*value[1])/distance
-    //     }else{
-    //         x = this.interpolate(distance_min,parseInt(value_min[0]),distance_max,parseInt(value_max[0]),num)
-    //         y = this.interpolate(distance_min,parseInt(value_min[1]),distance_max,parseInt(value_max[1]),num)
-    //     }
-    //     distribute[param].x.push(x)
-    //     distribute[param].y.push(y)
-    //     distribute[param].data.push([x,y])
-    //     // distribute[param].data.push(res)
-    //     return distribute;
-    // }
 
     init_arrdistribute(distribute){
         // distribute.push({dis:0,data:[]})
@@ -199,39 +163,38 @@ class OffsetAnalyze extends React.Component {
     data_lateral(result,value){
         // this.setState({arr : [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]})
         this.state.arr = [{name:'', type: 'line',smooth: true,showSymbol:false,lineStyle:{color:'#A9CCE3'},data: [[]]}]
-        var num = 1
         var long_origin = 100.743178;
         var lat_origin = 13.703669;
         var dist = [{name:'',data:[[]]}]
         var distribute = []
         this.init_arrdistribute_xy(distribute)
-        var name = result[0].name
-        var date = result[0].date
+        var x1,y1,x2,y2;
         // var count = this.uniqueNameFlight(name,result,date)
         // console.log('count',count)
         for(var i=0;i<result.length;i++){
-            var x = 0; var y = 0;
+            var dis = 0;
             for(var j=1;j<result[i].coords.length;j++){
 
-                y = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
-                x = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
-
-                if( (y>-20 && y<2) && (x>-4 && x<12) ){
+                y1 = (((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x1 = (((result[i].coords[j-1].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j-1].lat*0.01745329251))*0.539957)
+                y2 = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x2 = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
+                dis = dis + this.distance_xy(x1,x2,y1,y2)
+                if( dis < 18 ){
                     //console.log(i)
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
-                    this.state.arr[i].data[j-1].push(x)
-                    this.state.arr[i].data[j-1].push(y)
-                    if(j > 0){
-                        dist[i].name = result[i].name
-                        dist[i].data.push([])
-                        var dis = this.distance_xy(this.state.arr[i].data[j-1][0],x,this.state.arr[i].data[j-1][1],y)
-                        dist[i].data[j].push(dis)
-                        dist[i].data[j].push([x,y])
-                    }
+                    this.state.arr[i].data[j-1].push(x2)
+                    this.state.arr[i].data[j-1].push(y2)
+                }
+                if(dis < 30){
+                    dist[i].name = result[i].name
+                    dist[i].data.push([])
+                    dist[i].data[j-1].push(dis)
+                    dist[i].data[j-1].push([x2,y2])
                 }
             }
-            // console.log(dist)
+            console.log('dist',dist)
             for(var j=0;j<distribute.length;j++){
                 this.closest_xy(dist[i].data,distribute[j].dis,distribute,j)
             }
@@ -244,9 +207,13 @@ class OffsetAnalyze extends React.Component {
         // console.log(distribute)
         this.state.avg_arr.data = []
         this.state.avg_arr.data.push([0,0])
+        var num = 1
         for(var i=0;i<distribute.length;i++){
-            this.state.avg_arr.data.push([])
-            this.state.avg_arr.data[i+1].push(this.average(distribute[i].x),this.average(distribute[i].y))
+            if(distribute[i].data.length !== 0){
+                this.state.avg_arr.data.push([])
+                this.state.avg_arr.data[num].push(this.average(distribute[i].x),this.average(distribute[i].y))
+                num++
+            }
         }
         // console.log(this.state.avg_arr)
         this.state.arr.push(this.state.avg_arr)
