@@ -38,11 +38,13 @@ class FileReader extends React.Component {
             date_default : "Select Date",
             type_default : "Select Type",
             type : ['Departure','Arrival'],
+            turn : ['West','East'],
             select_feature : "Date",
             real : [],
             click : false,
             checkbox : [],
-            what_select : "Date"
+            what_select : "Date",
+            type_select : []
             // checkedList: [],
         };
         this.data = props.data
@@ -144,10 +146,106 @@ class FileReader extends React.Component {
             }
         }
 
-        console.log('real' , data_select)
+        // console.log('real' , data_select)
 
-        this.setState({real : data_select ,checkbox:name,turn_default : "Select Turn Direction"})
+        this.setState({type_select : data_select ,checkbox:name,turn_default : "Select Turn Direction"})
+    }
 
+    Turn_onhandleChange(value,data) {
+        // console.log(value)
+        this.setState({turn_default:value,click:false})
+        var data_select = []
+        var name = []
+
+        // console.log(value)
+        if(this.state.type_default === 'Departure'){
+            if(value === 'West'){
+                data_select = []
+                for(var i=0;i<data.length;i++){
+                    var sum = 0
+                    for(var j=0;j<data[i].coords.length-1;j++){
+                    // var dis = data[i].coords[0].long
+                        if(data[i].coords[j].long >= data[i].coords[j+1].long){
+                            sum += 1
+                        }
+                        // console.log(dis)
+                        if(sum > data[i].coords.length/3){
+                            // console.log('yes: ',dis)
+                            data_select.push(data[i])
+                            name.push(data[i].name)
+                            break
+                        }
+                    // console.log(dis)
+                    }
+                }
+            }
+            else{
+                data_select = []
+                for(var i=0;i<data.length;i++){
+                    var sum = 0
+                    for(var j=0;j<data[i].coords.length-1;j++){
+                    // var dis = data[i].coords[0].long
+                        if(data[i].coords[j].long < data[i].coords[j+1].long){
+                            sum += 1
+                        }
+                        // console.log(dis)
+                        if(sum > data[i].coords.length/3){
+                            // console.log('yes: ',dis)
+                            data_select.push(data[i])
+                            name.push(data[i].name)
+                            break
+                        }
+                    // console.log(dis)
+                    }
+                }
+            }
+        }
+        else{
+            if(value === 'West'){
+                data_select = []
+                for(var i=0;i<data.length;i++){
+                    var sum = 0
+                    for(var j=data[i].coords.length-1;j>1;j--){
+                    // var dis = data[i].coords[0].long
+                        if(data[i].coords[j].long >= data[i].coords[j-1].long){
+                            sum += 1
+                        }
+                        // console.log(dis)
+                        if(sum > data[i].coords.length/3){
+                            // console.log('yes: ',dis)
+                            data_select.push(data[i])
+                            name.push(data[i].name)
+                            break
+                        }
+                    // console.log(dis)
+                    }
+                }
+            }
+            else{
+                data_select = []
+                for(var i=0;i<data.length;i++){
+                    var sum = 0
+                    for(var j=data[i].coords.length-1;j>1;j--){
+                    // var dis = data[i].coords[0].long
+                        if(data[i].coords[j].long <= data[i].coords[j-1].long){
+                            sum += 1
+                        }
+                        // console.log(dis)
+                        if(sum > data[i].coords.length/3){
+                            // console.log('yes: ',dis)
+                            data_select.push(data[i])
+                            name.push(data[i].name)
+                            break
+                        }
+                    // console.log(dis)
+                    }
+                }
+            }
+        }
+
+        // console.log('real' , data_select)
+
+        this.setState({real : data_select})
     }
   
     render(props) {
@@ -170,8 +268,8 @@ class FileReader extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
-                <Select placeholder="Select Turn Direction" disabled style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.turn_default} onChange={e => this.Type_onhandleChange(e,this.state.time_flight)}>
-                    {this.state.type.map(flight => (
+                <Select placeholder="Select Turn Direction" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.turn_default} onChange={e => this.Turn_onhandleChange(e,this.state.type_select)}>
+                    {this.state.turn.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
@@ -179,7 +277,7 @@ class FileReader extends React.Component {
             </div>
             <div>
                 {this.state.click === true ? 
-                <Feature data={this.state.real}/>
+                <Feature data={this.state.real} type={this.state.type_default}/>
                 : null}
             </div>
 
