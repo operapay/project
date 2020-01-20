@@ -153,7 +153,7 @@ class OffsetAnalyze extends React.Component {
 
     init_arrdistribute_xy(distribute){
         // distribute.push({dis:0,data:[]})
-        for(var i=1;i<30;i+=1){
+        for(var i=1;i<20;i+=1){
             distribute.push({dis:i,x:[],y:[],data:[]})
         }
     }
@@ -175,23 +175,23 @@ class OffsetAnalyze extends React.Component {
             var dis = 0;
             for(var j=1;j<result[i].coords.length;j++){
 
-                y1 = (((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
-                x1 = (((result[i].coords[j-1].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j-1].lat*0.01745329251))*0.539957)
-                y2 = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
-                x2 = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
-                dis = dis + this.distance_xy(x1,x2,y1,y2)
-                if( dis < 18 ){
+                x1 = (((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                y1 = (((result[i].coords[j-1].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j-1].lat*0.01745329251))*0.539957)
+                x2 = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                y2 = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
+                dis = dis + this.distance_xy(x1,y1,x2,y2)
+                if( dis < 20 ){
                     //console.log(i)
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
-                    this.state.arr[i].data[j-1].push(x2)
-                    this.state.arr[i].data[j-1].push(y2)
+                    this.state.arr[i].data[j-1].push(x1)
+                    this.state.arr[i].data[j-1].push(y1)
                 }
-                if(dis < 30){
+                if(dis < 50){
                     dist[i].name = result[i].name
                     dist[i].data.push([])
                     dist[i].data[j-1].push(dis)
-                    dist[i].data[j-1].push([x2,y2])
+                    dist[i].data[j-1].push([x1,y1])
                 }
             }
             console.log('dist',dist)
@@ -204,10 +204,10 @@ class OffsetAnalyze extends React.Component {
                 dist.push({name:'',data:[[]]})
             }
         }
-        // console.log(distribute)
+        console.log(distribute)
         this.state.avg_arr.data = []
-        this.state.avg_arr.data.push([0,0])
-        var num = 1
+        // this.state.avg_arr.data.push([0,0])
+        var num = 0
         for(var i=0;i<distribute.length;i++){
             if(distribute[i].data.length !== 0){
                 this.state.avg_arr.data.push([])
@@ -215,7 +215,7 @@ class OffsetAnalyze extends React.Component {
                 num++
             }
         }
-        // console.log(this.state.avg_arr)
+        console.log(this.state.avg_arr)
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr})
         this.distributed(distribute,value,this.state.avg_arr)

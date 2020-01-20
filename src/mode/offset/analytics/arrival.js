@@ -441,7 +441,7 @@ class OffsetAnalyze extends React.Component {
 
     Option3nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at -3 nmi'
+            text: 'distribution of ' + this.state.select + ' at 3 nmi'
         },
         xAxis: {
             type: 'category',
@@ -483,7 +483,7 @@ class OffsetAnalyze extends React.Component {
 
     Option5nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at -5 nmi'
+            text: 'distribution of ' + this.state.select + ' at 5 nmi'
         },
         xAxis: {
             type: 'category',
@@ -525,7 +525,7 @@ class OffsetAnalyze extends React.Component {
 
     Option8nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at -8 nmi'
+            text: 'distribution of ' + this.state.select + ' at 8 nmi'
         },
         xAxis: {
             type: 'category',
