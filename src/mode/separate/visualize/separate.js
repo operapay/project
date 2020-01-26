@@ -29,6 +29,7 @@ class FileReader2 extends React.Component {
         this.state = {
             data : [],
             checkedList: [],
+            data_line : []
         };
         this.data = props.data
         this.time_pick = props.time_pick
@@ -51,6 +52,30 @@ class FileReader2 extends React.Component {
         return hours + minutes / 60 + seconds / 3600;
     }
 
+    distance(lat1, lon1, lat2, lon2, unit) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        }
+        else {
+            var radlat1 = Math.PI * lat1/180;
+            var radlat2 = Math.PI * lat2/180;
+            var theta = lon1-lon2;
+            var radtheta = Math.PI * theta/180;
+            var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180/Math.PI;
+            dist = dist * 60 * 1.1515;
+            if (unit==="K") { dist = dist * 1.609344 }
+            if (unit==="N") { dist = dist * 0.8684
+            // console.log('nmi') 
+            }
+            return dist;
+        }
+    }
+
     interpolate(x1,y1,x2,y2,x){
         // console.log(x1,y1,x2,y2,x)
         var diff = ((y2-y1)/(x2-x1))*(x-x1)
@@ -65,9 +90,14 @@ class FileReader2 extends React.Component {
         var first,last;
         var lat_min, lon_min, time_min,altitude_min;
         var lat_max, lon_max, time_max,altitude_max;
+        var lat,lon,altitude;
         var array = []
         var scatter = []
+        var line = []
+        var coord = []
         for(i in data){
+            var dis;
+            var state = 0
             for(var j=1;j<data[i].data.coords.length;j++){
                 // moment(data[i].coords[j-1][3]).format('HH:mm:ss')
                 first = this.timeStringToFloat( moment(data[i].data.coords[j-1][3]).format('HH:mm:ss'))
@@ -83,6 +113,7 @@ class FileReader2 extends React.Component {
                     altitude_max = data[i].data.coords[j][2]
                     time_min = first
                     time_max = last
+                    state = j-1
                     break
                 }
             }
@@ -91,9 +122,24 @@ class FileReader2 extends React.Component {
             var res_alt = this.interpolate(time_min,parseFloat(altitude_min),time_max,parseFloat(altitude_max),timepick)
             array.push({name:data[i].name,coords:[res_lon,res_lat,res_alt]})
             scatter.push([res_lon,res_lat])
+
+            dis = this.distance(res_lat,res_lon,data[i].data.coords[state][1],data[i].data.coords[state][0])
+            coord = [[res_lon,res_lat,0],[data[i].data.coords[state][0],data[i].data.coords[state][1],0]]
+            for(var j=state;j>1;j--){
+                dis = dis + this.distance(data[i].data.coords[j][1],data[i].data.coords[j][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][0])
+                coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],0])
+                if(dis >= 5){
+                    console.log('dis',dis)
+                    break
+                }
+            }
+            console.log('coord',coord)
+            if(coord.length > 2)
+                line.push({name:data[i].name,coords:coord})
         }
-        console.log('arr', array)
-        this.setState({data : scatter})
+        // console.log('arr', array)
+        console.log('line', line)
+        this.setState({data : scatter,data_line:line})
     }
 
     // onhandleChange(value,data) {
@@ -153,25 +199,27 @@ class FileReader2 extends React.Component {
                 },
                 data: this.state.data
             },
-            // {
-            //     type: 'lines3D',
-            //     coordinateSystem: 'maptalks3D',
-            //     effect: {
-            //         show: true,
-            //         constantSpeed: 40,
-            //         trailWidth: 2,
-            //         trailLength: 0.05,
-            //         trailOpacity: 1,
-            //     },
-            //     //blendMode: 'lighter',
-            //     polyline: true,
-            //     lineStyle: {
-            //         width: 2,
-            //         color: 'rgb(50, 60, 170)',
-            //         opacity: 0.5
-            //     },
-            //     data: this.state.data
-            // }
+            {
+                type: 'lines3D',
+                coordinateSystem: 'maptalks3D',
+                // symbolSize: 8,
+                effect: {
+                    show: true,
+                    constantSpeed: 1,
+                    trailWidth: 2,
+                    trailLength: 0.05,
+                    trailOpacity: 1,
+                    symbolSize: 8,
+                },
+                //blendMode: 'lighter',
+                polyline: true,
+                lineStyle: {
+                    width: 2,
+                    color: 'rgb(50, 60, 170)',
+                    opacity: 0.5
+                },
+                data: this.state.data_line
+            }
         ],
     });
 
