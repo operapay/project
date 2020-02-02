@@ -38,7 +38,9 @@ class FileReader extends React.Component {
             flight_default : "Select Flight",
             real : '00:00:00',
             click : false,
-            pick : '00:00:00'
+            pick : '00:00:00',
+            name : null,
+            time_real : []
             // checkedList: [],
         };
         this.data = props.data
@@ -75,8 +77,18 @@ class FileReader extends React.Component {
             return dist;
         }
     }
+
+    timeStringToFloat(time) {
+        // console.log(time)
+        var hoursMinutes = time.split(':');
+        var hours = parseInt(hoursMinutes[0], 10);
+        var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+        var seconds = hoursMinutes[2] ? parseInt(hoursMinutes[2], 10) : 0;
+        return hours + minutes / 60 + seconds / 3600;
+    }
   
     Date_onhandleChange(value,data) {
+        // console.log(data)
         var data_select = []
         var name = []
         this.setState({date_default:value,click:false})
@@ -99,18 +111,33 @@ class FileReader extends React.Component {
         this.setState({distinct_time : distinct, date_name:name.res, time_default:"Select Time",flight_default:"Select Flight",real:'00:00:00'})
     }
 
+    compare( a, b ) {
+        if ( a.timeint < b.timeint ){
+          return -1;
+        }
+        if ( a.timeint > b.timeint ){
+          return 1;
+        }
+        return 0;
+    }
+
     Time_onhandleChange(value,data) {
+        // console.log(data)
         this.setState({time_default:value,click:false})
         var data_select = []
-        var name = []
+        var time = []
         for(var i=0;i<data.length;i++){
             if(data[i].time.getHours() === parseInt(value)){
                 data_select.push(data[i])
+                // var x = moment(data[i].time).format('HH:mm:ss') 
+                // time.push(this.timeStringToFloat(moment(data[i].time).format('HH:mm:ss') ))
             }
         }
+        data_select.sort( this.compare );
         // console.log('data',data_select)
         // name = this.closest(data_select,this.state.runway)
-        // console.log(name)
+        // var sort_time = time.sort(function(a, b){return a-b})
+        // console.log(time)
         this.setState({time_flight : data_select,distinct_name:data_select, flight_default:"Select Flight",real:'00:00:00'})
     }
 
@@ -136,6 +163,7 @@ class FileReader extends React.Component {
             }
             res[i].name = array[i].name
             res[i].time = value
+            res[i].timeint = this.timeStringToFloat( moment(value).format('HH:mm:ss'))
             res[i].data = array[i]
             time.push(value.getHours())
             if(i < array.length-1){
@@ -167,7 +195,7 @@ class FileReader extends React.Component {
 
         // data_select = this.closest(data,this.state.runway)
         // console.log(data_select)
-        this.setState({real : data_select.time})
+        this.setState({real : data_select.time, name:data_select.name})
     }
 
     onChange_picktime(time) {
@@ -204,7 +232,7 @@ class FileReader extends React.Component {
             </div>
             <div>
                 {this.state.click === true ? 
-                <Separate data={this.state.time_flight} time_pick={this.state.real}/>
+                <Separate data={this.state.time_flight} time_pick={this.state.real} name={this.state.name}/>
                 : null}
             </div>
 

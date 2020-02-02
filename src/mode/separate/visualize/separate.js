@@ -29,10 +29,15 @@ class FileReader2 extends React.Component {
         this.state = {
             data : [],
             checkedList: [],
-            data_line : []
+            data_line : [],
+            heavy: ['A380','A358','A359','A333','A332','B747','B77W','B788','B789','B772'],
+            large: ['A319','A320','A321','B738','B739','B737'],
+            small: ['AT76']
         };
         this.data = props.data
         this.time_pick = props.time_pick
+        this.name_pick = props.name
+        this.time = props.time
         
         // this.getData = this.getData.bind(this);
         // this.updateData = this.updateData.bind(this);
@@ -86,7 +91,7 @@ class FileReader2 extends React.Component {
     getData(data){
         var timepick = this.timeStringToFloat( moment(this.time_pick).format('HH:mm:ss'))
         // console.log("...",timepick)
-        var i=0
+        // var i=0
         var first,last;
         var lat_min, lon_min, time_min,altitude_min;
         var lat_max, lon_max, time_max,altitude_max;
@@ -95,7 +100,10 @@ class FileReader2 extends React.Component {
         var scatter = []
         var line = []
         var coord = []
-        for(i in data){
+        // console.log('pick' , timepick)
+        // console.log(this.time)
+        console.log(data)
+        for(var i=0;i<data.length;i++){
             var dis;
             var state = 0
             for(var j=1;j<data[i].data.coords.length;j++){
@@ -120,72 +128,63 @@ class FileReader2 extends React.Component {
             var res_lon = this.interpolate(time_min,parseFloat(lon_min),time_max,parseFloat(lon_min),timepick)
             var res_lat = this.interpolate(time_min,parseFloat(lat_min),time_max,parseFloat(lat_max),timepick)
             var res_alt = this.interpolate(time_min,parseFloat(altitude_min),time_max,parseFloat(altitude_max),timepick)
-            array.push({name:data[i].name,coords:[res_lon,res_lat,res_alt]})
+            // array.push({name:data[i].name,coords:[res_lon,res_lat,res_alt]})
             scatter.push([res_lon,res_lat])
-
-            dis = this.distance(res_lat,res_lon,data[i].data.coords[state][1],data[i].data.coords[state][0])
-            coord = [[res_lon,res_lat,0],[data[i].data.coords[state][0],data[i].data.coords[state][1],0]]
-            for(var j=state;j>1;j--){
-                dis = dis + this.distance(data[i].data.coords[j][1],data[i].data.coords[j][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][0])
-                coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],0])
-                if(dis >= 5){
-                    console.log('dis',dis)
-                    break
+            // console.log(data)
+            // console.log('data', data[i], data[i+1])
+            // console.log(i)
+            //-------------------- compute distance between airplane----------------------
+            if(i < data.length-1){
+                var head; 
+                if(this.state.heavy.includes(data[i].data.aircraft)) head = 'heavy';
+                else if(this.state.large.includes(data[i].data.aircraft)) head = 'large';
+                else if(this.state.small.includes(data[i].data.aircraft)) head = 'small';
+                // console.log(i)
+                var follow;
+                if(this.state.heavy.includes(data[i+1].data.aircraft)) follow = 'heavy';
+                else if(this.state.large.includes(data[i+1].data.aircraft)) follow = 'large';
+                else if(this.state.small.includes(data[i+1].data.aircraft)) follow = 'small';       
+                
+                var real_dis = 0;
+                if(head === 'small') real_dis = 3;
+                else if(head === 'large'){
+                    if(follow === 'small') real_dis = 4;
+                    else real_dis = 3;
                 }
+                else if(head === 'heavy'){
+                    if(follow === 'small') real_dis = 6;
+                    else if(follow === 'large') real_dis = 5;
+                    else real_dis = 4;
+                }
+
+                dis = this.distance(res_lat,res_lon,data[i].data.coords[state][1],data[i].data.coords[state][0])
+                coord = [[res_lon,res_lat,0],[data[i].data.coords[state][0],data[i].data.coords[state][1],0]]
+                for(var j=state;j>1;j--){
+                    dis = dis + this.distance(data[i].data.coords[j][1],data[i].data.coords[j][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][0])
+                    coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],0])
+                    if(dis >= real_dis){
+                        // console.log('dis',dis)
+                        break
+                    }
+                }
+                // console.log('coord',coord)
+                if(coord.length > 2)
+                    line.push({name:data[i].name,coords:coord})
             }
-            console.log('coord',coord)
-            if(coord.length > 2)
-                line.push({name:data[i].name,coords:coord})
         }
         // console.log('arr', array)
-        console.log('line', line)
+        // console.log('line', line)
         this.setState({data : scatter,data_line:line})
     }
 
-    // onhandleChange(value,data) {
-    //     // console.log(`selected ${value}`);
-    //     var data_select = []
-    //     // console.log(value)
-    //     this.setState({checkedList : value})
-    //     for(var j=0;j<value.length;j++){
-    //         for(var i=0;i<data.length;i++){
-    //             if(data[i].name === value[j]){
-    //                 data_select.push(data[i])
-    //                 console.log(data[i])
-    //             }
-    //         }
-    //     }
-    //     // console.log(data_select)
-    //     this.setState({data : data_select})
-    // }
-
-    // getOption = () => ({
-    //     maptalks3D: map, 
-    //     series: [
-    //         {
-    //             type: 'lines3D',
-    //             coordinateSystem: 'maptalks3D',
-    //             effect: {
-    //                 show: true,
-    //                 constantSpeed: 40,
-    //                 trailWidth: 2,
-    //                 trailLength: 0.05,
-    //                 trailOpacity: 1,
-    //             },
-    //             //blendMode: 'lighter',
-    //             polyline: true,
-    //             lineStyle: {
-    //                 width: 2,
-    //                 color: 'rgb(50, 60, 170)',
-    //                 opacity: 0.5
-    //             },
-    //             data: this.state.data
-    //         }
-    //     ],
-    // });
-
     getOption = () => ({
         maptalks3D: map, 
+        tooltip: {
+            position: 'top',
+            formatter: function (params) {
+                return 'xxxxx';
+            }
+        },
         series: [
             {
                 type: 'scatter3D',
@@ -235,7 +234,9 @@ class FileReader2 extends React.Component {
   }
   FileReader2.propTypes = {
     data: PropTypes.array,
-    time_pick: PropTypes.string
+    time_pick: PropTypes.string,
+    name : PropTypes.string,
+    time : PropTypes.array
   };
   
   
