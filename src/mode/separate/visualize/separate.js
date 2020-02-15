@@ -100,6 +100,7 @@ class FileReader2 extends React.Component {
         var scatter = []
         var line = []
         var coord = []
+        var color_num = 0
         // console.log('pick' , timepick)
         // console.log(this.time)
         console.log(data)
@@ -129,7 +130,7 @@ class FileReader2 extends React.Component {
             var res_lat = this.interpolate(time_min,parseFloat(lat_min),time_max,parseFloat(lat_max),timepick)
             var res_alt = this.interpolate(time_min,parseFloat(altitude_min),time_max,parseFloat(altitude_max),timepick)
             // array.push({name:data[i].name,coords:[res_lon,res_lat,res_alt]})
-            scatter.push([res_lon,res_lat])
+            scatter.push([res_lon,res_lat,res_alt])
             // console.log(data)
             // console.log('data', data[i], data[i+1])
             // console.log(i)
@@ -158,18 +159,38 @@ class FileReader2 extends React.Component {
                 }
 
                 dis = this.distance(res_lat,res_lon,data[i].data.coords[state][1],data[i].data.coords[state][0])
-                coord = [[res_lon,res_lat,0],[data[i].data.coords[state][0],data[i].data.coords[state][1],0]]
+                coord = [[res_lon,res_lat,res_alt],[data[i].data.coords[state][0],data[i].data.coords[state][1],data[i].data.coords[state][2]]]
                 for(var j=state;j>1;j--){
                     dis = dis + this.distance(data[i].data.coords[j][1],data[i].data.coords[j][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][0])
-                    coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],0])
+                    coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][2]])
                     if(dis >= real_dis){
                         // console.log('dis',dis)
                         break
                     }
                 }
                 // console.log('coord',coord)
-                if(coord.length > 2)
-                    line.push({name:data[i].name,coords:coord})
+                if(coord.length > 2){
+                    // console.log(color_num)
+                    if(color_num % 2 == 0){
+                        // console.log('even')
+                        line.push({name:data[i].name,coords:coord,
+                        lineStyle: {
+                            width: 3,
+                            color: '#a6c84c',
+                            opacity: 1
+                        }})
+                    }
+                    else{
+                        // console.log('odd')
+                        line.push({name:data[i].name,coords:coord,
+                        lineStyle: {
+                            width: 3,
+                            color: '#ffa022',
+                            opacity: 1
+                        }}) 
+                    }
+                    color_num += 1
+                }
             }
         }
         // console.log('arr', array)
@@ -178,15 +199,10 @@ class FileReader2 extends React.Component {
     }
 
     getOption = () => ({
-        maptalks3D: map, 
-        tooltip: {
-            position: 'top',
-            formatter: function (params) {
-                return 'xxxxx';
-            }
-        },
+        maptalks3D: map,
         series: [
             {
+                name: 'plot',
                 type: 'scatter3D',
                 coordinateSystem: 'maptalks3D',
                 // blendMode: 'lighter',
@@ -199,24 +215,21 @@ class FileReader2 extends React.Component {
                 data: this.state.data
             },
             {
+                name: 'test',
                 type: 'lines3D',
                 coordinateSystem: 'maptalks3D',
                 // symbolSize: 8,
-                effect: {
-                    show: true,
-                    constantSpeed: 1,
-                    trailWidth: 2,
-                    trailLength: 0.05,
-                    trailOpacity: 1,
-                    symbolSize: 8,
-                },
+                // effect: {
+                //     show: true,
+                //     constantSpeed: 1,
+                //     trailWidth: 2,
+                //     trailLength: 0.05,
+                //     trailOpacity: 1,
+                //     symbolSize: 8,
+                //     symbol: 'diamond',
+                // },
                 //blendMode: 'lighter',
                 polyline: true,
-                lineStyle: {
-                    width: 2,
-                    color: 'rgb(50, 60, 170)',
-                    opacity: 0.5
-                },
                 data: this.state.data_line
             }
         ],
@@ -228,6 +241,7 @@ class FileReader2 extends React.Component {
       return (
         <div className="App">
             <ReactEcharts option={this.getOption()}  style={{width:1760, height:900}} />
+            {/* <Plot data={this.state.data_line}/> */}
         </div>
       );
     }

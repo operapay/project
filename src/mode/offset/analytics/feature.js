@@ -111,6 +111,8 @@ class OffsetAnalyze extends React.Component {
         }
         // console.log(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
         res = this.interpolate(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
+        // console.log('f',res)
+        if(isNaN(res)) return distribute
         distribute[param].data.push(res)
         return distribute;
     }
@@ -146,7 +148,7 @@ class OffsetAnalyze extends React.Component {
 
     init_arrdistribute(distribute){
         // distribute.push({dis:0,data:[]})
-        for(var i=1;i<=17;i+=0.5){
+        for(var i=0.5;i<=17;i+=0.5){
             distribute.push({dis:i,data:[]})
         }
     }
@@ -245,10 +247,10 @@ class OffsetAnalyze extends React.Component {
                     // this.state.arr[j].type = 'line'
                     // this.state.arr[j].lineStyle = {color:'#A9CCE3'}
                     // this.state.arr[j].showSymbol = false
-                    this.state.arr[i].data[j-1].push(0) 
-                    this.state.arr[i].data[j-1].push(0) 
-                    arr_ref[i].data[j-1].push(0)
-                    arr_ref[i].data[j-1].push(0)
+                    // this.state.arr[i].data[j-1].push(0) 
+                    // this.state.arr[i].data[j-1].push(0) 
+                    // arr_ref[i].data[j-1].push(0)
+                    // arr_ref[i].data[j-1].push(0)
                 }
                 if(ground < 18){
                     this.state.arr[i].data.push([])
@@ -282,11 +284,11 @@ class OffsetAnalyze extends React.Component {
         
         console.log('arr', this.state.arr)
         this.state.avg_arr.data = []
-        this.state.avg_arr.data.push([0,0])
+        // this.state.avg_arr.data.push([0,0])
         for(var i=0;i<distribute.length;i++){
             // average(distribute[i].data)
             this.state.avg_arr.data.push([])
-            this.state.avg_arr.data[i+1].push(distribute[i].dis,this.average(distribute[i].data))
+            this.state.avg_arr.data[i].push(distribute[i].dis,this.average(distribute[i].data))
         }
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr});

@@ -8,6 +8,7 @@ import { Select,Button,TimePicker } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Separate from './separate';
+// import Separate from './plot'
 
 const { Option } = Select;
 

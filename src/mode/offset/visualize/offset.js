@@ -129,6 +129,10 @@ class FileReader extends React.Component {
                     trailLength: 0.05,
                     trailOpacity: 1,
                 },
+                tooltip: {
+                    show:true,
+                    trigger:'item'
+                },
                 //blendMode: 'lighter',
                 polyline: true,
                 lineStyle: {

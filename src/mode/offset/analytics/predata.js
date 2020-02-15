@@ -114,7 +114,7 @@ class FileReader extends React.Component {
                 this.state.arr[j].name = result[i].name
                 this.state.arr[j].coords[i-num].long = result[i].long
                 this.state.arr[j].coords[i-num].lat = result[i].lat
-                this.state.arr[j].coords[i-num].altitude = result[i].altitude
+                // this.state.arr[j].coords[i-num].altitude = result[i].altitude
                 this.state.arr[j].coords[i-num].altitude_ft = result[i].altitude_ft
                 this.state.arr[j].coords[i-num].speed = result[i].speed
             }

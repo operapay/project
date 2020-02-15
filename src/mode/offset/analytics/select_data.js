@@ -119,31 +119,46 @@ class FileReader extends React.Component {
         this.setState({type_default:value,click:false})
         var data_select = []
         var name = []
+        var data_departure = []
+        var data_arrival = []
+        var name_departure = []
+        var name_arrival = []
+        var sumdeparture;
+        var sumarrival;
+        var dis,dis2;
 
-        // console.log(value)
-        if(value === 'Departure'){
-            for(var i=0;i<data.length;i++){
-                var dis = this.distance(13.6902099,100.7449953,data[i].coords[0].lat, data[i].coords[0].long, "N")
+        for(var i=0;i<data.length;i++){
+            sumdeparture = 0
+            sumarrival = 0
+            for(var j=0;j<data[i].coords.length-1;j++){
+                // if(data[i].coords.length < 4){
+                //     continue
+                // }
+                dis = this.distance(13.6902099,100.7449953,data[i].coords[j].lat, data[i].coords[j].long, "N")
+                dis2 = this.distance(13.6902099,100.7449953,data[i].coords[j+1].lat, data[i].coords[j+1].long, "N")
                 // console.log(dis)
-                if(dis<=5){
-                    // console.log('yes: ',dis)
-                    data_select.push(data[i])
-                    name.push(data[i].name)
-                }
-                // console.log(dis)
+                if(dis <= dis2) sumdeparture += 1
+                else sumarrival += 1
+            }
+            console.log(data[i].name , sumdeparture , sumarrival)
+            if(sumdeparture >= sumarrival){
+                // console.log('yes: ',dis)
+                data_departure.push(data[i])
+                name_departure.push(data[i].name)
+            }
+            else{
+                data_arrival.push(data[i])
+                name_arrival.push(data[i].name) 
             }
         }
+        console.log(data_departure , data_arrival)
+        if(value === 'Departure'){
+            data_select = data_departure
+            name = name_departure
+        }
         else{
-            for(var i=0;i<data.length;i++){
-                // 13.6902099,100.7449953
-                var dis = this.distance(13.6902099,100.7449953,data[i].coords[0].lat, data[i].coords[0].long, "N")
-                if(dis>5){
-                    // console.log('yes: ',dis)
-                    data_select.push(data[i])
-                    name.push(data[i].name)
-                }
-                // console.log(dis)
-            }
+            data_select = data_arrival
+            name = name_arrival
         }
 
         // console.log('real' , data_select)

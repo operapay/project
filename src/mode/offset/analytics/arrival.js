@@ -109,6 +109,7 @@ class OffsetAnalyze extends React.Component {
         // console.log(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
         res = this.interpolate(distance_min,parseInt(value_min),distance_max,parseInt(value_max),num)
         // console.log(res)
+        if(isNaN(res)) return distribute
         distribute[param].data.push(res)
         return distribute;
     }
@@ -144,7 +145,7 @@ class OffsetAnalyze extends React.Component {
 
     init_arrdistribute(distribute){
         // distribute.push({dis:0,data:[]})
-        for(var i=-1;i>=-17;i-=0.5){
+        for(var i=-0.5;i>=-17;i-=0.5){
             distribute.push({dis:i,data:[]})
         }
     }
@@ -260,28 +261,28 @@ class OffsetAnalyze extends React.Component {
                     // this.state.arr[j].type = 'line'
                     // this.state.arr[j].lineStyle = {color:'#A9CCE3'}
                     // this.state.arr[j].showSymbol = false
-                    this.state.arr[i].data[(result[i].coords.length-1)-j].push(0) 
-                    this.state.arr[i].data[(result[i].coords.length-1)-j].push(0) 
-                    arr_ref[i].data[(result[i].coords.length-1)-j].push(0)
-                    arr_ref[i].data[(result[i].coords.length-1)-j].push(0)
+                    // this.state.arr[i].data[(result[i].coords.length-1)-j].push(0) 
+                    // this.state.arr[i].data[(result[i].coords.length-1)-j].push(0) 
+                    // arr_ref[i].data[(result[i].coords.length-1)-j].push(0)
+                    // arr_ref[i].data[(result[i].coords.length-1)-j].push(0)
                 }
                 if(ground < 18){
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
-                    this.state.arr[i].data[(result[i].coords.length-1)-j+1].push(ground*-1)
+                    this.state.arr[i].data[(result[i].coords.length-1)-j].push(ground*-1)
                     if (value === 'speed')
-                        this.state.arr[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].speed)
+                        this.state.arr[i].data[(result[i].coords.length-1)-j].push(result[i].coords[j].speed)
                     else
-                        this.state.arr[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].altitude_ft) 
+                        this.state.arr[i].data[(result[i].coords.length-1)-j].push(result[i].coords[j].altitude_ft) 
                     //console.log(this.state.arr)
                 }
                 if(ground < 30){
                     arr_ref[i].data.push([])
-                    arr_ref[i].data[(result[i].coords.length-1)-j+1].push(ground*-1)
+                    arr_ref[i].data[(result[i].coords.length-1)-j].push(ground*-1)
                     if (value === 'speed')
-                        arr_ref[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].speed)
+                        arr_ref[i].data[(result[i].coords.length-1)-j].push(result[i].coords[j].speed)
                     else
-                        arr_ref[i].data[(result[i].coords.length-1)-j+1].push(result[i].coords[j].altitude_ft) 
+                        arr_ref[i].data[(result[i].coords.length-1)-j].push(result[i].coords[j].altitude_ft) 
                     //console.log(this.state.arr)
                 }
             }
@@ -298,11 +299,11 @@ class OffsetAnalyze extends React.Component {
         
         // console.log('arr', this.state.arr)
         this.state.avg_arr.data = []
-        this.state.avg_arr.data.push([0,0])
+        // this.state.avg_arr.data.push([0,0])
         for(var i=0;i<distribute.length;i++){
             // average(distribute[i].data)
             this.state.avg_arr.data.push([])
-            this.state.avg_arr.data[i+1].push(distribute[i].dis,this.average(distribute[i].data))
+            this.state.avg_arr.data[i].push(distribute[i].dis,this.average(distribute[i].data))
         }
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr});
