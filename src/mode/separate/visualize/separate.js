@@ -130,16 +130,25 @@ class FileReader2 extends React.Component {
             var res_lat = this.interpolate(time_min,parseFloat(lat_min),time_max,parseFloat(lat_max),timepick)
             var res_alt = this.interpolate(time_min,parseFloat(altitude_min),time_max,parseFloat(altitude_max),timepick)
             // array.push({name:data[i].name,coords:[res_lon,res_lat,res_alt]})
-            scatter.push([res_lon,res_lat,res_alt])
+
             // console.log(data)
             // console.log('data', data[i], data[i+1])
             // console.log(i)
             //-------------------- compute distance between airplane----------------------
             if(i < data.length-1){
                 var head; 
-                if(this.state.heavy.includes(data[i].data.aircraft)) head = 'heavy';
-                else if(this.state.large.includes(data[i].data.aircraft)) head = 'large';
-                else if(this.state.small.includes(data[i].data.aircraft)) head = 'small';
+                if(this.state.heavy.includes(data[i].data.aircraft)){
+                    scatter.push([res_lon,res_lat,res_alt,15,data[i].name])
+                    head = 'heavy'
+                } 
+                else if(this.state.large.includes(data[i].data.aircraft)){
+                    scatter.push([res_lon,res_lat,res_alt,10,data[i].name])
+                    head = 'large'
+                }
+                else if(this.state.small.includes(data[i].data.aircraft)) {
+                    scatter.push([res_lon,res_lat,res_alt,5,data[i].name])
+                    head = 'small'
+                }
                 // console.log(i)
                 var follow;
                 if(this.state.heavy.includes(data[i+1].data.aircraft)) follow = 'heavy';
@@ -164,11 +173,9 @@ class FileReader2 extends React.Component {
                     dis = dis + this.distance(data[i].data.coords[j][1],data[i].data.coords[j][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][0])
                     coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][2]])
                     if(dis >= real_dis){
-                        // console.log('dis',dis)
                         break
                     }
                 }
-                // console.log('coord',coord)
                 if(coord.length > 2){
                     // console.log(color_num)
                     if(color_num % 2 == 0){
@@ -202,33 +209,27 @@ class FileReader2 extends React.Component {
         maptalks3D: map,
         series: [
             {
-                name: 'plot',
                 type: 'scatter3D',
                 coordinateSystem: 'maptalks3D',
-                // blendMode: 'lighter',
-                symbolSize: 8,
-                // symbol: 'triangle',
                 itemStyle: {
                     color: 'rgb(50, 50, 150)',
                     opacity: 1
                 },
-                data: this.state.data
+                data: this.state.data,
+                symbolSize: function (data) {
+                    return data[3];
+                },
+                label: {
+                    show: true,
+                    formatter: function (data) {
+                        return data[3];
+                    },
+                    position: 'insideTop'
+                },
             },
             {
-                name: 'test',
                 type: 'lines3D',
                 coordinateSystem: 'maptalks3D',
-                // symbolSize: 8,
-                // effect: {
-                //     show: true,
-                //     constantSpeed: 1,
-                //     trailWidth: 2,
-                //     trailLength: 0.05,
-                //     trailOpacity: 1,
-                //     symbolSize: 8,
-                //     symbol: 'diamond',
-                // },
-                //blendMode: 'lighter',
                 polyline: true,
                 data: this.state.data_line
             }
