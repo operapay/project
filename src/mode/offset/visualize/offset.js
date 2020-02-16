@@ -12,8 +12,8 @@ const { Option } = Select;
 
 var map = {
     center: [100.7395539,13.6983666], //mahamek
-    zoom: 12,
-    pitch: 100,
+    zoom: 9,
+    // pitch: 100,
     altitudeScale: 3.28,
     baseLayer: new maptalks.TileLayer('base', {
         urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
@@ -42,7 +42,8 @@ class FileReader extends React.Component {
         this.state = {
             data : [],
             checkedList: [],
-            list: []
+            list: [],
+            scatter: []
         };
         this.flight = props.data
         this.check = props.name
@@ -61,18 +62,22 @@ class FileReader extends React.Component {
     onhandleChange(value,data) {
         // console.log(`selected ${value}`);
         var data_select = []
+        var data_scatter = []
         // console.log(value)
         this.setState({checkedList : value})
         for(var j=0;j<value.length;j++){
             for(var i=0;i<data.length;i++){
                 if(data[i].name === value[j]){
+                    var state = Math.floor((data[i].coords.length)/2)
+                    console.log(state)
                     data_select.push(data[i])
-                    console.log(data[i])
+                    data_scatter.push([data[i].coords[state][0],data[i].coords[state][1],data[i].coords[state][2],data[i].name])
+                    // console.log(data[i])
                 }
             }
         }
         // console.log(data_select)
-        this.setState({data : data_select})
+        this.setState({data : data_select,scatter:data_scatter})
     }
 
     getData(result){
@@ -120,6 +125,23 @@ class FileReader extends React.Component {
             //     }
             // },
             {
+                type: 'scatter3D',
+                coordinateSystem: 'maptalks3D',
+                itemStyle: {
+                    color: 'rgb(50, 50, 150)',
+                    opacity: 1
+                },
+                data: this.state.scatter,
+                symbolSize: 1,
+                label: {
+                    show: true,
+                    formatter: function (data) {
+                        return data[3];
+                    },
+                    position: 'insideTop'
+                },
+            },
+            {
                 type: 'lines3D',
                 coordinateSystem: 'maptalks3D',
                 effect: {
@@ -129,10 +151,13 @@ class FileReader extends React.Component {
                     trailLength: 0.05,
                     trailOpacity: 1,
                 },
-                tooltip: {
-                    show:true,
-                    trigger:'item'
-                },
+                // label: {
+                //     show: true,
+                //     formatter: function (data) {
+                //         return data.name;
+                //     },
+                //     position: 'insideTop'
+                // },
                 //blendMode: 'lighter',
                 polyline: true,
                 lineStyle: {
