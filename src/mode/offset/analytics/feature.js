@@ -42,6 +42,7 @@ class OffsetAnalyze extends React.Component {
 
     componentWillMount(){
         if(this.type === "Departure" && this.test.length !== 0){
+            // console.log(this.test)
             this.getData()
             this.setState({check : true})
         }
@@ -49,9 +50,9 @@ class OffsetAnalyze extends React.Component {
 
     onhandleChange(value) {
         this.setState({select : value})
-        console.log(value)
+        // console.log(value)
         if (value == 'lateral'){
-            console.log('lateral')
+            // console.log('lateral')
             this.data_lateral(this.test,value)
         }
         else{
@@ -196,7 +197,7 @@ class OffsetAnalyze extends React.Component {
                     dist[i].data[j-1].push([x1,y1])
                 }
             }
-            console.log('dist',dist)
+            //console.log('dist',dist)
             for(var j=0;j<distribute.length;j++){
                 this.closest_xy(dist[i].data,distribute[j].dis,distribute,j)
             }
@@ -206,7 +207,7 @@ class OffsetAnalyze extends React.Component {
                 dist.push({name:'',data:[[]]})
             }
         }
-        console.log(distribute)
+        // console.log(distribute)
         this.state.avg_arr.data = []
         // this.state.avg_arr.data.push([0,0])
         var num = 0
@@ -217,7 +218,7 @@ class OffsetAnalyze extends React.Component {
                 num++
             }
         }
-        console.log(this.state.avg_arr)
+        // console.log(this.state.avg_arr)
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr})
         this.distributed(distribute,value,this.state.avg_arr)
@@ -286,9 +287,11 @@ class OffsetAnalyze extends React.Component {
         this.state.avg_arr.data = []
         // this.state.avg_arr.data.push([0,0])
         for(var i=0;i<distribute.length;i++){
-            // average(distribute[i].data)
+            // console.log('dis' , distribute[i].data)
             this.state.avg_arr.data.push([])
-            this.state.avg_arr.data[i].push(distribute[i].dis,this.average(distribute[i].data))
+            if(distribute[i].data.length !== 0){
+                this.state.avg_arr.data[i].push(distribute[i].dis,this.average(distribute[i].data))
+            }
         }
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr});

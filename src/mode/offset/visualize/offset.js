@@ -69,7 +69,7 @@ class FileReader extends React.Component {
             for(var i=0;i<data.length;i++){
                 if(data[i].name === value[j]){
                     var state = Math.floor((data[i].coords.length)/2)
-                    console.log(state)
+                    //console.log(state)
                     data_select.push(data[i])
                     data_scatter.push([data[i].coords[state][0],data[i].coords[state][1],data[i].coords[state][2],data[i].name])
                     // console.log(data[i])

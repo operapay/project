@@ -130,28 +130,21 @@ class FileReader extends React.Component {
         for(var i=0;i<data.length;i++){
             sumdeparture = 0
             sumarrival = 0
-            for(var j=0;j<data[i].coords.length-1;j++){
-                // if(data[i].coords.length < 4){
-                //     continue
-                // }
-                dis = this.distance(13.6902099,100.7449953,data[i].coords[j].lat, data[i].coords[j].long, "N")
-                dis2 = this.distance(13.6902099,100.7449953,data[i].coords[j+1].lat, data[i].coords[j+1].long, "N")
-                // console.log(dis)
-                if(dis <= dis2) sumdeparture += 1
-                else sumarrival += 1
-            }
-            console.log(data[i].name , sumdeparture , sumarrival)
-            if(sumdeparture >= sumarrival){
-                // console.log('yes: ',dis)
+            var state = data[i].coords.length-1
+            // console.log(state)
+            dis = this.distance(13.6902099,100.7449953,data[i].coords[0].lat, data[i].coords[0].long, "N")
+            dis2 = this.distance(13.6902099,100.7449953,data[i].coords[state].lat, data[i].coords[state].long, "N")
+            // console.log(dis)
+            if(dis < dis2) {
                 data_departure.push(data[i])
                 name_departure.push(data[i].name)
             }
-            else{
+            else {
                 data_arrival.push(data[i])
                 name_arrival.push(data[i].name) 
             }
         }
-        console.log(data_departure , data_arrival)
+        //console.log(data_departure , data_arrival)
         if(value === 'Departure'){
             data_select = data_departure
             name = name_departure
@@ -161,8 +154,6 @@ class FileReader extends React.Component {
             name = name_arrival
         }
 
-        // console.log('real' , data_select)
-
         this.setState({type_select : data_select ,checkbox:name,turn_default : "Select Turn Direction"})
     }
 
@@ -170,93 +161,84 @@ class FileReader extends React.Component {
         // console.log(value)
         this.setState({turn_default:value,click:false})
         var data_select = []
-        var name = []
+        // var name = []
+        var sum_west = 0
+        var sum_east = 0
+        var data_west = []
+        var data_east = []
+        var dis_check = 0
+        var start = 0
+        // var name_west = []
+        // var name_east = []
 
         // console.log(value)
         if(this.state.type_default === 'Departure'){
-            if(value === 'West'){
-                data_select = []
-                for(var i=0;i<data.length;i++){
-                    var sum = 0
-                    for(var j=0;j<data[i].coords.length-1;j++){
-                    // var dis = data[i].coords[0].long
-                        if(data[i].coords[j].long >= data[i].coords[j+1].long){
-                            sum += 1
-                        }
-                        // console.log(dis)
-                        if(sum > data[i].coords.length/3){
-                            // console.log('yes: ',dis)
-                            data_select.push(data[i])
-                            name.push(data[i].name)
-                            break
-                        }
-                    // console.log(dis)
+            for(var i=0;i<data.length;i++){
+                sum_east = 0
+                sum_west = 0
+                dis_check = 0
+                for(var j=0;j<data[i].coords.length-1;j++){
+                    dis_check = dis_check + this.distance(data[i].coords[j].lat,data[i].coords[j].long,data[i].coords[j+1].lat,data[i].coords[j+1].long,"N")
+                    if(dis_check > 30){
+                        break
+                    }
+                    if(data[i].coords[j].long > data[i].coords[j+1].long){
+                        sum_west += 1
+                    }
+                    else if(data[i].coords[j].long < data[i].coords[j+1].long){
+                        sum_east += 1
                     }
                 }
-            }
-            else{
-                data_select = []
-                for(var i=0;i<data.length;i++){
-                    var sum = 0
-                    for(var j=0;j<data[i].coords.length-1;j++){
-                    // var dis = data[i].coords[0].long
-                        if(data[i].coords[j].long < data[i].coords[j+1].long){
-                            sum += 1
-                        }
-                        // console.log(dis)
-                        if(sum > data[i].coords.length/3){
-                            // console.log('yes: ',dis)
-                            data_select.push(data[i])
-                            name.push(data[i].name)
-                            break
-                        }
-                    // console.log(dis)
-                    }
+                if(sum_west > sum_east){
+                    data_west.push(data[i])
+                    // name_west.push(data[i].name)
+                }
+                else{
+                    data_east.push(data[i])
+                    // name_east.push(data[i].name)
                 }
             }
         }
         else{
-            if(value === 'West'){
-                data_select = []
-                for(var i=0;i<data.length;i++){
-                    var sum = 0
-                    for(var j=data[i].coords.length-1;j>1;j--){
-                    // var dis = data[i].coords[0].long
-                        if(data[i].coords[j].long >= data[i].coords[j-1].long){
-                            sum += 1
-                        }
-                        // console.log(dis)
-                        if(sum > data[i].coords.length/3){
-                            // console.log('yes: ',dis)
-                            data_select.push(data[i])
-                            name.push(data[i].name)
-                            break
-                        }
-                    // console.log(dis)
+            for(var i=0;i<data.length;i++){
+                sum_east = 0
+                sum_west = 0
+                dis_check = 0
+                for(var j=data[i].coords.length-1;j>1;j--){
+                    dis_check = dis_check + this.distance(data[i].coords[j].lat,data[i].coords[j].long,data[i].coords[j-1].lat,data[i].coords[j-1].long,"N")
+                    if(dis_check > 8){
+                        start = j
+                        break
                     }
                 }
-            }
-            else{
-                data_select = []
-                for(var i=0;i<data.length;i++){
-                    var sum = 0
-                    for(var j=data[i].coords.length-1;j>1;j--){
-                    // var dis = data[i].coords[0].long
-                        if(data[i].coords[j].long <= data[i].coords[j-1].long){
-                            sum += 1
-                        }
-                        // console.log(dis)
-                        if(sum > data[i].coords.length/3){
-                            // console.log('yes: ',dis)
-                            data_select.push(data[i])
-                            name.push(data[i].name)
-                            break
-                        }
-                    // console.log(dis)
+                dis_check = 0
+                for(var j=start;j>1;j--){
+                    dis_check = dis_check + this.distance(data[i].coords[j].lat,data[i].coords[j].long,data[i].coords[j-1].lat,data[i].coords[j-1].long,"N")
+                    if(dis_check > 25){
+                        break
                     }
+                    if(data[i].coords[j].long > data[i].coords[j-1].long){
+                        sum_west += 1
+                    }
+                    else if(data[i].coords[j].long < data[i].coords[j-1].long){
+                        sum_east += 1
+                    }
+                    // console.log(j)
+                }
+                // console.log(data[i].name,sum_east,sum_west)
+                if(sum_west > sum_east){
+                    data_west.push(data[i])
+                    // name_west.push(data[i].name)
+                }
+                else{
+                    data_east.push(data[i])
+                    // name_east.push(data[i].name)
                 }
             }
         }
+
+        if(value === 'West') data_select = data_west
+        else data_select = data_east
 
         // console.log('real' , data_select)
 
