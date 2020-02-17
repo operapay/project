@@ -125,15 +125,14 @@ class FileReader extends React.Component {
         var sumarrival;
         var dis,dis2;
 
-        // console.log(data)
         for(var i=0;i<data.length;i++){
             sumdeparture = 0
             sumarrival = 0
             var state = data[i].coords.length-1
             // console.log(state)
-            dis = this.distance(13.6902099,100.7449953,data[i].coords[0].lat, data[i].coords[0].long, "N")
-            dis2 = this.distance(13.6902099,100.7449953,data[i].coords[state].lat, data[i].coords[state].long, "N")
-            // console.log(dis)
+            dis = this.distance(13.6902099,100.7449953,data[i].coords[0][1], data[i].coords[0][0], "N")
+            dis2 = this.distance(13.6902099,100.7449953,data[i].coords[state][1], data[i].coords[state][0], "N")
+            console.log('dis',dis,dis2)
             if(dis < dis2) {
                 data_departure.push(data[i])
                 name_departure.push(data[i].name)

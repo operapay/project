@@ -28,6 +28,7 @@ class FileReader2 extends React.Component {
         super(props);
         this.state = {
             data : [],
+            scatter: [],
             checkedList: [],
         };
         this.test = props.data
@@ -41,23 +42,44 @@ class FileReader2 extends React.Component {
     onhandleChange(value,data) {
         // console.log(`selected ${value}`);
         var data_select = []
+        var data_scatter = []
         // console.log(value)
         this.setState({checkedList : value})
         for(var j=0;j<value.length;j++){
             for(var i=0;i<data.length;i++){
                 if(data[i].name === value[j]){
+                    var state = Math.floor((data[i].coords.length)/2)
                     data_select.push(data[i])
-                    console.log(data[i])
+                    data_scatter.push([data[i].coords[state][0],data[i].coords[state][1],data[i].coords[state][2],data[i].name])
+                    // console.log(data[i])
                 }
             }
         }
         // console.log(data_select)
-        this.setState({data : data_select})
+        this.setState({data : data_select,scatter:data_scatter})
+        // this.setState({data : data_select})
     }
 
     getOption = () => ({
         maptalks3D: map, 
         series: [
+            {
+                type: 'scatter3D',
+                coordinateSystem: 'maptalks3D',
+                itemStyle: {
+                    color: 'rgb(50, 50, 150)',
+                    opacity: 1
+                },
+                data: this.state.scatter,
+                symbolSize: 1,
+                label: {
+                    show: true,
+                    formatter: function (data) {
+                        return data[3];
+                    },
+                    position: 'insideTop'
+                },
+            },
             {
                 type: 'lines3D',
                 coordinateSystem: 'maptalks3D',
