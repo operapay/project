@@ -54,7 +54,7 @@ class FileReader2 extends React.Component {
 
     uniqueNameFlight(name,data,date){
         var count = 0
-        console.log(data.length)
+        // console.log(data.length)
         for(var i=1;i<data.length;i++){
             if (data[i].name === '-'){
                 count += 1
@@ -117,12 +117,16 @@ class FileReader2 extends React.Component {
                     this.state.arr[j].coords.pop()
                     break;
                 }
-                // console.log('check' , this.state.arr)
+                // var state = result.length-1
+                // // console.log(state)
+                // dis = this.distance(13.6902099,100.7449953,data[i].coords[0][1], data[i].coords[0][0], "N")
+                // dis2 = this.distance(13.6902099,100.7449953,data[i].coords[state][1], data[i].coords[state][0], "N")
+                // // console.log('check' , this.state.arr)
                 this.state.arr[j].coords.push([])
                 this.state.arr[j].name = result[i].name
                 this.state.arr[j].coords[i-num].push(result[i].long)
                 this.state.arr[j].coords[i-num].push(result[i].lat)
-                this.state.arr[j].coords[i-num].push(result[i].altitude)
+                this.state.arr[j].coords[i-num].push(result[i].altitude_ft*0.3048)
                 // dist = this.distance(13.6567,100.7518,result.data[i][5],result.data[i][4],"K")
                 // console.log(result.data[i][1]," ", dist)
                 if(check === false){

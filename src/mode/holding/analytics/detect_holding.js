@@ -15,15 +15,17 @@ class FileReader2 extends React.Component {
         super(props);
         this.state = {
             // csvfile: undefined,
-            dataAll : [{name:'', coords: [['', '', '']],date:'',time_1:'',time_2:''}],
+            dataAll : [{name:'', coords: [['', '', '']],date:'',time_1:'',time_2:'',aircraft:''}],
             arr: [{
                 name:'',
                 coords: [[]],
                 date:'',
                 time_1:'',
-                time_2:''
+                time_2:'',
+                aircraft:''
             }],
             distinct_name : [],
+            distinct_date : []
 
         };
         this.test = props.data
@@ -92,7 +94,9 @@ class FileReader2 extends React.Component {
         this.state.arr = [{
             name:'',
             coords: [[]],
-            date: [[]]
+            date: [[]],
+            aircraft:'',
+            datetime:''
         }]
         // console.log(result.length)
         var num = 0
@@ -101,6 +105,7 @@ class FileReader2 extends React.Component {
         var count = this.uniqueNameFlight(name,result,date)
         var dis = 100000
         var arr_name = []
+        var arr_date = []
         var check = false
         var sum = 0
         var dist
@@ -113,6 +118,7 @@ class FileReader2 extends React.Component {
             for(var i=num;i<=result.length;i++){
                 // console.log(num)
                 if(result[i].name === '-'){
+                    this.state.arr[j].aircraft = result[i-1].aircraft
                     num = i+1
                     //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
@@ -124,7 +130,7 @@ class FileReader2 extends React.Component {
                 // this.state.arr[j].name = result[i].name
                 this.state.arr[j].coords[i-num].push(result[i].long)
                 this.state.arr[j].coords[i-num].push(result[i].lat)
-                this.state.arr[j].coords[i-num].push(result[i].altitude)
+                this.state.arr[j].coords[i-num].push(result[i].altitude_ft*0.3048)
                 this.state.arr[j].date[i-num].push(result[i].date)
                 this.state.arr[j].date[i-num].push(result[i].time)
                 if(check === false){
@@ -136,6 +142,10 @@ class FileReader2 extends React.Component {
                             // console.log(sum)
                             check = true
                             name = result[i].name
+                            var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
+                            // time_first = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
+                            var local = moment(mydate).format('DD/MM/YYYY');
+
                         }
                         
                     }
@@ -145,17 +155,27 @@ class FileReader2 extends React.Component {
             }
             if(check === true){
                 this.state.arr[j].name = name
-                arr_name.push(name)
+                //arr_name.push(name)
+                this.state.arr[j].datetime = local
+                // arr.push(name)
+                arr_date.push(local)
                 // arr_date.push(local)
                 // console.log(name, ':' ,time_first, ' & ', time_last)
             }
             if(j < count-1){
-                this.state.arr.push({name:'', coords: [[]], date:[[]]})
+                this.state.arr.push({name:'', coords: [[]], date:[[]],aircraft:'',datetime:''})
             }
         }
 
-        var distinctName = [...new Set(arr_name)]
-        this.setState({dataAll: this.state.arr, distinct_name:distinctName});
+        var distinctDate = [...new Set(arr_date)]
+        distinctDate.sort(function(a, b){
+            var aa = a.split('/').reverse().join(),
+                bb = b.split('/').reverse().join();
+            return aa < bb ? -1 : (aa > bb ? 1 : 0);
+        });
+        // var distinctName = [...new Set(arr_name)]
+        console.log(distinctDate)
+        this.setState({dataAll: this.state.arr,  distinct_date:distinctDate});
     }
 
   
@@ -164,7 +184,7 @@ class FileReader2 extends React.Component {
       return (
         <div className="App">
           <h1>Holding Analyze</h1>
-          <Selectdata data={this.state.dataAll} name={this.state.distinct_name} dataref={this.dataref}/>
+          <Selectdata data={this.state.dataAll} date={this.state.distinct_date} dataref={this.dataref}/>
         </div>
       );
     }

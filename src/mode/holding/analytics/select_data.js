@@ -25,15 +25,24 @@ class FileReader1 extends React.Component {
             select : "",
             dataHoldingDist : [],
             dataHoldingTime : [],
+            distinct_name : [],
             Idealdis: [],
+            Idealtime: [],
+            data_select_name : [],
+            flight_default : "Select Flight",
+            date_default : "Select Date",
+            heavy: ['A380','A358','A359','A333','A332','B747','B77W','B788','B789','B772','B773'],
+            large: ['A319','A320','A321','B738','B739','B737'],
+            small: ['AT76','A20N'],
             point : [{name: 'LEBIM',lat:13.087447 ,lon: 100.473475, dis:62.04648723260302},
             {name: 'NORTA',lat:14.718789 ,lon: 100.639017, dis:57.16186200443073},
             {name: 'EASTE',lat:14.309667 ,lon: 101.286244, dis:74.06176424138363},
             {name: 'WILLA',lat:14.404717 ,lon: 100.059822, dis:64.93007258847182},
-            {name: 'DOLNI',lat:13.294339 ,lon: 101.180114, dis:58.124521104594955}]
+            {name: 'DOLNI',lat:13.294339 ,lon: 101.180114, dis:58.124521104594955}],
+            click: false
         };
 
-        this.name = props.name
+        this.date = props.date
         this.dataref = props.dataref
         this.data = props.data
 
@@ -103,7 +112,7 @@ class FileReader1 extends React.Component {
                     avg.push(count)
                     count = 0
                     var mydate = moment(String(selectdata[i].date), 'YYYY-MM-DD');
-                    console.log(mydate)
+                    // console.log(mydate)
                     var timeEnd = new Date(moment(mydate).format("MM/DD/YYYY")+" " + selectdata[i].time);
                     // var timeEnd = new Date("01/01/2007 " + selectdata[i].time);
                     var Diff = timeEnd - timeStart;
@@ -167,42 +176,78 @@ class FileReader1 extends React.Component {
         return value;
     }
 
-    onhandleChange(value,data) {
+    Date_onhandleChange(value,data) {
         var data_select = []
-        var data_dist = []
-        var data_time = []
-        var ground = 0
-        var res = this.alldata(value,this.dataref)
+        var data_name = []
+        this.setState({date_default:value})
+        // console.log(data)
         for(var i=0;i<data.length;i++){
-            if(data[i].name === value){
+            // console.log(data[i].date, String(value))
+            if(data[i].datetime === String(value)){
                 data_select.push(data[i])
+                data_name.push(data[i].name)
+                // console.log(data[i])
             }
         }
+        var distinctName = [...new Set(data_name)]
+        // console.log(data_time)
+        // console.log(data_time.sort(function(a, b){return a-b}))
+        // var distinct = [...new Set(data_time)].sort(function(a, b){return a-b})
 
-        var close = this.closest(data_select[0].coords,this.state.point)
-        var ideal = Math.round(this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N") + close.dis)
-        // console.log(ideal)
-        var resIdeal = [['Not holding',ideal],['Holding',ideal]]
-        this.setState({Idealdis:resIdeal})
+        this.setState({distinct_name : distinctName, data_select_name:data_select, flight_default:"Select Flight"})
+    }
 
-        var mydate = moment(String(data_select[0].date[0][0]), 'YYYY-MM-DD');
-        var timeStart = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[0][1]);
-        // var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
-        var timeEnd = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[data_select[0].date.length-1][1]);
-        // var timeEnd = new Date("01/01/2007 " + data_select[0].date[data_select[0].date.length-1][1]);
+    onhandleChange(value,data) {
+        if(value !== 'Select Flight'){
+            this.setState({flight_default:value})
+            var data_select = []
+            var data_dist = []
+            var data_time = []
+            var ground = 0
+            var speed_size = 0
+            var res = this.alldata(value,this.dataref)
+            for(var i=0;i<data.length;i++){
+                if(data[i].name === value){
+                    data_select.push(data[i])
+                }
+            }
 
-        var Diff = timeEnd - timeStart;
+            if(this.state.heavy.includes(data_select[0].aircraft)) speed_size = 150*0.868976;
+            else if(this.state.large.includes(data_select[0].aircraft)) speed_size = 140*0.868976;
+            else if(this.state.small.includes(data_select[0].aircraft)) speed_size = 110*0.868976;    
 
-        for(var i=1;i<data_select[0].coords.length;i++){
-            ground = ground + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0])
+            //-----------------compute part ideal-------------------------------
+            var close = this.closest(data_select[0].coords,this.state.point)
+            var ideal = Math.round(this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N") + close.dis)
+            var resIdeal = [['Not holding',ideal],['Holding',ideal]]
+
+            var ideal_speedperhour = (this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N")/250) + (close.dis/speed_size)
+            var ideal_speed = Math.round(ideal_speedperhour*60)
+            var resIdealtime = [['Not holding',ideal_speed],['Holding',ideal_speed]]
+            this.setState({Idealdis:resIdeal, Idealtime:resIdealtime})
+
+            var mydate = moment(String(data_select[0].date[0][0]), 'YYYY-MM-DD');
+            var timeStart = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[0][1]);
+            // var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
+            var timeEnd = new Date(moment(mydate).format("MM/DD/YYYY")+" " + data_select[0].date[data_select[0].date.length-1][1]);
+            // var timeEnd = new Date("01/01/2007 " + data_select[0].date[data_select[0].date.length-1][1]);
+
+            var Diff = timeEnd - timeStart;
+
+            for(var i=1;i<data_select[0].coords.length;i++){
+                ground = ground + this.distance(data_select[0].coords[i-1][1],data_select[0].coords[i-1][0],data_select[0].coords[i][1],data_select[0].coords[i][0],"N")
+            }
+            var time_hold = Diff * 0.16666666666667 * 0.0001
+            var time_non = res[1] * 0.16666666666667 * 0.0001
+            data_dist.push(['Not holding',Math.round(res[0])])
+            data_dist.push(['Holding',Math.round(ground)])
+            data_time.push(['Not holding',Math.round(time_non)])
+            data_time.push(['Holding',Math.round(time_hold)])
+            this.setState({dataHoldingDist : data_dist, dataHoldingTime : data_time})
         }
-        var time_hold = Diff * 0.16666666666667 * 0.0001
-        var time_non = res[1] * 0.16666666666667 * 0.0001
-        data_dist.push(['Not holding',Math.round(res[0])])
-        data_dist.push(['Holding',Math.round(ground)])
-        data_time.push(['Not holding',Math.round(time_non)])
-        data_time.push(['Holding',Math.round(time_hold)])
-        this.setState({dataHoldingDist : data_dist, dataHoldingTime : data_time})
+        else{
+            this.setState({dataHoldingDist : [], dataHoldingTime : [],Idealdis:[], Idealtime:[]})
+        }
     }
 
     getOption = () => ({
@@ -302,16 +347,43 @@ class FileReader1 extends React.Component {
                         fontSize: 20
                     }
                 },
+            },
+            {
+                type: 'line',
+                data: this.state.Idealtime,
+                lineStyle: {
+                    opacity : 0
+                },
+                symbol : 'none',
+                markLine: {
+                    data: [
+                        {type: 'average', name: 'Ideal'}
+                    ],
+                    lineStyle: {
+                        width : 2
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            fontSize: 20
+                        }
+                    },
+                }
             }
         ]      
     });
   
     render(props) {
-    //   console.log(this.state.csvfile);
+      console.log(this.date);
       return (
         <div className="App">
-            <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e,this.data)}>
-                {this.name.map(flight => (
+            <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.date_default} onChange={e => this.Date_onhandleChange(e,this.data)}>
+                {this.date.map(flight => (
+                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                ))}
+            </Select>
+            <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} value={this.state.flight_default} onChange={e => this.onhandleChange(e,this.state.data_select_name)}>
+                {this.state.distinct_name.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
             </Select>
@@ -324,7 +396,7 @@ class FileReader1 extends React.Component {
 
   FileReader1.propTypes = {
     data: PropTypes.array,
-    name: PropTypes.array,
+    date: PropTypes.array,
     dataref: PropTypes.array
   };
   

@@ -30,9 +30,9 @@ class FileReader2 extends React.Component {
             data : [],
             checkedList: [],
             data_line : [],
-            heavy: ['A380','A358','A359','A333','A332','B747','B77W','B788','B789','B772'],
+            heavy: ['A380','A358','A359','A333','A332','B747','B77W','B788','B789','B772','B773'],
             large: ['A319','A320','A321','B738','B739','B737'],
-            small: ['AT76']
+            small: ['AT76','A20N']
         };
         this.data = props.data
         this.time_pick = props.time_pick
