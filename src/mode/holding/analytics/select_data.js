@@ -205,6 +205,7 @@ class FileReader1 extends React.Component {
             var data_time = []
             var ground = 0
             var speed_size = 0
+            var speed_size_des = 0
             var res = this.alldata(value,this.dataref)
             for(var i=0;i<data.length;i++){
                 if(data[i].name === value){
@@ -212,16 +213,25 @@ class FileReader1 extends React.Component {
                 }
             }
 
-            if(this.state.heavy.includes(data_select[0].aircraft)) speed_size = 150*0.868976;
-            else if(this.state.large.includes(data_select[0].aircraft)) speed_size = 140*0.868976;
-            else if(this.state.small.includes(data_select[0].aircraft)) speed_size = 110*0.868976;    
+            if(this.state.heavy.includes(data_select[0].aircraft)) {
+                speed_size = 150*0.868976
+                speed_size_des = 500
+            }
+            else if(this.state.large.includes(data_select[0].aircraft)){
+                speed_size = 140*0.868976;
+                speed_size_des = 450
+            } 
+            else if(this.state.small.includes(data_select[0].aircraft)) {
+                speed_size = 110*0.868976;    
+                speed_size_des = 250
+            }
 
             //-----------------compute part ideal-------------------------------
             var close = this.closest(data_select[0].coords,this.state.point)
             var ideal = Math.round(this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N") + close.dis)
             var resIdeal = [['Not holding',ideal],['Holding',ideal]]
 
-            var ideal_speedperhour = (this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N")/250) + (close.dis/speed_size)
+            var ideal_speedperhour = (this.distance(data_select[0].coords[0][1],data_select[0].coords[0][0],close.lat,close.lon,"N")/speed_size_des) + (close.dis/speed_size)
             var ideal_speed = Math.round(ideal_speedperhour*60)
             var resIdealtime = [['Not holding',ideal_speed],['Holding',ideal_speed]]
             this.setState({Idealdis:resIdeal, Idealtime:resIdealtime})
