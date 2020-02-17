@@ -125,6 +125,7 @@ class FileReader extends React.Component {
                     this.state.arr[j].time_1 = time1
                     this.state.arr[j].time_2 = time2
                     this.state.arr[j].week = week
+                    // console.log('time',time2)
                     // data_check_time_date.push({name: result[num].name,date: date,time_1:time1,time_2:time2})
                     num = i+1
                     //name = result.data[i][1]

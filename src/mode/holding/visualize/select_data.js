@@ -48,7 +48,7 @@ class FileReader2 extends React.Component {
             // console.log(data[i].date, String(value))
             if(data[i].date === String(value)){
                 data_select.push(data[i])
-                data_time.push(data[i].time_1.getHours())
+                data_time.push(data[i].time_2.getHours())
                 // console.log(data[i])
             }
         }

@@ -118,6 +118,9 @@ class FileReader2 extends React.Component {
             for(var i=num;i<=result.length;i++){
                 // console.log(num)
                 if(result[i].name === '-'){
+                    if(this.distance(13.6567,100.7518,result[num].lat,result[num].long,"N") < this.distance(13.6567,100.7518,result[i-1].lat,result[i-1].long,"N")){
+                        check = false
+                    }
                     this.state.arr[j].aircraft = result[i-1].aircraft
                     num = i+1
                     //name = result.data[i][1]

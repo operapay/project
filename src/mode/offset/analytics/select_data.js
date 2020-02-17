@@ -84,13 +84,24 @@ class FileReader extends React.Component {
     Date_onhandleChange(value,data) {
         var data_select = []
         var data_time = []
+        var dis,dis2
         this.setState({date_default:value,click:false})
         // console.log(data)
         for(var i=0;i<data.length;i++){
+            dis = 0
+            dis2 = 0
             // console.log(data[i].date, String(value))
             if(data[i].date === String(value)){
                 data_select.push(data[i])
-                data_time.push(data[i].time_1.getHours())
+                var state = data[i].coords.length-1
+                // console.log(state)
+                dis = this.distance(13.6902099,100.7449953,data[i].coords[0].lat, data[i].coords[0].long, "N")
+                dis2 = this.distance(13.6902099,100.7449953,data[i].coords[state].lat, data[i].coords[state].long, "N")
+                if(dis < dis2) data_time.push(data[i].time_1.getHours())
+                else{
+                    data_time.push(data[i].time_2.getHours())
+                }
+                // data_time.push(data[i].time_1.getHours())
                 // console.log(data[i])
             }
         }

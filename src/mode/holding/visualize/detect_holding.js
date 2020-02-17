@@ -98,8 +98,8 @@ class FileReader2 extends React.Component {
         var check = false
         var sum = 0
         var dist
-        var time_first
-        var time_last
+        // var time_first
+        // var time_last
         var arr_date = []
         // console.log(count)
 
@@ -107,11 +107,22 @@ class FileReader2 extends React.Component {
             dis = 100000
             check = false
             sum = 0
-            time_first = 0
-            time_last = 0
+            // time_first = 0
+            // time_last = 0
+            var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
             for(var i=num;i<=result.length;i++){
                 // console.log(num)
                 if(result[i].name === '-'){
+                    if(this.distance(13.6567,100.7518,result[num].lat,result[num].long,"N") < this.distance(13.6567,100.7518,result[i-1].lat,result[i-1].long,"N")){
+                        check = false
+                    }
+                    var test1 = moment(mydate).format("MM/DD/YYYY")+" " + result[num].time
+                    var time1 = moment.utc(test1).toDate();
+                    var local = moment(time1).format('DD/MM/YYYY');
+                    //console.log(time1)
+                    // dataall_date.push(local)
+                    var test2 = moment(mydate).format("MM/DD/YYYY")+" " + result[i-1].time
+                    var time2 = moment.utc(test2).toDate();
                     num = i+1
                     //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
@@ -135,18 +146,19 @@ class FileReader2 extends React.Component {
                         // console.log(result.data[i][1]," ", dist)
                         sum = sum + 1
                         // var timeStart = new Date("01/01/2007 " + data_select[0].date[0][1]);
-                        if(sum === 1){
-                            var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
-                            time_first = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
-                            var local = moment(time_first).format('DD/MM/YYYY');
-                            // console.log('test' + String(result[i].date))
-                        }
+                        // if(sum === 1){
+                        //     var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
+                        //     var time1 = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
+                        //     time_first= moment.utc(time1).toDate();
+                        //     var local = moment(time_first).format('DD/MM/YYYY');
+                        //     // console.log('test' + String(result[i].date))
+                        // }
                         if(sum > 15){
                             // console.log(sum)
                             check = true
                             name = result[i].name
-                            var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
-                            time_last = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
+                            // var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
+                            // time_last = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
                         }
                         
                     }
@@ -155,8 +167,8 @@ class FileReader2 extends React.Component {
                 }
             }
             if(check === true){
-                this.state.arr[j].time_1 = time_first
-                this.state.arr[j].time_2 = time_last
+                this.state.arr[j].time_1 = time1
+                this.state.arr[j].time_2 = time2
                 this.state.arr[j].date = local
                 // arr.push(name)
                 arr_date.push(local)
