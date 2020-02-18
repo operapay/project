@@ -41,7 +41,9 @@ class FileReader extends React.Component {
             real : [],
             click : false,
             checkbox : [],
-            what_select : "Date"
+            what_select : "Date",
+            last: null
+            // button_search: true
             // checkedList: [],
         };
         this.data = props.data
@@ -124,7 +126,10 @@ class FileReader extends React.Component {
     }
 
     Type_onhandleChange(value,data) {
-        this.setState({type_default:value,click:false})
+
+        var before_state = this.state.type_default
+        this.setState({type_default:value,click:false,last:before_state})
+        // console.log(this.state.type_default,this.state.last)
         var data_select = []
         var name = []
         var data_departure = []
@@ -162,6 +167,10 @@ class FileReader extends React.Component {
             name = name_arrival
         }
 
+        // if(this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.type_default !== 'Select Type'){
+        //     this.setState({button_search:false})
+        // }
+
 
         this.setState({real : data_select ,checkbox:name})
     }
@@ -191,10 +200,12 @@ class FileReader extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select> */}
-                <Button onClick={this.search}>Search</Button>
+                {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.type_default !== 'Select Type' ?
+                <Button onClick={this.search}>Search</Button> : null}
             </div>
             <div>
                 {this.state.click === true ? 
+                // {/* {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.type_default !== 'Select Type' && this.state.last !== this.state.type_default? */}
                 <Offset data={this.state.real} name={this.state.checkbox} what={this.state.what_select}/>
                 : null}
             </div>

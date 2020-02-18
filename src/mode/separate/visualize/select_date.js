@@ -311,13 +311,15 @@ class FileReader extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
                     ))}
                 </Select>
-                <Select placeholder="Select Type" style={{ width: 400, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Flight_onhandleChange(e,this.state.time_flight)}>
+                <Select placeholder="Select Flight" style={{ width: 400, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Flight_onhandleChange(e,this.state.time_flight)}>
                     {this.state.distinct_name.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight.name}>{flight.name} time: {moment(flight.time).format('HH:mm:ss')} </Option>
                     ))}
                 </Select>
                 <TimePicker defaultValue={moment('00:00:00', 'HH:mm:ss')} value={moment(this.state.real, 'HH:mm:ss')} onChange={e => this.onChange_picktime(e)}/>
-                <Button onClick={this.search}>Search</Button>
+                {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.flight_default !== 'Select Flight' ?
+                <Button onClick={this.search}>Search</Button> : null}
+                {/* <Button onClick={this.search}>Search</Button> */}
             </div>
             <div>
                 {this.state.click === true ? 

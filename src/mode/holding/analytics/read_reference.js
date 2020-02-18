@@ -19,6 +19,7 @@ class FileReader1 extends React.Component {
             csvfile: undefined,
             status : true,
             data : null,
+            upload: true
             // route : [
             // [{name: 'LEBIM',lat:13.087447 ,lon: 100.473475},
             // {name: 'INNDY',lat:13.271014 ,lon: 100.624633},
@@ -113,6 +114,7 @@ class FileReader1 extends React.Component {
     handleChange = event => {
         this.setState({
           csvfile: event.target.files[0],
+          upload: false
         //   check: false
         });
     };
@@ -149,7 +151,7 @@ class FileReader1 extends React.Component {
                 onChange={this.handleChange}
             />
             <p />
-            <button onClick={this.importCSV}> Upload now!</button>
+            <button onClick={this.importCSV} disabled={this.state.upload}> Upload now!</button>
             {this.state.status === false ? 
             <Detect data={this.test} status={this.state.status} dataref={this.state.data}/>
             : null}

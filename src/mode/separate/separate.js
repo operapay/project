@@ -24,7 +24,8 @@ class Mode extends React.Component {
       key: 'tab1',
       csvfile: undefined,
       data : null,
-      check : false
+      check : false,
+      upload : true
     };
     // this.test = props.data
 
@@ -40,7 +41,8 @@ class Mode extends React.Component {
     handleChange = event => {
       this.setState({
         csvfile: event.target.files[0],
-        check: false
+        check: false,
+        upload: false
       });
     };
   
@@ -78,7 +80,7 @@ class Mode extends React.Component {
               onChange={this.handleChange}
           />
           <p />
-          <button onClick={this.importCSV}> Upload now!</button>
+          <button onClick={this.importCSV} disabled={this.state.upload}> Upload now!</button>
           {this.state.check === true ? 
           <Card
             style={{ width: '100%', textAlign: "-webkit-center"}}

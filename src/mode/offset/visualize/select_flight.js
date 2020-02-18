@@ -132,7 +132,9 @@ class FileReader extends React.Component {
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
-                <Button onClick={this.search}>Search</Button>
+                {this.state.flight_default !== 'Select Flight no' && this.state.unit_default !== 'Select Unit' && this.state.time_default !== 'Select Time' ?
+                <Button onClick={this.search} disabled={this.state.button_search}>Search</Button> : null}
+                {/* <Button onClick={this.search}>Search</Button> */}
             </div>
             <div>
                 {this.state.click === true ? 
