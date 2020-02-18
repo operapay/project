@@ -18,7 +18,7 @@ class FileReader extends React.Component {
         super(props);
         this.state = {
             // csvfile: undefined,
-            runway : [{lat:13.703669,long:100.743178}],
+            runway : [{name:'01R',lat:13.656697,long:100.751831},{name:'01L',lat:13.671278,long:100.734664}],
             arr: [{
                 name:'',
                 coords: [[]],
@@ -79,13 +79,96 @@ class FileReader extends React.Component {
         }
     }
 
+    interpolate(x1,y1,x2,y2,x){
+        // console.log(x1,y1,x2,y2,x)
+        var diff = ((y2-y1)/(x2-x1))*(x-x1)
+        var res = diff+y1
+        return res
+    }
+
     timeStringToFloat(time) {
         // console.log(time)
         var hoursMinutes = time.split(':');
         var hours = parseInt(hoursMinutes[0], 10);
         var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
         var seconds = hoursMinutes[2] ? parseInt(hoursMinutes[2], 10) : 0;
-        return hours + minutes / 60 + seconds / 3600;
+        return hours + minutes /60 + seconds/3600;
+    }
+
+    FloattoTime(time){
+        // console.log(time)
+        var hh = time-(time % 1)
+        var min = (time%1)*60
+        var mm = min-(min%1)
+        var seconds = (min%1)*60
+        var ss = seconds-(seconds%1)
+        // var ss = ((time-hh*60)-mm)%100
+        // console.log(hh)
+        return hh + ':' + mm + ':' + ss
+    }
+
+    compute_newcoords(array,point){
+        var first,first_lat,first_long,last,last_lat,last_long
+        var res = [{name:'',time:'',data:[]}]
+        var time = []
+        var num = 0
+        for(var i=0;i<array.length;i++){
+            first = 0
+            first_lat = 0
+            first_long = 0
+            last = 0
+            last_lat = 0
+            last_long = 0
+            for(var j=1;j<array[i].coords.length;j++){
+                first_lat = array[i].coords[j-1][1]
+                last_lat = array[i].coords[j][1]
+                first_long = array[i].coords[j-1][0]
+                last_long = array[i].coords[j][0]
+                if((point[0].lat >= first_lat && point[0].lat <= last_lat) && (point[0].long >= first_long && point[0].long <= last_long)){
+                    // time_min = array[i].coords[j-1][3]
+                    // time_max = data[i].data.coords[j][3]
+                    first = this.timeStringToFloat( moment(array[i].coords[j-1][3]).format('HH:mm:ss'))
+                    last = this.timeStringToFloat( moment(array[i].coords[j][3]).format('HH:mm:ss'))
+                    var point_lat = point[0].lat
+                    var point_long = point[0].long
+                    var turn = '01R'
+                    // console.log('if')
+                    break
+                }
+                else if((point[1].lat >= first_lat && point[1].lat <= last_lat) && (point[1].long >= first_long && point[1].long <= last_long)){
+                    // time_min = array[i].coords[j-1][3]
+                    // time_max = data[i].data.coords[j][3]
+                    first = this.timeStringToFloat( moment(array[i].coords[j-1][3]).format('HH:mm:ss'))
+                    last = this.timeStringToFloat( moment(array[i].coords[j][3]).format('HH:mm:ss'))
+                    var point_lat = point[1].lat
+                    var point_long = point[1].long
+                    var turn = '01L'
+                    // console.log('if')
+                    break
+                }
+            }
+            var res_time1 = this.interpolate(parseFloat(first_lat),first,parseFloat(last_lat),last,point_lat)
+            var res_time2 = this.interpolate(parseFloat(first_long),first,parseFloat(last_long),last,point_long)
+            var avg = (res_time1+res_time2)/2
+
+            // var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
+            // console.log(array[i].coords[j-1][3], '--',this.FloattoTime(avg))
+            var test1 = moment(array[i].date).format("DD/MM/YYYY")+" " + this.FloattoTime(avg)
+            var time1 = moment(test1).toDate();
+            // console.log(array[i].coords[j-1][3], '--',time1)
+            // console.log(array[i].name,'time_runway',res_time1,res_time2,this.FloattoTime(avg))
+            res[i].name = array[i].name
+            res[i].time = time1
+            res[i].timeint = avg
+            res[i].data = array[i]
+            res[i].runway = turn
+            if(avg !== 0) time.push(time1.getHours())
+            if(i < array.length-1){
+                res.push({name:'',time:'',data:[]})
+            }
+            // console.log(res)
+        }
+        return {res: res ,time:time};
     }
   
     Date_onhandleChange(value,data) {
@@ -102,8 +185,9 @@ class FileReader extends React.Component {
                 // console.log(data[i])
             }
         }
-
-        name = this.closest(data_select,this.state.runway)
+        // console.log(data_select)
+        name =this.compute_newcoords(data_select,this.state.runway)
+        // name = this.closest(data_select,this.state.runway)
         // console.log('name',name)
         // console.log(data_time)
         // console.log(data_time.sort(function(a, b){return a-b}))
@@ -162,6 +246,10 @@ class FileReader extends React.Component {
                     value=array[i].coords[j][3]
                 }
             }
+            // var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
+            // var test1 = moment(mydate).format("MM/DD/YYYY")+" " + result[num].time
+            // var time1 = moment.utc(test1).toDate();
+
             res[i].name = array[i].name
             res[i].time = value
             res[i].timeint = this.timeStringToFloat( moment(value).format('HH:mm:ss'))
@@ -233,7 +321,7 @@ class FileReader extends React.Component {
             </div>
             <div>
                 {this.state.click === true ? 
-                <Separate data={this.state.time_flight} time_pick={this.state.real} name={this.state.name}/>
+                <Separate data={this.state.time_flight} time_pick={this.state.real} name={this.state.name} turn={this.state.date_name}/>
                 : null}
             </div>
 

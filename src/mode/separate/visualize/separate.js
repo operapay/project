@@ -28,16 +28,18 @@ class FileReader2 extends React.Component {
         super(props);
         this.state = {
             data : [],
+            runway : [{name:'01R',lat:13.656697,long:100.751831},{name:'01L',lat:13.671278,long:100.734664}],
             checkedList: [],
             data_line : [],
             heavy: ['A380','A358','A359','A333','A332','B747','B77W','B788','B789','B772','B773'],
-            large: ['A319','A320','A321','B738','B739','B737'],
-            small: ['AT76','A20N']
+            large: ['A319','A320','A321','B738','B739','B737','A20N'],
+            small: ['AT76']
         };
         this.data = props.data
         this.time_pick = props.time_pick
         this.name_pick = props.name
         this.time = props.time
+        this.turn = props.turn
         
         // this.getData = this.getData.bind(this);
         // this.updateData = this.updateData.bind(this);
@@ -103,9 +105,9 @@ class FileReader2 extends React.Component {
         var color_num = 0
         // console.log('pick' , timepick)
         // console.log(this.time)
-        console.log(data)
+        // console.log(data)
         for(var i=0;i<data.length;i++){
-            var dis;
+            var dis,dis_runway;
             var state = 0
             for(var j=1;j<data[i].data.coords.length;j++){
                 // moment(data[i].coords[j-1][3]).format('HH:mm:ss')
@@ -126,16 +128,16 @@ class FileReader2 extends React.Component {
                     break
                 }
             }
-            var res_lon = this.interpolate(time_min,parseFloat(lon_min),time_max,parseFloat(lon_min),timepick)
+            var res_lon = this.interpolate(time_min,parseFloat(lon_min),time_max,parseFloat(lon_max),timepick)
             var res_lat = this.interpolate(time_min,parseFloat(lat_min),time_max,parseFloat(lat_max),timepick)
             var res_alt = this.interpolate(time_min,parseFloat(altitude_min),time_max,parseFloat(altitude_max),timepick)
-            // array.push({name:data[i].name,coords:[res_lon,res_lat,res_alt]})
-
-            // console.log(data)
-            // console.log('data', data[i], data[i+1])
-            // console.log(i)
+            
+            //--------------------detect miles from runway-------------------------------
+            if(this.turn[i].runway === '01R') dis_runway = this.distance(this.state.runway[0].lat,this.state.runway[0].long,res_lat,res_lon)
+            else if(this.turn[i].runway === '01L') dis_runway = this.distance(this.state.runway[1].lat,this.state.runway[1].long,res_lat,res_lon)
             //-------------------- compute distance between airplane----------------------
-            if(i < data.length-1){
+            if(i < data.length-1 && res_alt !== 0 && dis_runway < 15){
+                // console.log('if')
                 var head; 
                 if(this.state.heavy.includes(data[i].data.aircraft)){
                     scatter.push([res_lon,res_lat,res_alt,15,data[i].name])
@@ -149,7 +151,7 @@ class FileReader2 extends React.Component {
                     scatter.push([res_lon,res_lat,res_alt,5,data[i].name])
                     head = 'small'
                 }
-                // console.log(i)
+                // console.log('scatter',scatter)
                 var follow;
                 if(this.state.heavy.includes(data[i+1].data.aircraft)) follow = 'heavy';
                 else if(this.state.large.includes(data[i+1].data.aircraft)) follow = 'large';
@@ -186,8 +188,9 @@ class FileReader2 extends React.Component {
                             color: '#a6c84c',
                             opacity: 1
                         }})
+                        color_num += 1
                     }
-                    else{
+                    else if(color_num % 2 != 0){
                         // console.log('odd')
                         line.push({name:data[i].name,coords:coord,
                         lineStyle: {
@@ -195,8 +198,23 @@ class FileReader2 extends React.Component {
                             color: '#ffa022',
                             opacity: 1
                         }}) 
+                        color_num += 1
                     }
-                    color_num += 1
+                    // color_num += 1
+                }
+            }
+            else if(i === data.length-1 && dis_runway < 15){
+                if(this.state.heavy.includes(data[i].data.aircraft)){
+                    scatter.push([res_lon,res_lat,res_alt,15,data[i].name])
+                    // head = 'heavy'
+                } 
+                else if(this.state.large.includes(data[i].data.aircraft)){
+                    scatter.push([res_lon,res_lat,res_alt,10,data[i].name])
+                    // head = 'large'
+                }
+                else if(this.state.small.includes(data[i].data.aircraft)) {
+                    scatter.push([res_lon,res_lat,res_alt,5,data[i].name])
+                    // head = 'small'
                 }
             }
         }
@@ -251,7 +269,8 @@ class FileReader2 extends React.Component {
     data: PropTypes.array,
     time_pick: PropTypes.string,
     name : PropTypes.string,
-    time : PropTypes.array
+    time : PropTypes.array,
+    turn : PropTypes.string
   };
   
   

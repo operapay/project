@@ -87,15 +87,15 @@ class FileReader extends React.Component {
 
         for(var j=0;j<count;j++){
             //console.log(j)
-            var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
             // console.log(mydate)
             // dataall_name.push(result[num].name)
             for(var i=num;i<=result.length;i++){
+                var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
                 // console.log(num)
                 if(result[i].name === '-'){
-
-                    var test1 = moment(mydate).format("MM/DD/YYYY")+" " + result[num].time
-                    var time1 = moment.utc(test1).toDate();
+                    var mydate1 = moment(String(result[i-1].date), 'YYYY-MM-DD');
+                    var test1 = moment(mydate1).format("MM/DD/YYYY")+" " + result[i-1].time
+                    var time1 = moment(test1).toDate();
                     var local = moment(time1).format('DD/MM/YYYY');
                     //console.log(time1)
                     dataall_date.push(local)
@@ -115,7 +115,7 @@ class FileReader extends React.Component {
                 this.state.arr[j].name = result[i].name
                 this.state.arr[j].aircraft = result[i].aircraft
                 var test = moment(mydate).format("MM/DD/YYYY")+" " + result[i].time
-                var time = moment.utc(test).toDate();
+                var time = moment(test).toDate();
                 this.state.arr[j].coords[i-num].push(result[i].long)
                 this.state.arr[j].coords[i-num].push(result[i].lat)
                 this.state.arr[j].coords[i-num].push(result[i].altitude)
