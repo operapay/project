@@ -69,9 +69,29 @@ class FileReader extends React.Component {
         // console.log(data_select)
         // console.log(data_time.sort(function(a, b){return a-b}))
         var distinctMonth = [...new Set(data_month)]
-        var distinctWeek = [...new Set(data_week)]
+        var month = []
+        for(var i=0;i<distinctMonth.length;i++){
+            month.push([distinctMonth[i],moment.months(distinctMonth[i] - 1)])
+        }
 
-        this.setState({data_selected:data_select, distinct_month : distinctMonth, distinct_week:distinctWeek, time_default:"Select Time", unit_default:"Select Unit"})
+        var distinctWeek = [...new Set(data_week)]
+        var week = []
+        var dateofweek1,dateofweek2;
+        for(var i=0;i<distinctWeek.length;i++){
+            dateofweek1 = moment(this.getDateOfWeek(distinctWeek[i],2019)).format('DD/MM/YYYY')
+            dateofweek2 = moment(this.getDateOfWeek(distinctWeek[i],2019)).add(6,'days').format('DD/MM/YYYY')
+            week.push([distinctWeek[i],dateofweek1+'-'+dateofweek2])
+            // moment(this.getDateOfWeek(distinctWeek[i],2019)).format('DD/MM/YYYY')
+        }
+        // console.log(week)
+
+        this.setState({data_selected:data_select, distinct_month : month, distinct_week:week, time_default:"Select Time", unit_default:"Select Unit"})
+    }
+
+    getDateOfWeek(w, y) {
+        var d = (1 + (w - 1) * 7); // 1st of January + 7 days for each week
+    
+        return new Date(y, 0, d);
     }
 
     Unit_onhandleChange(value) {
@@ -129,7 +149,7 @@ class FileReader extends React.Component {
                 </Select>
                 <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.time_default} onChange={e => this.Time_onhandleChange(e,this.state.data_selected)}>
                     {this.state.distinct_time.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                        <Option style={{ fontSize: "1rem" }} key={flight[0]}>{flight[1]}</Option>
                     ))}
                 </Select>
                 {this.state.flight_default !== 'Select Flight no' && this.state.unit_default !== 'Select Unit' && this.state.time_default !== 'Select Time' ?

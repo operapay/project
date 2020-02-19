@@ -71,9 +71,14 @@ class FileReader1 extends React.Component {
         }
     }
 
+    // process(date){
+    //     var parts = date.split("/");
+    //     return new Date(parts[2], parts[1] - 1, parts[0]);
+    // }
+
     average = list => list.reduce((prev, curr) => prev + curr) / list.length;
 
-    alldata(value,data){
+    alldata(value,data,date){
         // console.log(data)
         var avg = []
         var avg_time = []
@@ -85,8 +90,18 @@ class FileReader1 extends React.Component {
         var sum = 0
         var dist
         var num = 0
+        var mydate1 = moment(String(date), 'DD/MM/YYYY').add(5, 'days');
+        var mydate2 = moment(String(date), 'DD/MM/YYYY').add(-5, 'days');
+        var newdate;
+        // console.log(mydate1,mydate2)
+        // console.log(mydate.subtract('1', 'days'))
         for(var i=0;i<data.length-1;i++){
-            if(data[i].name === value){
+            newdate = moment(String(data[i].date), 'YYYY-MM-DD')
+            if(data[i].name === value && mydate1 > newdate && mydate2 < newdate){
+                // console.log(moment(String(data[i].date), 'YYYY-MM-DD'))
+                // if(mydate1 > newdate && mydate2 < newdate){
+                //     // console.log(newdate)
+                // }
                 if(data[i+1].name === '-'){
                     // console.log(i)
                     selectdata.push('-')
@@ -206,7 +221,7 @@ class FileReader1 extends React.Component {
             var ground = 0
             var speed_size = 0
             var speed_size_des = 0
-            var res = this.alldata(value,this.dataref)
+            var res = this.alldata(value,this.dataref,this.state.date_default)
             for(var i=0;i<data.length;i++){
                 if(data[i].name === value){
                     data_select.push(data[i])
