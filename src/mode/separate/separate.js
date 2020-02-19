@@ -1,9 +1,9 @@
 import { Card } from 'antd';
 import React from "react";
-// import Offset from '../../visualize/offset';
-import Offset from './visualize/predata'
-// import OffsetAnalyze from './analytics/predata'
-import OffsetAnalyze from './visualize/predata'
+// import Separate from '../../visualize/Separate';
+import Separate from './visualize/predata'
+// import SeparateAnalyze from './analytics/predata'
+import SeparateAnalyze from './analytics/predata'
 import Papa from 'papaparse'
 
 const tabList = [
@@ -62,8 +62,8 @@ class Mode extends React.Component {
   
     render() {
       const contentList = {
-        tab1: <Offset check={this.state.check} data={this.state.data}/>,
-        tab2: <OffsetAnalyze check={this.state.check} data={this.state.data}/>,
+        tab1: <Separate check={this.state.check} data={this.state.data}/>,
+        tab2: <SeparateAnalyze check={this.state.check} data={this.state.data}/>,
       };
       // console.log(this.state.csvfile)
       return (

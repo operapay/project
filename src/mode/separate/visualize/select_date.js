@@ -153,7 +153,9 @@ class FileReader extends React.Component {
 
             // var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
             // console.log(array[i].coords[j-1][3], '--',this.FloattoTime(avg))
-            var test1 = moment(array[i].date).format("DD/MM/YYYY")+" " + this.FloattoTime(avg)
+            console.log(array[i].date)
+            var test1 = moment(array[i].date).format("MM/DD/YYYY")+" " + this.FloattoTime(avg)
+            console.log(test1)
             var time1 = moment(test1).toDate();
             // console.log(array[i].coords[j-1][3], '--',time1)
             // console.log(array[i].name,'time_runway',res_time1,res_time2,this.FloattoTime(avg))
@@ -188,7 +190,7 @@ class FileReader extends React.Component {
         // console.log(data_select)
         name =this.compute_newcoords(data_select,this.state.runway)
         // name = this.closest(data_select,this.state.runway)
-        // console.log('name',name)
+        console.log('name',name)
         // console.log(data_time)
         // console.log(data_time.sort(function(a, b){return a-b}))
         var distinct = [...new Set(name.time)].sort(function(a, b){return a-b})

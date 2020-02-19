@@ -71,7 +71,7 @@ class FileReader extends React.Component {
         var distinctMonth = [...new Set(data_month)]
         var month = []
         for(var i=0;i<distinctMonth.length;i++){
-            month.push([distinctMonth[i],moment.months(distinctMonth[i] - 1)])
+            month.push([distinctMonth[i],moment.months(distinctMonth[i])])
         }
 
         var distinctWeek = [...new Set(data_week)]
