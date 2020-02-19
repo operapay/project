@@ -117,12 +117,12 @@ class FileReader2 extends React.Component {
                         check = false
                     }
                     var test1 = moment(mydate).format("MM/DD/YYYY")+" " + result[num].time
-                    var time1 = moment.utc(test1).toDate();
+                    var time1 = moment(test1).toDate();
                     var local = moment(time1).format('DD/MM/YYYY');
                     //console.log(time1)
                     // dataall_date.push(local)
                     var test2 = moment(mydate).format("MM/DD/YYYY")+" " + result[i-1].time
-                    var time2 = moment.utc(test2).toDate();
+                    var time2 = moment(test2).toDate();
                     num = i+1
                     //name = result.data[i][1]
                     this.state.arr[j].coords.pop()
@@ -149,7 +149,7 @@ class FileReader2 extends React.Component {
                         // if(sum === 1){
                         //     var mydate = moment(String(result[i].date), 'YYYY-MM-DD');
                         //     var time1 = new Date(moment(mydate).format("MM/DD/YYYY")+" " + result[i].time);
-                        //     time_first= moment.utc(time1).toDate();
+                        //     time_first= moment(time1).toDate();
                         //     var local = moment(time_first).format('DD/MM/YYYY');
                         //     // console.log('test' + String(result[i].date))
                         // }

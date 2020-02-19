@@ -172,9 +172,9 @@ class OffsetAnalyze extends React.Component {
             var dis = 0; var no = 0; var no1 = 0;
             // for(var j=1;j<result[i].coords.length;j++){
             for(var j=result[i].coords.length-1;j>1;j--){
-                x1 = (((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x1 = -(((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 y1 = (((result[i].coords[j-1].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j-1].lat*0.01745329251))*0.539957)
-                x2 = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x2 = -(((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 y2 = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
                 dis = dis + this.distance_xy(x1,y1,x2,y2)
                 // console.log('check',dis,x1,y1,x2,y2)

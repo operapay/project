@@ -91,12 +91,12 @@ class FileReader extends React.Component {
                 if(result[i].name === '-'){
 
                     var test1 = moment(mydate).format("MM/DD/YYYY")+" " + result[num].time
-                    var time1 = moment.utc(test1).toDate();
+                    var time1 = moment(test1).toDate();
                     var local = moment(time1).format('DD/MM/YYYY');
                     //console.log(time1)
                     dataall_date.push(local)
                     var test2 = moment(mydate).format("MM/DD/YYYY")+" " + result[i-1].time
-                    var time2 = moment.utc(test2).toDate();
+                    var time2 = moment(test2).toDate();
                     // var onejan = new Date(time1.getFullYear(),0,1);
                     // var week =  Math.ceil((((time1 - onejan) / 86400000) + onejan.getDay())/7);
                     // console.log('week ',week)
