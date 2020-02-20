@@ -18,7 +18,10 @@ class FileReader extends React.Component {
         super(props);
         this.state = {
             // csvfile: undefined,
-            runway : [{name:'01R',lat:13.656697,long:100.751831},{name:'01L',lat:13.671278,long:100.734664}],
+            runway : [{name:'01R',lat:13.656697,long:100.751831},
+            {name:'01L',lat:13.671278,long:100.734664},
+            {name:'19L',lat:13.691714,long:100.761033},
+            {name:'19R',lat:13.703669,long:100.743178}],
             arr: [{
                 name:'',
                 coords: [[]],
@@ -132,7 +135,7 @@ class FileReader extends React.Component {
                     var point_lat = point[0].lat
                     var point_long = point[0].long
                     var turn = '01R'
-                    // console.log('if')
+                    // console.log('01R')
                     break
                 }
                 else if((point[1].lat >= first_lat && point[1].lat <= last_lat) && (point[1].long >= first_long && point[1].long <= last_long)){
@@ -143,19 +146,43 @@ class FileReader extends React.Component {
                     var point_lat = point[1].lat
                     var point_long = point[1].long
                     var turn = '01L'
-                    // console.log('if')
+                    // console.log('01L')
                     break
                 }
+                else if((point[2].lat >= last_lat && point[2].lat <= first_lat) && (point[2].long >= last_long && point[2].long <= first_long)){
+                    // time_min = array[i].coords[j-1][3]
+                    // time_max = data[i].data.coords[j][3]
+                    first = this.timeStringToFloat( moment(array[i].coords[j-1][3]).format('HH:mm:ss'))
+                    last = this.timeStringToFloat( moment(array[i].coords[j][3]).format('HH:mm:ss'))
+                    var point_lat = point[2].lat
+                    var point_long = point[2].long
+                    var turn = '19L'
+                    // console.log('19L')
+                    break
+                }
+                else if((point[3].lat >= last_lat && point[3].lat <= first_lat) && (point[3].long >= last_long && point[3].long <= first_long)){
+                    // time_min = array[i].coords[j-1][3]
+                    // time_max = data[i].data.coords[j][3]
+                    first = this.timeStringToFloat( moment(array[i].coords[j-1][3]).format('HH:mm:ss'))
+                    last = this.timeStringToFloat( moment(array[i].coords[j][3]).format('HH:mm:ss'))
+                    var point_lat = point[3].lat
+                    var point_long = point[3].long
+                    var turn = '19R'
+                    // console.log('19R')
+                    break
+                }
+                // console.log(first_lat,first_long,last_lat,last_long +' vs ', point[3].lat,point[3].long)
             }
             var res_time1 = this.interpolate(parseFloat(first_lat),first,parseFloat(last_lat),last,point_lat)
             var res_time2 = this.interpolate(parseFloat(first_long),first,parseFloat(last_long),last,point_long)
+            // console.log
             var avg = (res_time1+res_time2)/2
 
-            // var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
+            // var mydate = moment(String(array[i].date), 'DD/MM/YYYY');
             // console.log(array[i].coords[j-1][3], '--',this.FloattoTime(avg))
-            console.log(array[i].date)
-            var test1 = moment(array[i].date).format("MM/DD/YYYY")+" " + this.FloattoTime(avg)
-            console.log(test1)
+            // console.log(array[i].date)
+            var test1 = moment(array[i].date,'DD/MM/YYYY').format("MM/DD/YYYY")+" " + this.FloattoTime(avg)
+            // console.log(test1)
             var time1 = moment(test1).toDate();
             // console.log(array[i].coords[j-1][3], '--',time1)
             // console.log(array[i].name,'time_runway',res_time1,res_time2,this.FloattoTime(avg))
@@ -187,7 +214,7 @@ class FileReader extends React.Component {
                 // console.log(data[i])
             }
         }
-        // console.log(data_select)
+        console.log(data_select)
         name =this.compute_newcoords(data_select,this.state.runway)
         // name = this.closest(data_select,this.state.runway)
         console.log('name',name)
@@ -226,44 +253,6 @@ class FileReader extends React.Component {
         // var sort_time = time.sort(function(a, b){return a-b})
         // console.log(time)
         this.setState({time_flight : data_select,distinct_name:data_select, flight_default:"Select Flight",real:'00:00:00'})
-    }
-
-    closest(array,point){
-        var i=0;
-        var j=0;
-        var minDiff=1000000;
-        // var distance;
-        var res = [{name:'',time:'',data:[]}]
-        var time = []
-        for(i in array){
-            var value = 0;
-            var minDiff=1000000;
-            for(j in array[i].coords){
-                // console.log(point[j])
-                var dis = this.distance(array[i].coords[j][1],array[i].coords[j][0],point[0].lat,point[0].long,"N")
-                // console.log(dis)
-                // var m=Math.abs(dis-array[i][0]);
-                if(dis<minDiff){ 
-                    minDiff=dis; 
-                    value=array[i].coords[j][3]
-                }
-            }
-            // var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
-            // var test1 = moment(mydate).format("MM/DD/YYYY")+" " + result[num].time
-            // var time1 = moment.utc(test1).toDate();
-
-            res[i].name = array[i].name
-            res[i].time = value
-            res[i].timeint = this.timeStringToFloat( moment(value).format('HH:mm:ss'))
-            res[i].data = array[i]
-            time.push(value.getHours())
-            if(i < array.length-1){
-                res.push({name:'',time:'',data:[]})
-            }
-        }
-        // res = (num*value)/distance
-        // distribute[param].data.push(res)
-        return {res: res ,time:time};
     }
 
     onChange = time => {

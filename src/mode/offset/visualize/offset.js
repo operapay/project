@@ -33,6 +33,7 @@ var dataplane = [
     [100.8975,13.51687,1828.8]]}
 ]
 
+var R = [[100.743178,13.703669,0]]
 
 var centrallocat = [[100.7415433,13.6383389,23]]
 
@@ -124,6 +125,16 @@ class FileReader extends React.Component {
             //         // opacity: 0.8
             //     }
             // },
+            {
+                type: 'scatter3D',
+                coordinateSystem: 'maptalks3D',
+                itemStyle: {
+                    color: 'rgb(50, 50, 150)',
+                    opacity: 1
+                },
+                data: R,
+                symbolSize: 10,
+            },
             {
                 type: 'scatter3D',
                 coordinateSystem: 'maptalks3D',

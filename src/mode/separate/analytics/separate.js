@@ -4,37 +4,31 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 // import './holding.css'
-import { Select,Checkbox,Col } from 'antd';
+import { Select,Checkbox,Col,Table, Input, Button, Icon } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+// import Tableplot from './table'
 
 const { Option } = Select;
-
-// var map = {
-//     center: [100.7395539,13.6983666], //mahamek
-//     zoom: 8,
-//     // pitch: 100,
-//     altitudeScale: 3.28,
-//     baseLayer: new maptalks.TileLayer('base', {
-//         urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-//         subdomains: ['a','b','c','d'],
-//         attribution: '&copy; <a href="http://osm.org">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/">CARTO</a>'
-//     }),
-// }
-var sizeValue = '30%';
-var symbolSize = 2.5;
 
 class FileReader2 extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data : [],
-            runway : [{name:'01R',lat:13.656697,long:100.751831},{name:'01L',lat:13.671278,long:100.734664}],
+            runway : [{name:'01R',lat:13.656697,long:100.751831},
+            {name:'01L',lat:13.671278,long:100.734664},
+            {name:'19L',lat:13.691714,long:100.761033},
+            {name:'19R',lat:13.703669,long:100.743178}],
             checkedList: [],
             data_bar : [],
             heavy: ['A38','A35','A33','B74','B77','B78'],
             large: ['A31','A32','B73','A20'],
             small: ['AT7'],
+            table : [],
+            data_table: [],
+            click: false,
+            name_table:''
         };
         this.data = props.data
         this.time_pick = props.time_pick
@@ -50,6 +44,62 @@ class FileReader2 extends React.Component {
         // console.log(this.data)
         this.getData(this.data)
     }
+
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Input
+              ref={node => {
+                this.searchInput = node;
+              }}
+              placeholder={`Search ${dataIndex}`}
+              value={selectedKeys[0]}
+              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+              style={{ width: 188, marginBottom: 8, display: 'block' }}
+            />
+            <Button
+              type="primary"
+              onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            //   icon="search"
+              size="small"
+              style={{ width: 90, marginRight: 8 }}
+            >
+              Search
+            </Button>
+            <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+              Reset
+            </Button>
+          </div>
+        ),
+        filterIcon: filtered => (
+          <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        onFilter: (value, record) =>
+          record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+          if (visible) {
+            setTimeout(() => this.searchInput.select());
+          }
+        },
+      });
+    
+      handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        this.setState({
+          searchText: selectedKeys[0],
+          searchedColumn: dataIndex,
+        });
+      };
+    
+      handleReset = clearFilters => {
+        clearFilters();
+        this.setState({ searchText: '' });
+      };
+
     compute_newcoords(array,point){
         var first,first_lat,first_long,last,last_lat,last_long
         var res = [{name:'',time:'',data:[]}]
@@ -89,6 +139,28 @@ class FileReader2 extends React.Component {
                     // console.log('if')
                     break
                 }
+                else if((point[2].lat >= last_lat && point[2].lat <= first_lat) && (point[2].long >= last_long && point[2].long <= first_long)){
+                    // time_min = array[i].coords[j-1][3]
+                    // time_max = data[i].data.coords[j][3]
+                    first = this.timeStringToFloat( moment(array[i].coords[j-1][3]).format('HH:mm:ss'))
+                    last = this.timeStringToFloat( moment(array[i].coords[j][3]).format('HH:mm:ss'))
+                    var point_lat = point[2].lat
+                    var point_long = point[2].long
+                    var turn = '19L'
+                    // console.log('19L')
+                    break
+                }
+                else if((point[3].lat >= last_lat && point[3].lat <= first_lat) && (point[3].long >= last_long && point[3].long <= first_long)){
+                    // time_min = array[i].coords[j-1][3]
+                    // time_max = data[i].data.coords[j][3]
+                    first = this.timeStringToFloat( moment(array[i].coords[j-1][3]).format('HH:mm:ss'))
+                    last = this.timeStringToFloat( moment(array[i].coords[j][3]).format('HH:mm:ss'))
+                    var point_lat = point[3].lat
+                    var point_long = point[3].long
+                    var turn = '19R'
+                    // console.log('19R')
+                    break
+                }
             }
             var res_time1 = this.interpolate(parseFloat(first_lat),first,parseFloat(last_lat),last,point_lat)
             var res_time2 = this.interpolate(parseFloat(first_long),first,parseFloat(last_long),last,point_long)
@@ -96,10 +168,9 @@ class FileReader2 extends React.Component {
 
             // var mydate = moment(String(result[num].date), 'YYYY-MM-DD');
             // console.log(array[i].coords[j-1][3], '--',this.FloattoTime(avg))
-            var test1 = moment(array[i].date).format("MM/DD/YYYY")+" " + this.FloattoTime(avg)
+            var test1 = moment(array[i].date,'DD/MM/YYYY').format("MM/DD/YYYY")+" " + this.FloattoTime(avg)
+            // console.log(test1)
             var time1 = moment(test1).toDate();
-            // console.log(array[i].coords[j-1][3], '--',time1)
-            // console.log(array[i].name,'time_runway',res_time1,res_time2,this.FloattoTime(avg))
             res[i].name = array[i].name
             res[i].time = time1
             res[i].timeint = avg
@@ -211,6 +282,10 @@ class FileReader2 extends React.Component {
         var array = [[[],[],[]],
                     [[],[],[]],
                     [[],[],[]]]
+        // var data_array = [[[],[],[]],
+        //                 [[],[],[]],
+        //                 [[],[],[]]]
+        var data_array = [[],[],[],[],[],[],[],[],[]]
         // var scatter = []
         // var line = []
         var data_distribute = []
@@ -218,10 +293,10 @@ class FileReader2 extends React.Component {
             var dis,dis_runway;
             // var state = 0
             if(data[i].data.date === data[i+1].data.date && data[i].timeint !== 0){
-                for(var j=1;j<data[i].data.coords.length;j++){
+                for(var j=1;j<data[i+1].data.coords.length;j++){
                     first = this.timeStringToFloat( moment(data[i+1].data.coords[j-1][3]).format('HH:mm:ss'))
                     last = this.timeStringToFloat( moment(data[i+1].data.coords[j][3]).format('HH:mm:ss'))
-                    if(data[i].timeint >= first && data[i].timeint <= last){
+                    if(data[i+1].timeint >= first && data[i+1].timeint <= last){
                         // console.log('if')
                         lon_min = data[i+1].data.coords[j-1][0]
                         lon_max = data[i+1].data.coords[j][0]
@@ -238,54 +313,68 @@ class FileReader2 extends React.Component {
                     var res_lat = this.interpolate(time_min,parseFloat(lat_min),time_max,parseFloat(lat_max),data[i+1].timeint)
                     var res_alt = this.interpolate(time_min,parseFloat(altitude_min),time_max,parseFloat(altitude_max),data[i+1].timeint)
                 }
+                // console.log(data[i].runway)
                 if(data[i].runway === '01R') dis_runway = this.distance(this.state.runway[0].lat,this.state.runway[0].long,res_lat,res_lon)
                 else if(data[i].runway === '01L') dis_runway = this.distance(this.state.runway[1].lat,this.state.runway[1].long,res_lat,res_lon) 
-                // console.log(data[i],data[i+1],dis_runway)
+                else if(data[i].runway === '19L') dis_runway = this.distance(this.state.runway[2].lat,this.state.runway[2].long,res_lat,res_lon)
+                else if(data[i].runway === '19R') dis_runway = this.distance(this.state.runway[3].lat,this.state.runway[3].long,res_lat,res_lon)
+                // console.log(data[i].name,data[i+1].name,dis_runway)
                 if(dis_runway < 9){
                     // console.log('if')
                     var head; 
                     if(this.state.heavy.includes(data[i].data.aircraft)) head = 'heavy'
                     else if(this.state.large.includes(data[i].data.aircraft)) head = 'large'
                     else if(this.state.small.includes(data[i].data.aircraft)) head = 'small'
+                    else head = 'large'
                     // console.log('scatter',scatter)
                     var follow;
                     if(this.state.heavy.includes(data[i+1].data.aircraft)) follow = 'heavy';
                     else if(this.state.large.includes(data[i+1].data.aircraft)) follow = 'large';
-                    else if(this.state.small.includes(data[i+1].data.aircraft)) follow = 'small';       
+                    else if(this.state.small.includes(data[i+1].data.aircraft)) follow = 'small';     
+                    else head = 'large'  
                     
                     var real_dis = 0;
                     if(head === 'small') {
                         if(follow === 'small'){
                             array[0][0].push(Math.round(dis_runway))
+                            data_array[0].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                         else if(follow === 'large'){
                             array[0][1].push(Math.round(dis_runway))
+                            data_array[1].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                         else if(follow === 'heavy'){
                             array[0][2].push(Math.round(dis_runway))
+                            data_array[2].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                         // real_dis = 3;
                     }    
                     else if(head === 'large'){
                         if(follow === 'small'){
                             array[1][0].push(Math.round(dis_runway))
+                            data_array[3].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                         else if(follow === 'large'){
                             array[1][1].push(Math.round(dis_runway))
+                            data_array[4].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                         else if(follow === 'heavy'){
                             array[1][2].push(Math.round(dis_runway))
+                            data_array[5].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                     }
                     else if(head === 'heavy'){
                         if(follow === 'small'){
                             array[2][0].push(Math.round(dis_runway))
+                            data_array[6].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                         else if(follow === 'large'){
                             array[2][1].push(Math.round(dis_runway))
+                            data_array[7].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                         else if(follow === 'heavy'){
                             array[2][2].push(Math.round(dis_runway))
+                            data_array[8].push({num:Math.round(dis_runway),data:[{time:data[i].time,head:data[i].name,tail:data[i+1].name}]})
                         }
                     }
                 }
@@ -293,10 +382,10 @@ class FileReader2 extends React.Component {
             // console.log('dis',array)
         }
         //----------------data distribution----------------
-        // console.log('dis',array)
-        let graph_name = ['H-Small T-Small','H-Small T-Large','H-Small T-Heavy',
-        'H-Large T-Small','H-Large T-Large','H-Large T-Heavy',
-        'H-Heavy T-Small','H-Heavy T-Large','H-Heavy T-Heavy']
+        // console.log('dis',data_array)
+        let graph_name = ['Small and Small','Small and Large','Small and Heavy',
+        'Large and Small','Large and Large','Large and Heavy',
+        'Heavy and Small','Heavy and Large','Heavy and Heavy']
         let plot_data = this.distribution(array)
         let series = []
         for(var i=0;i<plot_data.length;i++){
@@ -306,8 +395,46 @@ class FileReader2 extends React.Component {
                 yAxisIndex: i,
                 type: 'bar',})
         }
-        this.setState({data_bar:series})
+        this.setState({data_bar:series,table:data_array})
+        // this.setState({data_bar:plot_data})
     }
+
+    onChartClick = (param, echarts) => {
+        var data_click = {num:param.data[0],data:[]}
+        // console.log(param);
+        for(var i=0;i<this.state.table.length;i++){
+            if(i === param.seriesIndex){
+                for(var j=0;j<this.state.table[i].length;j++){
+                    // console.log(param.data[0])
+                    if(this.state.table[i][j].num === param.data[0]){
+                        data_click.data.push(this.state.table[i][j].data)
+                        // console.log(this.state.table[i])
+                    }
+                }
+            }
+        }
+        var data = []
+        if(data_click.length !== 0){
+            // console.log(data_click.data)
+            for(var i=0;i<data_click.data.length;i++){
+                // console.log(data_click.data[i][0].time)
+                // console.log(data_click.data[i][0].head)
+                // console.log(data_click.data[i][0].tail)
+                data.push(
+                {
+                    date:moment(data_click.data[i][0].time).format('MM/DD/YYYY'),
+                    key: i,
+                    head:data_click.data[i][0].head,
+                    tail:data_click.data[i][0].tail
+                })
+            }
+        }
+        var name = 'Table between ' + param.seriesName + ' at ' + param.data[0] + ' nmi'
+        // console.log(data)
+        data.sort(this.compare)
+        this.setState({data_table:data,click:true,name_table:name})
+        // alert('chart click');
+      };
 
     getOption = () => ({
         // title:[
@@ -365,13 +492,44 @@ class FileReader2 extends React.Component {
         ],
         series: this.state.data_bar
     });
-
   
     render(props) {
     //   console.log(this.state.csvfile);
-      return (
+        let onEvents = {
+        'click': this.onChartClick,
+        // 'legendselectchanged': this.onChartLegendselectchanged
+        };
+        const columns = [
+            {
+              title: 'Date',
+              dataIndex: 'date',
+              key: 'date',
+              width: '40%',
+              ...this.getColumnSearchProps('date'),
+            },
+            {
+              title: 'Head',
+              dataIndex: 'head',
+              key: 'head',
+              width: '30%',
+              ...this.getColumnSearchProps('head'),
+            },
+            {
+              title: 'tail',
+              dataIndex: 'tail',
+              key: 'tail',
+              ...this.getColumnSearchProps('tail'),
+            },
+        ];
+        return (
         <div className="App">
-            <ReactEcharts option={this.getOption()}  style={{width:1280, height:800}} />
+            <ReactEcharts ref={(e) => { this.echarts_react = e; } } option={this.getOption()}  style={{width:1280, height:800}} 
+            onEvents={onEvents}/>
+            <h1>{this.state.name_table}</h1>
+            {this.state.click === true ? 
+            <Table columns={columns} dataSource={this.state.data_table} bordered />
+            : null}
+            {/* <Tableplot data={this.state.data_table} check={this.state.click}/> */}
             {/* <Plot data={this.state.data_line}/> */}
         </div>
       );

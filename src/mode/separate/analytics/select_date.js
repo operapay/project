@@ -18,7 +18,10 @@ class FileReader extends React.Component {
         super(props);
         this.state = {
             // csvfile: undefined,
-            runway : [{name:'01R',lat:13.656697,long:100.751831},{name:'01L',lat:13.671278,long:100.734664}],
+            runway : [{name:'01R',lat:13.656697,long:100.751831},
+            {name:'01L',lat:13.671278,long:100.734664},
+            {name:'19L',lat:13.691714,long:100.761033},
+            {name:'19R',lat:13.703669,long:100.743178}],
             arr: [{
                 name:'',
                 coords: [[]],
@@ -48,6 +51,7 @@ class FileReader extends React.Component {
         this.date = props.date
         this.week = props.week
         this.month = props.month
+        this.year = props.year
 
         // this.getData = this.getData.bind(this);
     }
@@ -77,8 +81,8 @@ class FileReader extends React.Component {
         } 
         else if(value === 'Week') {
             for(var i=0;i<week.length;i++){
-                dateofweek1 = moment(this.getDateOfWeek(week[i],2019)).format('DD/MM/YYYY')
-                dateofweek2 = moment(this.getDateOfWeek(week[i],2019)).add(6,'days').format('DD/MM/YYYY')
+                dateofweek1 = moment(this.getDateOfWeek(week[i],this.year)).format('DD/MM/YYYY')
+                dateofweek2 = moment(this.getDateOfWeek(week[i],this.year)).add(6,'days').format('DD/MM/YYYY')
                 arr_week.push([week[i],dateofweek1+'-'+dateofweek2])
                 // moment(this.getDateOfWeek(distinctWeek[i],2019)).format('DD/MM/YYYY')
             }
@@ -160,7 +164,8 @@ class FileReader extends React.Component {
     check: PropTypes.bool,
     date: PropTypes.array,
     week: PropTypes.array,
-    month: PropTypes.array
+    month: PropTypes.array,
+    year: PropTypes.number
   };
   
   

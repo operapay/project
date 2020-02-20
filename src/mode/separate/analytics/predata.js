@@ -36,7 +36,8 @@ class FileReader extends React.Component {
             time_name : [],
             time_flight : [],
             check_data : false,
-            distinct_name : []
+            distinct_name : [],
+            year:''
         };
         this.test = props.data
         this.check = props.check
@@ -81,7 +82,7 @@ class FileReader extends React.Component {
         }]
         var num = 0
         var name = result[0].name
-        var date = result[0].name
+        var date = result[0].date
         var count = this.uniqueNameFlight(name,result,date)
         var dataall_date = []
         var dataall_name = []
@@ -105,7 +106,7 @@ class FileReader extends React.Component {
                     //console.log(time1)
                     var onejan = new Date(time1.getFullYear(),0,1);
                     var week =  Math.ceil((((time1 - onejan) / 86400000) + onejan.getDay())/7);
-                    
+                    var fullyear = time1.getFullYear()
                     dataall_date.push(local)
                     data_week.push(week)
                     data_month.push(time1.getMonth())
@@ -150,7 +151,7 @@ class FileReader extends React.Component {
         var distinctMonth = [...new Set(data_month)]
         // console.log(distinctMonth)
 
-        this.setState({dataAll: this.state.arr,distinct_date:distinct,distinct_week:distinctWeek,distinct_month:distinctMonth});
+        this.setState({dataAll: this.state.arr,distinct_date:distinct,distinct_week:distinctWeek,distinct_month:distinctMonth,year:fullyear});
     }
   
     render(props) {
@@ -158,7 +159,7 @@ class FileReader extends React.Component {
         <div className="App">
             <h1>Offset Visualization</h1>
             <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date} 
-            week={this.state.distinct_week} month={this.state.distinct_month}/>
+            week={this.state.distinct_week} month={this.state.distinct_month} year={this.state.year}/>
             {/* {this.state.check_data === true ?
             <Offset flight={this.state.flight} check_data={this.state.check_data}/>: null } */}
 

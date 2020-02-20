@@ -28,7 +28,10 @@ class FileReader2 extends React.Component {
         super(props);
         this.state = {
             data : [],
-            runway : [{name:'01R',lat:13.656697,long:100.751831},{name:'01L',lat:13.671278,long:100.734664}],
+            runway : [{name:'01R',lat:13.656697,long:100.751831},
+            {name:'01L',lat:13.671278,long:100.734664},
+            {name:'19L',lat:13.691714,long:100.761033},
+            {name:'19R',lat:13.703669,long:100.743178}],
             checkedList: [],
             data_line : [],
             heavy: ['A38','A35','A33','B74','B77','B78'],
@@ -135,6 +138,8 @@ class FileReader2 extends React.Component {
             //--------------------detect miles from runway-------------------------------
             if(this.turn[i].runway === '01R') dis_runway = this.distance(this.state.runway[0].lat,this.state.runway[0].long,res_lat,res_lon)
             else if(this.turn[i].runway === '01L') dis_runway = this.distance(this.state.runway[1].lat,this.state.runway[1].long,res_lat,res_lon)
+            else if(this.turn[i].runway === '19L') dis_runway = this.distance(this.state.runway[2].lat,this.state.runway[2].long,res_lat,res_lon)
+            else if(this.turn[i].runway === '19R') dis_runway = this.distance(this.state.runway[3].lat,this.state.runway[3].long,res_lat,res_lon)
             //-------------------- compute distance between airplane----------------------
             if(i < data.length-1 && res_alt !== 0 && dis_runway < 15){
                 // console.log('if')
@@ -220,7 +225,8 @@ class FileReader2 extends React.Component {
         }
         // console.log('arr', array)
         // console.log('line', line)
-        this.setState({data : scatter,data_line:line})
+        var rev = line.reverse()
+        this.setState({data : scatter,data_line:rev})
     }
 
     getOption = () => ({
