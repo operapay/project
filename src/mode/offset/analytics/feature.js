@@ -304,15 +304,31 @@ class OffsetAnalyze extends React.Component {
         var lateral = [2,4,7]
         if (value === "speed"){
             for(var j=0;j<3;j++){
-                var altitude_nmi = [['0-50',0],['50-100',0],['100-150',0],['150-200',0],['200-250',0],['250-300',0]]
-                for(var i=0;i<distribute[altitude[j]].data.length;i++){
-                    if(distribute[altitude[j]].data[i] >= 0 && distribute[altitude[j]].data[i] < 50) altitude_nmi[0][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 50 && distribute[altitude[j]].data[i] < 100) altitude_nmi[1][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 100 && distribute[altitude[j]].data[i] < 150) altitude_nmi[2][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 150 && distribute[altitude[j]].data[i] < 200) altitude_nmi[3][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 200 && distribute[altitude[j]].data[i] < 250) altitude_nmi[4][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 250 && distribute[altitude[j]].data[i] < 300) altitude_nmi[5][1] += 1;
+                var num = []
+                var altitude_nmi = []
+                for(var i=0;i<=300;i+=10){
+                    num.push(i)
                 }
+                for(var i=0;i<num.length-1;i++){
+                    altitude_nmi.push([(num[i]+num[i+1])/2,0])
+                }
+                // console.log(altitude_nmi)
+                for(var i=0;i<distribute[altitude[j]].data.length;i++){
+                    for(var k=0;k<num.length-1;k++){
+                        if(distribute[altitude[j]].data[i] >= num[k] && distribute[altitude[j]].data[i] < num[k+1]){
+                            altitude_nmi[k][1] += 1;
+                        }
+                    }
+                }
+                // var altitude_nmi = [['0-50',0],['50-100',0],['100-150',0],['150-200',0],['200-250',0],['250-300',0]]
+                // for(var i=0;i<distribute[altitude[j]].data.length;i++){
+                //     if(distribute[altitude[j]].data[i] >= 0 && distribute[altitude[j]].data[i] < 50) altitude_nmi[0][1] += 1;
+                //     else if(distribute[altitude[j]].data[i] >= 50 && distribute[altitude[j]].data[i] < 100) altitude_nmi[1][1] += 1;
+                //     else if(distribute[altitude[j]].data[i] >= 100 && distribute[altitude[j]].data[i] < 150) altitude_nmi[2][1] += 1;
+                //     else if(distribute[altitude[j]].data[i] >= 150 && distribute[altitude[j]].data[i] < 200) altitude_nmi[3][1] += 1;
+                //     else if(distribute[altitude[j]].data[i] >= 200 && distribute[altitude[j]].data[i] < 250) altitude_nmi[4][1] += 1;
+                //     else if(distribute[altitude[j]].data[i] >= 250 && distribute[altitude[j]].data[i] < 300) altitude_nmi[5][1] += 1;
+                // }
                 if(j === 0) this.setState({distribute3nmi : altitude_nmi})
                 else if (j === 1) this.setState({distribute5nmi : altitude_nmi})
                 else if (j === 2) this.setState({distribute8nmi : altitude_nmi})
@@ -321,19 +337,41 @@ class OffsetAnalyze extends React.Component {
         else if (value === "lateral"){
             var dist
             for(var j=0;j<3;j++){
-                var lateral_nmi = [['-4,-3',0],['-3,-2',0],['-2,-1',0],['-1,0',0],['0,1',0],['1,2',0],['2,3',0],['3,4',0]]
-                for(var i=0;i<distribute[lateral[j]].data.length;i++){
-                    dist = this.distance_xy(avg.data[lateral[j]+1][0],avg.data[lateral[j]+1][1],distribute[lateral[j]].data[i][0],distribute[lateral[j]].data[i][1])
-                    // console.log(j , '=' ,dist, "y1 ", avg.data[lateral[j]+1][1] , 'y2 ' , distribute[lateral[j]].data[i][1])
-                    if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[0][1] += 1;
-                    else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[1][1] += 1;
-                    else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[2][1] += 1;
-                    else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[3][1] += 1;
-                    else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[4][1] += 1;
-                    else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[5][1] += 1;
-                    else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[6][1] += 1;
-                    else if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[7][1] += 1;
+                var num = []
+                var xais = []
+                var lateral_nmi = []
+                for(var i=-4;i<=4;i+=0.5){
+                    num.push(Math.abs(i))
+                    xais.push(i)
                 }
+                for(var i=0;i<num.length-1;i++){
+                    lateral_nmi.push([xais[i],0])
+                }
+                // console.log(altitude_nmi)
+                for(var i=0;i<distribute[altitude[j]].data.length;i++){
+                    dist = this.distance_xy(avg.data[lateral[j]+1][0],avg.data[lateral[j]+1][1],distribute[lateral[j]].data[i][0],distribute[lateral[j]].data[i][1])
+                    for(var k=0;k<num.length-1;k++){
+                        if(dist >= num[k+1] && dist < num[k] && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]){
+                            lateral_nmi[k][1] += 1;
+                        }
+                        else if(dist >= num[k+1] && dist < num[k] && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]){
+                            lateral_nmi[k][1] += 1;
+                        }
+                    }
+                }
+                // var lateral_nmi = [['-4,-3',0],['-3,-2',0],['-2,-1',0],['-1,0',0],['0,1',0],['1,2',0],['2,3',0],['3,4',0]]
+                // for(var i=0;i<distribute[lateral[j]].data.length;i++){
+                //     dist = this.distance_xy(avg.data[lateral[j]+1][0],avg.data[lateral[j]+1][1],distribute[lateral[j]].data[i][0],distribute[lateral[j]].data[i][1])
+                //     // console.log(j , '=' ,dist, "y1 ", avg.data[lateral[j]+1][1] , 'y2 ' , distribute[lateral[j]].data[i][1])
+                //     if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[0][1] += 1;
+                //     else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[1][1] += 1;
+                //     else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[2][1] += 1;
+                //     else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[3][1] += 1;
+                //     else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[4][1] += 1;
+                //     else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[5][1] += 1;
+                //     else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[6][1] += 1;
+                //     else if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[7][1] += 1;
+                // }
                 if(j === 0) this.setState({distribute3nmi : lateral_nmi})
                 else if (j === 1) this.setState({distribute5nmi : lateral_nmi})
                 else if (j === 2) this.setState({distribute8nmi : lateral_nmi})
@@ -341,21 +379,21 @@ class OffsetAnalyze extends React.Component {
         }
         else{
             for(var j=0;j<3;j++){
-                var altitude_nmi = [['0-500',0],['500-1000',0],['1000-1500',0],['1500-2000',0],['2000-2500',0],['2500-3000',0],['3000-3500',0],['3500-4000',0],
-            ['4000-4500',0],['4500-5000',0],['5000-5500',0],['5500-6000',0]]
+                var num = []
+                var altitude_nmi = []
+                for(var i=0;i<=5500;i+=200){
+                    num.push(i)
+                }
+                for(var i=0;i<num.length-1;i++){
+                    altitude_nmi.push([(num[i]+num[i+1])/2,0])
+                }
+                // console.log(altitude_nmi)
                 for(var i=0;i<distribute[altitude[j]].data.length;i++){
-                    if(distribute[altitude[j]].data[i] >= 0 && distribute[altitude[j]].data[i] < 500) altitude_nmi[0][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 500 && distribute[altitude[j]].data[i] < 1000) altitude_nmi[1][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 1000 && distribute[altitude[j]].data[i] < 1500) altitude_nmi[2][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 1500 && distribute[altitude[j]].data[i] < 2000) altitude_nmi[3][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 2000 && distribute[altitude[j]].data[i] < 2500) altitude_nmi[4][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 2500 && distribute[altitude[j]].data[i] < 3000) altitude_nmi[5][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 3000 && distribute[altitude[j]].data[i] < 3500) altitude_nmi[6][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 3500 && distribute[altitude[j]].data[i] < 4000) altitude_nmi[7][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 4000 && distribute[altitude[j]].data[i] < 4500) altitude_nmi[8][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 4500 && distribute[altitude[j]].data[i] < 5000) altitude_nmi[9][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 5000 && distribute[altitude[j]].data[i] < 5500) altitude_nmi[10][1] += 1;
-                    else if(distribute[altitude[j]].data[i] >= 5500 && distribute[altitude[j]].data[i] < 6000) altitude_nmi[11][1] += 1;
+                    for(var k=0;k<num.length-1;k++){
+                        if(distribute[altitude[j]].data[i] >= num[k] && distribute[altitude[j]].data[i] < num[k+1]){
+                            altitude_nmi[k][1] += 1;
+                        }
+                    }
                 }
                 if(j === 0) this.setState({distribute3nmi : altitude_nmi})
                 else if (j === 1) this.setState({distribute5nmi : altitude_nmi})
