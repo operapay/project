@@ -44,7 +44,8 @@ class FileReader extends React.Component {
             unit : ['Week','Month'],
             type : ['Departure','Arrival'],
             select_feature : "Date",
-            distinct_name : []
+            distinct_name : [],
+            year:''
         };
         this.test = props.data
         this.check = props.check
@@ -118,8 +119,8 @@ class FileReader extends React.Component {
                     dataall_date.push(local)
                     var test2 = moment(mydate).format("MM/DD/YYYY")+" " + result[i-1].time
                     var time2 = moment(test2).toDate();
-                    var onejan = new Date(time1.getFullYear(),0,1);
-                    var week =  Math.ceil((((time1 - onejan) / 86400000) + onejan.getDay())/7);
+                    var week = moment(time1).format('WW')
+                    var fullyear = time1.getFullYear()
                     // console.log('week ',week)
                     this.state.arr[j].date = local
                     this.state.arr[j].time_1 = time1
@@ -152,7 +153,7 @@ class FileReader extends React.Component {
             return aa < bb ? -1 : (aa > bb ? 1 : 0);
         });
 
-        this.setState({dataAll: this.state.arr,distinct_date:distinct,distinct_name:distinctName});
+        this.setState({dataAll: this.state.arr,distinct_date:distinct,distinct_name:distinctName,year:fullyear});
     }
   
     render(props) {
@@ -172,7 +173,7 @@ class FileReader extends React.Component {
                 { this.state.select_feature === 'Date' ?
                 <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date}/>
                 : 
-                <SelectFlight check={this.state.check} data={this.state.dataAll} name={this.state.distinct_name}/>
+                <SelectFlight check={this.state.check} data={this.state.dataAll} name={this.state.distinct_name} year={this.state.year}/>
                 }
             
             {/* {this.state.check_data === true ?

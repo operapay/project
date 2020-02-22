@@ -61,8 +61,7 @@ class FileReader extends React.Component {
     };
 
     getDateOfWeek(w, y) {
-        var d = (1 + (w - 1) * 7); // 1st of January + 7 days for each week
-        return new Date(y, 0, d);
+        return moment().day("Monday").year(y).week(w)
     }
 
     Unit_onhandleChange(value,date,week,month){
@@ -80,10 +79,13 @@ class FileReader extends React.Component {
             select_unit = arr_date
         } 
         else if(value === 'Week') {
+            // console.log(this.year)
             for(var i=0;i<week.length;i++){
                 dateofweek1 = moment(this.getDateOfWeek(week[i],this.year)).format('DD/MM/YYYY')
                 dateofweek2 = moment(this.getDateOfWeek(week[i],this.year)).add(6,'days').format('DD/MM/YYYY')
                 arr_week.push([week[i],dateofweek1+'-'+dateofweek2])
+
+                // console.log(dateofweek1)
                 // moment(this.getDateOfWeek(distinctWeek[i],2019)).format('DD/MM/YYYY')
             }
             select_unit = arr_week

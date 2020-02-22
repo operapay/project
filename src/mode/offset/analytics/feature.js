@@ -285,7 +285,7 @@ class OffsetAnalyze extends React.Component {
                     //console.log(this.state.arr)
                 }
             }
-            console.log(arr_ref)
+            // console.log(arr_ref)
             for(var j=0;j<distribute.length;j++){
                 this.closest(arr_ref[i].data,distribute[j].dis,distribute,j)
             }
@@ -295,7 +295,7 @@ class OffsetAnalyze extends React.Component {
             }
         }
         
-        console.log('arr', this.state.arr)
+        // console.log('arr', this.state.arr)
         this.state.avg_arr.data = []
         // this.state.avg_arr.data.push([0,0])
         for(var i=0;i<distribute.length;i++){
@@ -308,7 +308,7 @@ class OffsetAnalyze extends React.Component {
         this.state.arr.push(this.state.avg_arr)
         this.setState({data: this.state.arr});
         this.distributed(distribute,value,this.state.avg_arr)
-        console.log('distribute', distribute)
+        // console.log('distribute', distribute)
     }
 
     distributed(distribute,value,avg){

@@ -276,7 +276,7 @@ class FileReader2 extends React.Component {
     time_pick: PropTypes.string,
     name : PropTypes.string,
     time : PropTypes.array,
-    turn : PropTypes.string
+    turn : PropTypes.array
   };
   
   

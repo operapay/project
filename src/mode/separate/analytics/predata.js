@@ -130,8 +130,10 @@ class FileReader extends React.Component {
                     var time1 = moment(test1).toDate();
                     var local = moment(time1).format('DD/MM/YYYY');
                     //console.log(time1)
-                    var onejan = new Date(time1.getFullYear(),0,1);
-                    var week =  Math.ceil((((time1 - onejan) / 86400000) + onejan.getDay())/7);
+                    // var onejan = new Date(time1.getFullYear(),0,1);
+                    // var week =  Math.ceil((((time1 - onejan) / 86400000) + onejan.getDay())/7);
+                    var week = moment(time1).format('WW')
+                    // console.log(week)
                     var fullyear = time1.getFullYear()
 
                     if(dis > dis2){
@@ -168,7 +170,7 @@ class FileReader extends React.Component {
                 this.state.arr.push({name:'', coords: [[]],date:'',aircraft:'',week:'',month:''})
             }
         }
-
+        // console.log(data_week)
         var distinct = [...new Set(dataall_date)]
         // var distinctName = [...new Set(dataall_name)]
         distinct.sort(function(a, b){

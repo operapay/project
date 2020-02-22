@@ -214,10 +214,10 @@ class FileReader extends React.Component {
                 // console.log(data[i])
             }
         }
-        console.log(data_select)
+        // console.log(data_select)
         name =this.compute_newcoords(data_select,this.state.runway)
         // name = this.closest(data_select,this.state.runway)
-        console.log('name',name)
+        // console.log('name',name)
         // console.log(data_time)
         // console.log(data_time.sort(function(a, b){return a-b}))
         var distinct = [...new Set(name.time)].sort(function(a, b){return a-b})

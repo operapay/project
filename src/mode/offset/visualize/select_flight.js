@@ -43,6 +43,7 @@ class FileReader extends React.Component {
         this.data = props.data
         this.check = props.check
         this.name = props.name
+        this.year = props.year
 
         // this.getData = this.getData.bind(this);
     }
@@ -78,8 +79,8 @@ class FileReader extends React.Component {
         var week = []
         var dateofweek1,dateofweek2;
         for(var i=0;i<distinctWeek.length;i++){
-            dateofweek1 = moment(this.getDateOfWeek(distinctWeek[i],2019)).format('DD/MM/YYYY')
-            dateofweek2 = moment(this.getDateOfWeek(distinctWeek[i],2019)).add(6,'days').format('DD/MM/YYYY')
+            dateofweek1 = moment(this.getDateOfWeek(distinctWeek[i],this.year)).format('DD/MM/YYYY')
+            dateofweek2 = moment(this.getDateOfWeek(distinctWeek[i],this.year)).add(6,'days').format('DD/MM/YYYY')
             week.push([distinctWeek[i],dateofweek1+'-'+dateofweek2])
             // moment(this.getDateOfWeek(distinctWeek[i],2019)).format('DD/MM/YYYY')
         }
@@ -89,9 +90,7 @@ class FileReader extends React.Component {
     }
 
     getDateOfWeek(w, y) {
-        var d = (1 + (w - 1) * 7); // 1st of January + 7 days for each week
-    
-        return new Date(y, 0, d);
+        return moment().day("Monday").year(y).week(w)
     }
 
     Unit_onhandleChange(value) {
@@ -181,7 +180,8 @@ class FileReader extends React.Component {
   FileReader.propTypes = {
     data: PropTypes.array,
     check: PropTypes.bool,
-    name: PropTypes.array
+    name: PropTypes.array,
+    year: PropTypes.number
   };
   
   

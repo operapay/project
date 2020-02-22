@@ -47,7 +47,7 @@ class FileReader2 extends React.Component {
 
     componentWillUpdate(nextPorps){
         if(nextPorps.check !== this.check && nextPorps.test !== this.test){
-            console.log(this.check , 'next ', nextPorps.check )
+            // console.log(this.check , 'next ', nextPorps.check )
             if(this.check === false){
                 this.getData(nextPorps.test)
             }
@@ -57,7 +57,7 @@ class FileReader2 extends React.Component {
 
     uniqueNameFlight(name,data,date){
         var count = 0
-        console.log(data.length)
+        // console.log(data.length)
         for(var i=1;i<data.length;i++){
             if (data[i].name === '-'){
                 count += 1
@@ -109,7 +109,7 @@ class FileReader2 extends React.Component {
         var check = false
         var sum = 0
         var dist
-        console.log(count)
+        // console.log(count)
 
         for(var j=0;j<count;j++){
             dis = 100000
@@ -177,7 +177,7 @@ class FileReader2 extends React.Component {
             return aa < bb ? -1 : (aa > bb ? 1 : 0);
         });
         // var distinctName = [...new Set(arr_name)]
-        console.log(distinctDate)
+        // console.log(distinctDate)
         this.setState({dataAll: this.state.arr,  distinct_date:distinctDate});
     }
 
