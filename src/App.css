@@ -21,6 +21,55 @@
   color: #09d3ac;
 }
 
+.container{
+  background-color: #f4fafd !important;
+}
+
 .ant-tabs .ant-tabs-large-bar .ant-tabs-tab{
-  font: 1.5rem sans-serif;
+  font: 1.5rem 'Comic Sans MS';
+  color: #f4fafd;
+  opacity: 0.7;
+}
+
+.navbar .ant-tabs-nav .ant-tabs-tab-active{
+  color: #f4fafd !important;
+  /* font-weight: bold; */
+  opacity: 1;
+}
+
+.navbar .ant-tabs-ink-bar{
+  background-color:#f4fafd;
+  bottom: 10px;
+  height: 3;
+  
+}
+
+.navbar .ant-card-body{
+  background-color: #f4fafd !important
+}
+
+.navbar .ant-card-head .ant-tabs-bar{
+  border-bottom: 0px solid transparent;
+  padding: 0 80px
+}
+
+.navbar .ant-tabs-nav-scroll{
+  padding-top: 5%
+}
+
+.navbar .ant-card-bordered{
+  border: 0px solid transparent
+}
+
+.ant-form-item-label > label{
+  opacity: 0.8 !important;
+  font-size: 1.5em !important;
+}
+
+.ant-form{
+  margin-bottom: 1% !important;
+}
+
+.ant-tabs-nav .ant-tabs-tab:hover{
+  color: #f4fafd !important;
 }

@@ -9,7 +9,7 @@ import * as d3 from 'd3-request';
 //import url from '../data/data_arrival.csv';
 import Papa from 'papaparse'
 import echarts from 'echarts'
-import { Select } from 'antd';
+import { Select,Form } from 'antd';
 import PropTypes from 'prop-types';
 import Arrival from './arrival'
 // import 'antd/dist/antd.css';
@@ -597,18 +597,22 @@ class OffsetAnalyze extends React.Component {
         <div className="App">
             {this.type === "Departure" ? this.state.check === true ?
             <div>
-            <h1>Offset Analytics</h1>
-                <Select defaultValue="altitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
-                    <Option value="altitude" style={{ fontSize: "1rem" }}>Altitude</Option>
-                    <Option value="lateral" style={{ fontSize: "1rem" }}>Lateral</Option>
-                    <Option value="speed" style={{ fontSize: "1rem" }}>Speed</Option>
-                </Select>
-                <ReactEcharts option={this.getOption()} style={{width:1500, height:700}} />
-                <ReactEcharts option={this.Option3nmi()} style={{width:1500, height:500}} />
-                <ReactEcharts option={this.Option5nmi()} style={{width:1500, height:500}} />
-                <ReactEcharts option={this.Option8nmi()} style={{width:1500, height:500}} />
+                <Form layout="inline">
+                    {/* <Form layout="inline"> */}
+                    <Form.Item label="Analyze by">
+                    <Select defaultValue="altitude" style={{ width: 300, fontSize: "1.2rem" }} onChange={e => this.onhandleChange(e)}>
+                        <Option value="altitude" style={{ fontSize: "1rem" }}>Altitude</Option>
+                        <Option value="lateral" style={{ fontSize: "1rem" }}>Lateral</Option>
+                        <Option value="speed" style={{ fontSize: "1rem" }}>Speed</Option>
+                    </Select>
+                    </Form.Item>
+                </Form>
+                <ReactEcharts option={this.getOption()} style={{width:'100%', height:700}} />
+                <ReactEcharts option={this.Option3nmi()} style={{width:'100%', height:500}} />
+                <ReactEcharts option={this.Option5nmi()} style={{width:'100%', height:500}} />
+                <ReactEcharts option={this.Option8nmi()} style={{width:'100%', height:500}} />
             </div>
-            : <p>No data for Analytics </p>
+            : <p style={{fontSize:'1.5em', marginTop:'10%'}}>No data for Analyze</p>
             : <Arrival data={this.test}/> }
         </div>
       );

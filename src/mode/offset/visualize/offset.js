@@ -184,11 +184,11 @@ class FileReader extends React.Component {
     render(props) {
     //   console.log(this.flight);
       return (
-        <div className="App">
+        <div>
             {this.what === "Date" ?
             <Select
                 mode="multiple"
-                style={{ width: '50%' }}
+                style={{ width: '50%',marginBottom:'2%' }}
                 placeholder="Please select flight"
                 value={this.state.checkedList}
                 // defaultValue={['a10', 'c12']}
@@ -203,7 +203,7 @@ class FileReader extends React.Component {
                 null
             }
             {/* <Checkbox.Group options={this.check}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.flight)}/> */}
-            <ReactEcharts option={this.getOption()} style={{width:1760, height:600}} />
+            <ReactEcharts option={this.getOption()} style={{width:'100%', height:700, border:'1px solid lightgray'}} />
         </div>
       );
     }

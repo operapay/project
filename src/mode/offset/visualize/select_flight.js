@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './select.css'
-import { Select,Button  } from 'antd';
+import { Select,Button,Form  } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Offset from './offset';
@@ -29,7 +29,7 @@ class FileReader extends React.Component {
             distinct_month : [],
             data_selected : [],
             check_data : false,
-            time_default : "Select Time",
+            time_default : "Select",
             unit_default : "Select Unit",
             flight_default : "Select Flight no",
             unit : ['Week','Month'],
@@ -85,7 +85,7 @@ class FileReader extends React.Component {
         }
         // console.log(week)
 
-        this.setState({data_selected:data_select, distinct_month : month, distinct_week:week, time_default:"Select Time", unit_default:"Select Unit"})
+        this.setState({data_selected:data_select, distinct_month : month, distinct_week:week, time_default:"Select", unit_default:"Select Unit"})
     }
 
     getDateOfWeek(w, y) {
@@ -104,7 +104,7 @@ class FileReader extends React.Component {
         else{
             data_select = this.state.distinct_month
         }
-        this.setState({distinct_time:data_select, time_default:"Select Time"})
+        this.setState({distinct_time:data_select, time_default:"Select"})
     }
 
     Time_onhandleChange(value,data) {
@@ -135,33 +135,44 @@ class FileReader extends React.Component {
     render(props) {
         // console.log(this.data)
       return (
-        <div className="App">
+          <div>
             <div>
-                <Select placeholder="Select Flight no" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Name_onhandleChange(e,this.data)}>
-                    {this.name.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                    ))}
-                </Select>
-                <Select placeholder="Select Unit" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.unit_default} onChange={e => this.Unit_onhandleChange(e)}>
-                    {this.state.unit.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                    ))}
-                </Select>
-                <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.time_default} onChange={e => this.Time_onhandleChange(e,this.state.data_selected)}>
-                    {this.state.distinct_time.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight[0]}>{flight[1]}</Option>
-                    ))}
-                </Select>
-                {this.state.flight_default !== 'Select Flight no' && this.state.unit_default !== 'Select Unit' && this.state.time_default !== 'Select Time' ?
-                <Button onClick={this.search} disabled={this.state.button_search}>Search</Button> : null}
-                {/* <Button onClick={this.search}>Search</Button> */}
+                <Form layout="inline">
+                    <Form.Item label="Flight no">
+                    <Select placeholder="Select Flight no" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Name_onhandleChange(e,this.data)}>
+                        {this.name.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                        ))}
+                    </Select>
+                    </Form.Item>
+                    {this.state.flight_default !== 'Select Flight no' ?
+                    <Form.Item label="Unit per">
+                    <Select placeholder="Select Unit" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.unit_default} onChange={e => this.Unit_onhandleChange(e)}>
+                        {this.state.unit.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                        ))}
+                    </Select>
+                    </Form.Item>
+                    : null}
+                    {this.state.flight_default !== 'Select Flight no' && this.state.unit_default !== 'Select Unit' ?
+                    <Form.Item label={this.state.unit_default}>
+                    <Select placeholder="Select" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.time_default} onChange={e => this.Time_onhandleChange(e,this.state.data_selected)}>
+                        {this.state.distinct_time.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight[0]}>{flight[1]}</Option>
+                        ))}
+                    </Select>
+                    </Form.Item>
+                    : null}
+                    {this.state.flight_default !== 'Select Flight no' && this.state.unit_default !== 'Select Unit' && this.state.time_default !== 'Select' ?
+                    <Button onClick={this.search} disabled={this.state.button_search} style={{backgroundColor:'#b47b44',color:'white'}}>Search</Button> : null}
+                    {/* <Button onClick={this.search}>Search</Button> */}
+                </Form>
             </div>
             <div>
                 {this.state.click === true ? 
                 <Offset data={this.state.real} name={this.state.checkbox} what={this.state.what_select}/>
                 : null}
             </div>
-
         </div>
       );
     }

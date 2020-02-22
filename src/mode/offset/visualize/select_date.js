@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './select.css'
-import { Select,Button  } from 'antd';
+import { Select,Button,Form  } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Offset from './offset';
@@ -35,7 +35,7 @@ class FileReader extends React.Component {
             check_data : false,
             time_default : "Select Time",
             date_default : "Select Date",
-            type_default : "Select Type",
+            type_default : "Select Section",
             turn_default : "Select Turn Direction",
             type : ['Departure','Arrival'],
             real : [],
@@ -108,7 +108,7 @@ class FileReader extends React.Component {
         // console.log(data_time.sort(function(a, b){return a-b}))
         var distinct = [...new Set(data_time)].sort(function(a, b){return a-b})
 
-        this.setState({distinct_time : distinct, date_name:data_select, time_default:"Select Time",type_default:"Select Type"})
+        this.setState({distinct_time : distinct, date_name:data_select, time_default:"Select Time",type_default:"Select Section"})
     }
 
     Time_onhandleChange(value,data) {
@@ -122,7 +122,7 @@ class FileReader extends React.Component {
             }
         }
         // console.log(data_select)
-        this.setState({time_flight : data_select,type_default:"Select Type"})
+        this.setState({time_flight : data_select,type_default:"Select Section"})
     }
 
     Type_onhandleChange(value,data) {
@@ -178,32 +178,49 @@ class FileReader extends React.Component {
     render(props) {
         // console.log(this.data)
       return (
-        <div className="App">
-            <div>
-                <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.date_default} onChange={e => this.Date_onhandleChange(e,this.data)}>
-                    {this.date.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                    ))}
-                </Select>
-                <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.time_default} onChange={e => this.Time_onhandleChange(e,this.state.date_name)}>
-                    {this.state.distinct_time.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
-                    ))}
-                </Select>
-                <Select placeholder="Select Type" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.type_default} onChange={e => this.Type_onhandleChange(e,this.state.time_flight)}>
-                    {this.state.type.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                    ))}
-                </Select>
+        <div>
+            <div style={{marginBottom:'1%'}}>
+            <Form layout="inline">
+                {/* <Form layout="inline"> */}
+                    <Form.Item label="Date">
+                    <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.date_default} onChange={e => this.Date_onhandleChange(e,this.data)}>
+                        {this.date.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                        ))}
+                    </Select>
+                    </Form.Item>
+                {/* </Form> */}
+
+                {this.state.date_default !== 'Select Date' ?
+                    <Form.Item label="Time">
+                    <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.time_default} onChange={e => this.Time_onhandleChange(e,this.state.date_name)}>
+                        {this.state.distinct_time.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
+                        ))}
+                    </Select>
+                    </Form.Item>
+                : null}
+                {/* </Form> */}
+                {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' ?
+                    <Form.Item label="Section">
+                    <Select placeholder="Select Section" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.type_default} onChange={e => this.Type_onhandleChange(e,this.state.time_flight)}>
+                        {this.state.type.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                        ))}
+                    </Select>
+                    </Form.Item>
+                : null}
+                {/* </Form> */}
                 {/* <Select placeholder="Select Turn Direction" disabled style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.type_default} onChange={e => this.Type_onhandleChange(e,this.state.time_flight)}>
                     {this.state.type.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select> */}
-                {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.type_default !== 'Select Type' ?
-                <Button onClick={this.search}>Search</Button> : null}
+                {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.type_default !== 'Select Section' ?
+                <Button onClick={this.search} style={{backgroundColor:'#b47b44',color:'white'}}>Search</Button> : null}
+                </Form>
             </div>
-            <div>
+            <div style={{marginBottom:'1%'}}>
                 {this.state.click === true ? 
                 // {/* {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.type_default !== 'Select Type' && this.state.last !== this.state.type_default? */}
                 <Offset data={this.state.real} name={this.state.checkbox} what={this.state.what_select}/>

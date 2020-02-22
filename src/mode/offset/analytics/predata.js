@@ -139,7 +139,7 @@ class FileReader extends React.Component {
     render(props) {
       return (
         <div className="App">
-            <h1>Offset Analyze</h1>
+            <h1  style={{color:'#b47b44', margin:'3% 0 3% 0'}}>Offset Analyze</h1>
             {/* <Select placeholder="Select Feature" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.select_feature} onChange={e => this.Feature_onhandleChange(e)}>
                 {this.state.feature.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>

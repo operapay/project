@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 import './select.css'
-import { Select } from 'antd';
+import { Select,Form } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import SelectDate from './select_date';
@@ -158,18 +158,22 @@ class FileReader extends React.Component {
     render(props) {
       return (
         <div className="App">
-            <h1>Offset Visualization</h1>
-            <Select placeholder="Select Feature" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.select_feature} onChange={e => this.Feature_onhandleChange(e)}>
-                {this.state.feature.map(flight => (
-                    <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
-                ))}
-            </Select>
-            
-            { this.state.select_feature === 'Date' ?
-            <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date}/>
-            : 
-            <SelectFlight check={this.state.check} data={this.state.dataAll} name={this.state.distinct_name}/>
-            }
+            <h1 style={{color:'#b47b44', margin:'3% 0 3% 0'}}>Offset Visualization</h1>
+            <Form layout="inline">
+                <Form.Item label="Fliter by">
+                    <Select placeholder="Select Feature" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" , marginBottom:'2%'}} value={this.state.select_feature} onChange={e => this.Feature_onhandleChange(e)}>
+                        {this.state.feature.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+            </Form>
+                
+                { this.state.select_feature === 'Date' ?
+                <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date}/>
+                : 
+                <SelectFlight check={this.state.check} data={this.state.dataAll} name={this.state.distinct_name}/>
+                }
             
             {/* {this.state.check_data === true ?
             <Offset flight={this.state.flight} check_data={this.state.check_data}/>: null } */}

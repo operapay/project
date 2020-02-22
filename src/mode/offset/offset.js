@@ -1,9 +1,11 @@
-import { Card } from 'antd';
+import { Card,Button } from 'antd';
 import React from "react";
 // import Offset from '../../visualize/offset';
 import Offset from './visualize/select_data'
 import OffsetAnalyze from './analytics/predata'
 import Papa from 'papaparse'
+import './offset.css'
+// import { Button } from 'antd/lib/radio';
 
 const tabList = [
     {
@@ -66,32 +68,38 @@ class Mode extends React.Component {
       };
       // console.log(this.state.csvfile)
       return (
-        <div>
-          <h2>Import offset .csv file</h2>
-          <input
-              className="csv-input"
-              type="file"
-              ref={input => {
-              this.filesInput = input;
-              }}
-              name="file"
-              placeholder={null}
-              onChange={this.handleChange}
-          />
-          <p />
-          <button onClick={this.importCSV} disabled={this.state.upload}> Upload now!</button>
+        <div className='importbar'>
+          <div style={{marginLeft:'80px'}}>
+            <h2>Import offset .csv file</h2>
+            <input
+                className="csv-input"
+                type="file"
+                ref={input => {
+                this.filesInput = input;
+                }}
+                name="upload" 
+                id="upload" 
+                // name="file"
+                placeholder={null}
+                onChange={this.handleChange}
+                // style={{color:'#b47b44'}}
+            />
+            <Button style={{backgroundColor:'#b47b44',color:'white',marginTop:'1.5%', display:'flex'}} onClick={this.importCSV} disabled={this.state.upload}> Upload now!</Button>
+          </div>
           {this.state.check === true ? 
-          <Card
-            style={{ width: '100%', textAlign: "-webkit-center"}}
-            // title="Card title"
-            tabList={tabList}
-            activeTabKey={this.state.key}
-            onTabChange={key => {
-              this.onTabChange(key, 'key');
-            }}
-          >
-            {contentList[this.state.key]}
-          </Card>
+          <div>
+            <Card 
+              style={{ width: '100%',textAlign:'center'}}
+              // title="Card title"
+              tabList={tabList}
+              activeTabKey={this.state.key}
+              onTabChange={key => {
+                this.onTabChange(key, 'key');
+              }}
+            >
+              {contentList[this.state.key]}
+            </Card>
+          </div>
           : null}
         </div>
       );

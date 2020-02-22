@@ -39,9 +39,9 @@ class Home extends React.Component {
   
     render() {
       return (
-        <div>
+        <div className='navbar'>
           <Card
-            style={{ width: '100%' , fontSize : '2rem !important'}}
+            style={{ width: '100%' , fontSize : '2rem !important',backgroundColor:'#5886af',fontFamily: 'Comic Sans MS'}}
             // title="Card title"
             tabList={tabList}
             activeTabKey={this.state.key}
