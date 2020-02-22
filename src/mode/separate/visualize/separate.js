@@ -156,11 +156,16 @@ class FileReader2 extends React.Component {
                     scatter.push([res_lon,res_lat,res_alt,5,data[i].name])
                     head = 'small'
                 }
+                else{
+                    scatter.push([res_lon,res_lat,res_alt,10,data[i].name])
+                    head = 'large'
+                }
                 // console.log('scatter',scatter)
                 var follow;
                 if(this.state.heavy.includes(data[i+1].data.aircraft)) follow = 'heavy';
                 else if(this.state.large.includes(data[i+1].data.aircraft)) follow = 'large';
-                else if(this.state.small.includes(data[i+1].data.aircraft)) follow = 'small';       
+                else if(this.state.small.includes(data[i+1].data.aircraft)) follow = 'small';  
+                else follow = 'large';
                 
                 var real_dis = 0;
                 if(head === 'small') real_dis = 3;

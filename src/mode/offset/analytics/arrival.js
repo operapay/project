@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 const { Option } = Select;
 
 var xaxis = ['Altitude (ft)','Lateral Dispersion (nmi)','Groungspeed (kts)']
-var xyaxis = [['Altitude (ft)','Ground Distance (nmi)'],['North-South Distance (nmi)','East-West Distance (nmi)'],['Groungspeed (kts)','Ground Distance (nmi)']]
+var xyaxis = [['Altitude (ft)','Ground Track Distance (nmi)'],['North-South Distance (nmi)','East-West Distance (nmi)'],['Groungspeed (kts)','Ground Track Distance (nmi)']]
 
 class OffsetAnalyze extends React.Component {
     constructor(props) {

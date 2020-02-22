@@ -289,7 +289,7 @@ class FileReader1 extends React.Component {
             type: 'value',
             name: 'distance (nmi)',
             nameLocation: 'center',
-            nameGap: 100,
+            nameGap: 80,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -350,9 +350,9 @@ class FileReader1 extends React.Component {
             type: 'value',
             name: 'time (min)',
             nameLocation: 'center',
-            nameGap: 100,
+            nameGap: 80,
             nameTextStyle: {
-                fontSize: 20
+                fontSize: 20,
             },
             axisLabel: {
                 show: true,
