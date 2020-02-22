@@ -122,7 +122,7 @@ class FileReader2 extends React.Component {
                     ))}
                 </Select>
             </Col>
-            <ReactEcharts option={this.getOption()}  style={{width:'100%', height:700, border:'1px solid lightgray'}} />
+            <ReactEcharts option={this.getOption()}  style={{width:'100%', height:800, border:'1px solid lightgray'}} />
         </div>
       );
     }

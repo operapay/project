@@ -186,7 +186,7 @@ class FileReader extends React.Component {
     render(props) {
       return (
         <div className="App">
-            <h1>Separate Analytics</h1>
+            <h1 style={{color:'#b47b44', margin:'1% 0 1% 0'}}>Separate Analytics</h1>
             <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date} 
             week={this.state.distinct_week} month={this.state.distinct_month} year={this.state.year}/>
             {/* {this.state.check_data === true ?

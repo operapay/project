@@ -186,7 +186,7 @@ class FileReader2 extends React.Component {
     //   console.log(this.dataref);
       return (
         <div className="App">
-          <h1 style={{color:'#b47b44', margin:'3% 0 3% 0'}}>Holding Analyze</h1>
+          <h1 style={{color:'#b47b44', margin:'1% 0 1% 0'}}>Holding Analytics</h1>
           <Selectdata data={this.state.dataAll} date={this.state.distinct_date} dataref={this.dataref}/>
         </div>
       );

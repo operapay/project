@@ -174,7 +174,7 @@ class FileReader extends React.Component {
     render(props) {
       return (
         <div className="App">
-            <h1>Separate Visualization</h1>
+            <h1 style={{color:'#b47b44', margin:'1% 0 1% 0'}}>Separate Visualization</h1>
             <SelectDate check={this.state.check} data={this.state.dataAll} date={this.state.distinct_date}/>
             {/* {this.state.check_data === true ?
             <Offset flight={this.state.flight} check_data={this.state.check_data}/>: null } */}

@@ -15,6 +15,9 @@ import PropTypes from 'prop-types';
 
 const { Option } = Select;
 
+var xaxis = ['Altitude (ft)','Lateral Dispersion (nmi)','Groungspeed (kts)']
+var xyaxis = [['Altitude (ft)','Ground Distance (nmi)'],['North-South Distance (nmi)','East-West Distance (nmi)'],['Groungspeed (kts)','Ground Distance (nmi)']]
+
 class OffsetAnalyze extends React.Component {
     constructor(props) {
         super(props);
@@ -29,6 +32,9 @@ class OffsetAnalyze extends React.Component {
             distribute3nmi : [],
             distribute5nmi : [],
             distribute8nmi : [],
+            plot_graph: null,
+            plot_xaxis: null,
+            plot_yaxis: null,
             check : false
         };
 
@@ -50,8 +56,11 @@ class OffsetAnalyze extends React.Component {
         this.setState({select : value})
         if (value == 'lateral'){
             this.data_lateral(this.test,value)
+            this.setState({plot_graph:xaxis[1],plot_xaxis:xyaxis[1][1],plot_yaxis:xyaxis[1][0]})
         }
         else{
+            if(value === 'speed') this.setState({plot_graph:xaxis[2],plot_xaxis:xyaxis[2][1],plot_yaxis:xyaxis[2][0]})
+            else this.setState({plot_graph:xaxis[0],plot_xaxis:xyaxis[0][1],plot_yaxis:xyaxis[0][0]})
             this.data_linegraph(this.test,value)
         }
     }
@@ -341,6 +350,19 @@ class OffsetAnalyze extends React.Component {
         else if (value === "lateral"){
             var dist
             for(var j=0;j<3;j++){
+                // var lateral_nmi = [['-4,-3',0],['-3,-2',0],['-2,-1',0],['-1,0',0],['0,1',0],['1,2',0],['2,3',0],['3,4',0]]
+                // for(var i=0;i<distribute[lateral[j]].data.length;i++){
+                //     dist = this.distance_xy(avg.data[lateral[j]+1][0],avg.data[lateral[j]+1][1],distribute[lateral[j]].data[i][0],distribute[lateral[j]].data[i][1])
+                //     // console.log(j , '=' ,dist, "y1 ", avg.data[lateral[j]+1][1] , 'y2 ' , distribute[lateral[j]].data[i][1])
+                //     if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[0][1] += 1;
+                //     else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[1][1] += 1;
+                //     else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[2][1] += 1;
+                //     else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]) lateral_nmi[3][1] += 1;
+                //     else if(dist >= 0 && dist < 1 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[4][1] += 1;
+                //     else if(dist >= 1 && dist < 2 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[5][1] += 1;
+                //     else if(dist >= 2 && dist < 3 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[6][1] += 1;
+                //     else if(dist >= 3 && dist < 4 && distribute[lateral[j]].data[i][1] >= avg.data[lateral[j]+1][1]) lateral_nmi[7][1] += 1;
+                // }
                 var num = []
                 var xais = []
                 var lateral_nmi = []
@@ -352,7 +374,9 @@ class OffsetAnalyze extends React.Component {
                     lateral_nmi.push([xais[i],0])
                 }
                 // console.log(altitude_nmi)
-                for(var i=0;i<distribute[altitude[j]].data.length;i++){
+                for(var i=0;i<distribute[lateral[j]].data.length;i++){
+                    // console.log
+                    // dist = this.distance_xy(avg.data[lateral[j]+1][0],avg.data[lateral[j]+1][1],distribute[lateral[j]].data[i][0],distribute[lateral[j]].data[i][1])
                     dist = this.distance_xy(avg.data[lateral[j]+1][0],avg.data[lateral[j]+1][1],distribute[lateral[j]].data[i][0],distribute[lateral[j]].data[i][1])
                     for(var k=0;k<num.length-1;k++){
                         if(dist >= num[k+1] && dist < num[k] && distribute[lateral[j]].data[i][1] < avg.data[lateral[j]+1][1]){
@@ -396,6 +420,8 @@ class OffsetAnalyze extends React.Component {
     getData() {
         // console.log(this.test)
         this.data_linegraph(this.test,0)
+        this.setState({plot_graph:xaxis[0],plot_xaxis:xyaxis[0][1],plot_yaxis:xyaxis[0][2]})
+
     }
 
     getOption = () => ({
@@ -417,15 +443,15 @@ class OffsetAnalyze extends React.Component {
                     show: true,
                     title: 'Save As Image'
                 },
-                dataView: {
-                    show: true,
-                    title: 'Data View'
-                },
+                // dataView: {
+                //     show: true,
+                //     title: 'Data View'
+                // },
             }
         },
         xAxis: {
             type: 'value',
-            name: 'ground distance (nmi)',
+            name: this.state.plot_xaxis,
             nameLocation: 'center',
             nameGap: 30,
             nameTextStyle: {
@@ -440,7 +466,7 @@ class OffsetAnalyze extends React.Component {
         },
         yAxis: {
             type: 'value',
-            name: this.state.select,
+            name: this.state.plot_yaxis,
             nameLocation: 'center',
             nameGap: 90,
             nameTextStyle: {
@@ -458,11 +484,11 @@ class OffsetAnalyze extends React.Component {
 
     Option3nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at 3 nmi'
+            text: 'Distribution of ' + this.state.select + ' at 3 nmi'
         },
         xAxis: {
             type: 'category',
-            name: this.state.select,
+            name: this.state.plot_graph,
             nameLocation: 'center',
             nameGap: 40,
             nameTextStyle: {
@@ -477,7 +503,7 @@ class OffsetAnalyze extends React.Component {
         },
         yAxis: {
             type: 'value',
-            name: 'number of flight',
+            name: 'Number of Flight',
             nameLocation: 'center',
             nameGap: 50,
             nameTextStyle: {
@@ -500,11 +526,11 @@ class OffsetAnalyze extends React.Component {
 
     Option5nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at 5 nmi'
+            text: 'Distribution of ' + this.state.select + ' at 5 nmi'
         },
         xAxis: {
             type: 'category',
-            name: this.state.select,
+            name: this.state.plot_graph,
             nameLocation: 'center',
             nameGap: 40,
             nameTextStyle: {
@@ -519,7 +545,7 @@ class OffsetAnalyze extends React.Component {
         },
         yAxis: {
             type: 'value',
-            name: 'number of flight',
+            name: 'Number of Flight',
             nameLocation: 'center',
             nameGap: 50,
             nameTextStyle: {
@@ -542,11 +568,11 @@ class OffsetAnalyze extends React.Component {
 
     Option8nmi = () => ({
         title: {
-            text: 'distribution of ' + this.state.select + ' at 8 nmi'
+            text: 'Distribution of ' + this.state.select + ' at 8 nmi'
         },
         xAxis: {
             type: 'category',
-            name: this.state.select,
+            name: this.state.plot_graph,
             nameLocation: 'center',
             nameGap: 40,
             nameTextStyle: {
@@ -561,7 +587,7 @@ class OffsetAnalyze extends React.Component {
         },
         yAxis: {
             type: 'value',
-            name: 'number of flight',
+            name: 'Number of Flight',
             nameLocation: 'center',
             nameGap: 50,
             nameTextStyle: {
@@ -598,9 +624,9 @@ class OffsetAnalyze extends React.Component {
                     </Select>
                     </Form.Item>
                 </Form>
-                <ReactEcharts option={this.getOption()} style={{width:'70%', height:700, display:'inline-block'}} />
-                <ReactEcharts option={this.Option3nmi()} style={{width:'60%', height:600, display:'inline-block'}} />
-                <ReactEcharts option={this.Option5nmi()} style={{width:'60%', height:600, display:'inline-block'}} />
+                <ReactEcharts option={this.getOption()} style={{width:'70%', height:700, display:'inline-block',marginBottom:'3%'}} />
+                <ReactEcharts option={this.Option3nmi()} style={{width:'60%', height:600, display:'inline-block',marginBottom:'3%'}} />
+                <ReactEcharts option={this.Option5nmi()} style={{width:'60%', height:600, display:'inline-block',marginBottom:'3%'}} />
                 <ReactEcharts option={this.Option8nmi()} style={{width:'60%', height:600,  display:'inline-block'}} />
             </div>
             : <p style={{fontSize:'1.5em', marginTop:'9%'}}>No data for Analyze</p>}

@@ -1,4 +1,14 @@
-.container{
+/* .container{
     width: 1000 !important;
     height: 700 !important;
+} */
+
+.ant-table-thead > tr > th{
+    background: wheat !important;
+    font-size: 1.3em;
+}
+
+.ant-table-tbody > tr > td{
+    background: cornsilk;
+    font-size: 1.1em;
 }

@@ -469,15 +469,15 @@ class FileReader2 extends React.Component {
             
         ],
         xAxis: [
-            {type: 'value', gridIndex: 0, name: 'distance'},
-            {type: 'value', gridIndex: 1, name: 'distance'},
-            {type: 'value', gridIndex: 2, name: 'distance'},
-            {type: 'value', gridIndex: 3, name: 'distance'},
-            {type: 'value', gridIndex: 4, name: 'distance'},
-            {type: 'value', gridIndex: 5, name: 'distance'},
-            {type: 'value', gridIndex: 6, name: 'distance'},
-            {type: 'value', gridIndex: 7, name: 'distance'},
-            {type: 'value', gridIndex: 8, name: 'distance'},
+            {type: 'value', gridIndex: 0, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 1, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 2, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 3, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 4, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 5, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 6, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 7, name: 'distance (nmi)'},
+            {type: 'value', gridIndex: 8, name: 'distance (nmi)'},
         ],
         yAxis: [
             {type: 'value', gridIndex: 0, name: 'number of flight'},
@@ -523,11 +523,11 @@ class FileReader2 extends React.Component {
         ];
         return (
         <div className="App">
-            <ReactEcharts ref={(e) => { this.echarts_react = e; } } option={this.getOption()}  style={{width:1280, height:800}} 
+            <ReactEcharts ref={(e) => { this.echarts_react = e; } } option={this.getOption()}  style={{marginTop:'1%', width:'80%', height:1000, display:'inline-block'}} 
             onEvents={onEvents}/>
-            <h1>{this.state.name_table}</h1>
+            <h1 style={{color:'#b47b44', margin:'3% 0 2% 0'}}>{this.state.name_table}</h1>
             {this.state.click === true ? 
-            <Table columns={columns} dataSource={this.state.data_table} bordered />
+            <Table  style={{width:'50%', display:'inline-block'}} columns={columns} dataSource={this.state.data_table} bordered />
             : null}
             {/* <Tableplot data={this.state.data_table} check={this.state.click}/> */}
             {/* <Plot data={this.state.data_line}/> */}

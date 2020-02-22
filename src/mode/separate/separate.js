@@ -1,4 +1,4 @@
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
 import React from "react";
 // import Separate from '../../visualize/Separate';
 import Separate from './visualize/predata'
@@ -67,34 +67,36 @@ class Mode extends React.Component {
       };
       // console.log(this.state.csvfile)
       return (
-        <div>
-          <h2>Import separate .csv file</h2>
-          <input
-              className="csv-input"
-              type="file"
-              ref={input => {
-              this.filesInput = input;
+        <div className='importbar'>
+          <div  style={{marginLeft:'80px'}}>
+            <h2>Import separate .csv file</h2>
+            <input
+                className="csv-input"
+                type="file"
+                ref={input => {
+                this.filesInput = input;
+                }}
+                name="file"
+                placeholder={null}
+                onChange={this.handleChange}
+            />
+            <Button style={{backgroundColor:'#b47b44',color:'white',marginTop:'1%', display:'flex'}} onClick={this.importCSV} disabled={this.state.upload}> Upload now!</Button>
+            </div>
+            {/* <button onClick={this.importCSV} disabled={this.state.upload}> Upload now!</button> */}
+            {this.state.check === true ? 
+            <Card
+              style={{ width: '100%', textAlign: "center"}}
+              // title="Card title"
+              tabList={tabList}
+              activeTabKey={this.state.key}
+              onTabChange={key => {
+                this.onTabChange(key, 'key');
               }}
-              name="file"
-              placeholder={null}
-              onChange={this.handleChange}
-          />
-          <p />
-          <button onClick={this.importCSV} disabled={this.state.upload}> Upload now!</button>
-          {this.state.check === true ? 
-          <Card
-            style={{ width: '100%', textAlign: "-webkit-center"}}
-            // title="Card title"
-            tabList={tabList}
-            activeTabKey={this.state.key}
-            onTabChange={key => {
-              this.onTabChange(key, 'key');
-            }}
-          >
-            {contentList[this.state.key]}
-          </Card>
-          : null}
-        </div>
+            >
+              {contentList[this.state.key]}
+            </Card>
+            : null}
+          </div>
       );
     }
   }

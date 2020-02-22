@@ -89,7 +89,7 @@ class Mode extends React.Component {
           </div>
           {this.state.check === true ? 
           <Card
-            style={{ width: '100%', textAlign: "-webkit-center"}}
+            style={{ width: '100%', textAlign: "center"}}
             // title="Card title"
             tabList={tabList}
             activeTabKey={this.state.key}

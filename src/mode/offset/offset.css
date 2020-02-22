@@ -37,7 +37,7 @@
 }
 
 .importbar .ant-tabs-nav .ant-tabs-tab{
-    background-color: burlywood;
+    background-color: #c09669;
     margin: 0 0 0 0;
     width: 150%
 }
@@ -47,7 +47,7 @@
     width: 150%
 }
 .importbar .ant-tabs-nav-scroll{
-    padding-top: 3% !important;
+    padding-top: 1% !important;
 }
 
 .importbar .ant-card-bordered{

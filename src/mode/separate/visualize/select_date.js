@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 // import './select.css'
-import { Select,Button,TimePicker } from 'antd';
+import { Select,Button,TimePicker,Form } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Separate from './separate';
@@ -290,34 +290,53 @@ class FileReader extends React.Component {
     render(props) {
         // console.log(this.data)
       return (
-        <div className="App">
-            <div>
+        <div>
+            <div style={{marginBottom:'1%'}}>
+            <Form layout="inline">
+                {/* <Form layout="inline"> */}
+                    <Form.Item label="Date">
                 <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.date_default} onChange={e => this.Date_onhandleChange(e,this.data)}>
                     {this.date.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
+                </Form.Item>
+
+                {this.state.date_default !== 'Select Date' ?
+                    <Form.Item label="Time">
                 <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.time_default} onChange={e => this.Time_onhandleChange(e,this.state.date_name)}>
                     {this.state.distinct_time.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
                     ))}
                 </Select>
-                <Select placeholder="Select Flight" style={{ width: 400, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Flight_onhandleChange(e,this.state.time_flight)}>
-                    {this.state.distinct_name.map(flight => (
-                        <Option style={{ fontSize: "1rem" }} key={flight.name}>{flight.name} time: {moment(flight.time).format('HH:mm:ss')} </Option>
-                    ))}
-                </Select>
-                <TimePicker defaultValue={moment('00:00:00', 'HH:mm:ss')} value={moment(this.state.real, 'HH:mm:ss')} onChange={e => this.onChange_picktime(e)}/>
+                </Form.Item>
+                : null}
+
+                {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' ?
+                    <div>
+                    <Form.Item label="Flight no">
+                    <Select placeholder="Select Flight" style={{ width: 400, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.flight_default} onChange={e => this.Flight_onhandleChange(e,this.state.time_flight)}>
+                        {this.state.distinct_name.map(flight => (
+                            <Option style={{ fontSize: "1rem" }} key={flight.name}>{flight.name} time: {moment(flight.time).format('HH:mm:ss')} </Option>
+                        ))}
+                    </Select>
+                    </Form.Item>
+                    <Form.Item label="Time stamp">
+                    <TimePicker defaultValue={moment('00:00:00', 'HH:mm:ss')} value={moment(this.state.real, 'HH:mm:ss')} onChange={e => this.onChange_picktime(e)}/>
+                    </Form.Item>
+                    </div>
+                : null}
+
                 {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time' && this.state.flight_default !== 'Select Flight' ?
-                <Button onClick={this.search}>Search</Button> : null}
+                <Button style={{backgroundColor:'#b47b44',color:'white'}} onClick={this.search}>Search</Button> : null}
                 {/* <Button onClick={this.search}>Search</Button> */}
+                </Form>
             </div>
-            <div>
+            <div  style={{marginBottom:'1%'}}>
                 {this.state.click === true ? 
                 <Separate data={this.state.time_flight} time_pick={this.state.real} name={this.state.name} turn={this.state.date_name}/>
                 : null}
             </div>
-
         </div>
       );
     }

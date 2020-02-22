@@ -265,7 +265,7 @@ class FileReader2 extends React.Component {
     //   console.log(this.state.csvfile);
       return (
         <div className="App">
-            <ReactEcharts option={this.getOption()}  style={{width:1760, height:900}} />
+            <ReactEcharts option={this.getOption()}  style={{width:'100%', height:800, border:'1px solid lightgray'}}/>
             {/* <Plot data={this.state.data_line}/> */}
         </div>
       );

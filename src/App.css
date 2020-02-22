@@ -23,6 +23,7 @@
 
 .container{
   background-color: #f4fafd !important;
+  height: 0px;
 }
 
 .ant-tabs .ant-tabs-large-bar .ant-tabs-tab{
@@ -49,7 +50,6 @@
 }
 
 .navbar .ant-card-head .ant-tabs-bar{
-  border-bottom: 0px solid transparent;
   padding: 0 80px
 }
 

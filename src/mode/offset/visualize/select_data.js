@@ -158,7 +158,7 @@ class FileReader extends React.Component {
     render(props) {
       return (
         <div className="App">
-            <h1 style={{color:'#b47b44', margin:'3% 0 3% 0'}}>Offset Visualization</h1>
+            <h1 style={{color:'#b47b44', margin:'1% 0 1% 0'}}>Offset Visualization</h1>
             <Form layout="inline">
                 <Form.Item label="Fliter by">
                     <Select placeholder="Select Feature" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" , marginBottom:'2%'}} value={this.state.select_feature} onChange={e => this.Feature_onhandleChange(e)}>
