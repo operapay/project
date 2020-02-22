@@ -125,16 +125,16 @@ class FileReader extends React.Component {
             //         // opacity: 0.8
             //     }
             // },
-            {
-                type: 'scatter3D',
-                coordinateSystem: 'maptalks3D',
-                itemStyle: {
-                    color: 'rgb(50, 50, 150)',
-                    opacity: 1
-                },
-                data: R,
-                symbolSize: 10,
-            },
+            // {
+            //     type: 'scatter3D',
+            //     coordinateSystem: 'maptalks3D',
+            //     itemStyle: {
+            //         color: 'rgb(50, 50, 150)',
+            //         opacity: 1
+            //     },
+            //     data: R,
+            //     symbolSize: 10,
+            // },
             {
                 type: 'scatter3D',
                 coordinateSystem: 'maptalks3D',

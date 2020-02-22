@@ -598,12 +598,12 @@ class OffsetAnalyze extends React.Component {
                     </Select>
                     </Form.Item>
                 </Form>
-                <ReactEcharts option={this.getOption()} style={{width:'100%', height:700}} />
-                <ReactEcharts option={this.Option3nmi()} style={{width:'100%', height:500}} />
-                <ReactEcharts option={this.Option5nmi()} style={{width:'100%', height:500}} />
-                <ReactEcharts option={this.Option8nmi()} style={{width:'100%', height:500}} />
+                <ReactEcharts option={this.getOption()} style={{width:'70%', height:700, display:'inline-block'}} />
+                <ReactEcharts option={this.Option3nmi()} style={{width:'60%', height:600, display:'inline-block'}} />
+                <ReactEcharts option={this.Option5nmi()} style={{width:'60%', height:600, display:'inline-block'}} />
+                <ReactEcharts option={this.Option8nmi()} style={{width:'60%', height:600,  display:'inline-block'}} />
             </div>
-            : <p style={{fontSize:'1.5em', marginTop:'10%'}}>No data for Analyze</p>}
+            : <p style={{fontSize:'1.5em', marginTop:'9%'}}>No data for Analyze</p>}
         </div>
       );
     }

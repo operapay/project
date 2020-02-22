@@ -84,7 +84,7 @@ class Mode extends React.Component {
                 onChange={this.handleChange}
                 // style={{color:'#b47b44'}}
             />
-            <Button style={{backgroundColor:'#b47b44',color:'white',marginTop:'1.5%', display:'flex'}} onClick={this.importCSV} disabled={this.state.upload}> Upload now!</Button>
+            <Button style={{backgroundColor:'#b47b44',color:'white',marginTop:'1%', display:'flex'}} onClick={this.importCSV} disabled={this.state.upload}> Upload now!</Button>
           </div>
           {this.state.check === true ? 
           <div>

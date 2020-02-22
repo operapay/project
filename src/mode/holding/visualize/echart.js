@@ -106,11 +106,11 @@ class FileReader2 extends React.Component {
     render(props) {
     //   console.log(this.state.csvfile);
       return (
-        <div className="App">
+        <div>
             <Col>
                 <Select
                     mode="multiple"
-                    style={{ width: '50%' }}
+                    style={{ width: '50%' ,marginBottom:'2%'}}
                     placeholder="Please select flight"
                     value={this.state.checkedList}
                     // defaultValue={['a10', 'c12']}
@@ -122,7 +122,7 @@ class FileReader2 extends React.Component {
                     ))}
                 </Select>
             </Col>
-            <ReactEcharts option={this.getOption()}  style={{width:1760, height:900}} />
+            <ReactEcharts option={this.getOption()}  style={{width:'100%', height:700, border:'1px solid lightgray'}} />
         </div>
       );
     }

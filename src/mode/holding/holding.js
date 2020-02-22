@@ -1,4 +1,4 @@
-import { Card } from 'antd';
+import { Card,Button } from 'antd';
 import React from "react";
 // import Holding from '../../visualize/holding';
 import Holding from './visualize/detect_holding';
@@ -71,20 +71,22 @@ class Mode extends React.Component {
         tab2: <HoldingAnalyze check={this.state.check} data={this.state.data}/>,
       };
       return (
-        <div>
-          <h2>Import holding .csv file</h2>
-          <input
-              className="csv-input"
-              type="file"
-              ref={input => {
-              this.filesInput = input;
-              }}
-              name="file"
-              placeholder={null}
-              onChange={this.handleChange}
-          />
-          <p />
-          <button onClick={this.importCSV} disabled={this.state.upload}> Upload now!</button>
+        <div className='importbar'>
+          <div style={{marginLeft:'80px'}}>
+            <h2>Import holding .csv file</h2>
+            <input
+                className="csv-input"
+                type="file"
+                ref={input => {
+                this.filesInput = input;
+                }}
+                name="file"
+                placeholder={null}
+                onChange={this.handleChange}
+            />
+            <p />
+            <Button  style={{backgroundColor:'#b47b44',color:'white',marginTop:'1%', display:'flex'}} onClick={this.importCSV} disabled={this.state.upload}> Upload now!</Button>
+          </div>
           {this.state.check === true ? 
           <Card
             style={{ width: '100%', textAlign: "-webkit-center"}}

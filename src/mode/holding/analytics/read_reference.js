@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import './holding.css'
 import Papa from 'papaparse'
-import { Select } from 'antd';
+import { Select, Button,Form } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Detect from './detect_holding'
@@ -136,7 +136,7 @@ class FileReader1 extends React.Component {
     }
 
     render(props) {
-      console.log(this.state.data);
+      // console.log(this.state.data);
       return (
         <div className="App">
             <h2>Import reference .csv file</h2>
@@ -151,7 +151,7 @@ class FileReader1 extends React.Component {
                 onChange={this.handleChange}
             />
             <p />
-            <button onClick={this.importCSV} disabled={this.state.upload}> Upload now!</button>
+            <Button style={{backgroundColor:'#b47b44',color:'white'}} onClick={this.importCSV} disabled={this.state.upload}> Upload now!</Button>
             {this.state.status === false ? 
             <Detect data={this.test} status={this.state.status} dataref={this.state.data}/>
             : null}

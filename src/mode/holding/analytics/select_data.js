@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import './holding.css'
 import Papa from 'papaparse'
-import { Select } from 'antd';
+import { Select,Form } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
@@ -399,21 +399,31 @@ class FileReader1 extends React.Component {
     });
   
     render(props) {
-      console.log(this.date);
+    //   console.log(this.date);
       return (
-        <div className="App">
+        <div>
+            <Form layout="inline">
+            <Form.Item label="Date">
             <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.date_default} onChange={e => this.Date_onhandleChange(e,this.data)}>
                 {this.date.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
             </Select>
+            </Form.Item>
+
+            {this.state.date_default !== 'Select Date' ?
+            <Form.Item label="Flight no">
             <Select placeholder="Select Flight" style={{ width: 300, fontSize: "1.2rem" }} value={this.state.flight_default} onChange={e => this.onhandleChange(e,this.state.data_select_name)}>
                 {this.state.distinct_name.map(flight => (
                     <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                 ))}
             </Select>
-            <ReactEcharts option={this.getOption()} style={{width:1300, height:500}} />
-            <ReactEcharts option={this.getOptiontime()} style={{width:1300, height:500}} />
+            </Form.Item>
+            : null}
+            </Form>
+
+            <ReactEcharts option={this.getOption()} style={{width:'60%', height:500, display:'inline-block'}} />
+            <ReactEcharts option={this.getOptiontime()} style={{width:'60%', height:500,  display:'inline-block'}} />
         </div>
       );
     }

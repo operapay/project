@@ -4,7 +4,7 @@ import 'echarts-gl'
 import 'mapbox-echarts'
 import * as maptalks from 'maptalks'
 // import './holding.css'
-import { Select,Button} from 'antd';
+import { Select,Button,Form} from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Holding from './echart'
@@ -78,20 +78,31 @@ class FileReader2 extends React.Component {
     render(props) {
     //   console.log(this.state.csvfile);
       return (
-        <div className="App">
-            <div>
+        <div>
+            <div style={{marginBottom:'1%'}}>
+            <Form layout="inline">
+                {/* <Form layout="inline"> */}
+                <Form.Item label="Date">
                 <Select placeholder="Select Date" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.date_default} onChange={e => this.Date_onhandleChange(e,this.data)}>
                     {this.date.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}</Option>
                     ))}
                 </Select>
+                </Form.Item>
+
+                {this.state.date_default !== 'Select Date' ?
+                <Form.Item label="Time">
                 <Select placeholder="Select Time" style={{ width: 200, fontSize: "1.2rem", paddingRight:"100 px" }} value={this.state.time_default} onChange={e => this.Time_onhandleChange(e,this.state.date_name)}>
                     {this.state.distinct_time.map(flight => (
                         <Option style={{ fontSize: "1rem" }} key={flight}>{flight}.00 - {flight}.59</Option>
                     ))}
                 </Select>
+                </Form.Item>
+                : null}
+
                 {this.state.date_default !== 'Select Date' && this.state.time_default !== 'Select Time'?
-                <Button onClick={this.search}>Search</Button> : null}
+                <Button style={{backgroundColor:'#b47b44',color:'white'}} onClick={this.search}>Search</Button> : null}
+                </Form>
                 {/* <Button onClick={this.search}>Search</Button> */}
             </div>
             <div>

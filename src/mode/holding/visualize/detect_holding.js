@@ -198,7 +198,7 @@ class FileReader2 extends React.Component {
     //   console.log(this.state.csvfile);
       return (
         <div className="App">
-          <h1>Holding Visualization</h1>
+          <h1 style={{color:'#b47b44', margin:'3% 0 3% 0'}}>Holding Visualization</h1>
           <Selectdata data={this.state.dataAll} date={this.state.distinct_date}/>
         </div>
       );
