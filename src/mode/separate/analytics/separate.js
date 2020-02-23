@@ -23,8 +23,8 @@ class FileReader2 extends React.Component {
             checkedList: [],
             data_bar : [],
             heavy: ['A38','A35','A33','B74','B77','B78'],
-            large: ['A31','A32','B73','A20'],
-            small: ['AT7'],
+            large: ['A31','A32','B73','A20'], //meaning medium
+            small: ['AT7'], //meaning light
             table : [],
             data_table: [],
             click: false,
@@ -383,9 +383,9 @@ class FileReader2 extends React.Component {
         }
         //----------------data distribution----------------
         // console.log('dis',data_array)
-        let graph_name = ['Small and Small','Small and Large','Small and Heavy',
-        'Large and Small','Large and Large','Large and Heavy',
-        'Heavy and Small','Heavy and Large','Heavy and Heavy']
+        let graph_name = ['Light and Light','Light and Medium','Light and Heavy',
+        'Medium and Light','Medium and Medium','Medium and Heavy',
+        'Heavy and Light','Heavy and Medium','Heavy and Heavy']
         let plot_data = this.distribution(array)
         let series = []
         for(var i=0;i<plot_data.length;i++){
