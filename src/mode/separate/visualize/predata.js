@@ -151,7 +151,7 @@ class FileReader extends React.Component {
                 // console.log(time)
                 this.state.arr[j].coords[i-num].push(result[i].long)
                 this.state.arr[j].coords[i-num].push(result[i].lat)
-                this.state.arr[j].coords[i-num].push(result[i].altitude)
+                this.state.arr[j].coords[i-num].push(result[i].altitude_ft*0.3048)
                 this.state.arr[j].coords[i-num].push(time)
             }
             // console.log(j)

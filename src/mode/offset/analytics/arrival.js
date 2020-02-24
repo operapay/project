@@ -468,7 +468,7 @@ class OffsetAnalyze extends React.Component {
             type: 'value',
             name: this.state.plot_yaxis,
             nameLocation: 'center',
-            nameGap: 90,
+            nameGap: 50,
             nameTextStyle: {
                 fontSize: 20
             },
