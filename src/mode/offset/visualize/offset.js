@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef, useEffect } from "react";
 import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'
 import 'mapbox-echarts'
@@ -7,6 +7,7 @@ import './offset.css'
 import { Select,Checkbox } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import BlockScrolling from "../../../BlockScrolling";
 
 const { Option } = Select;
 
@@ -203,7 +204,9 @@ class FileReader extends React.Component {
                 null
             }
             {/* <Checkbox.Group options={this.check}  value={this.state.checkedList} onChange={e => this.onhandleChange(e,this.flight)}/> */}
-            <ReactEcharts option={this.getOption()} style={{width:'100%', height:800, border:'1px solid lightgray'}} />
+            <BlockScrolling>
+                <ReactEcharts option={this.getOption()} style={{width:'100%', height:800, border:'1px solid lightgray'}} />
+            </BlockScrolling>
         </div>
       );
     }
@@ -215,6 +218,5 @@ class FileReader extends React.Component {
     what: PropTypes.string
     // check_data: PropTypes.bool
   };
-  
   
   export default FileReader;

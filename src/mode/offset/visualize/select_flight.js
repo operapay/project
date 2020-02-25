@@ -45,12 +45,24 @@ class FileReader extends React.Component {
         this.name = props.name
         this.year = props.year
 
+        this.offsetScrollingRef = React.createRef();
+
         // this.getData = this.getData.bind(this);
     }
 
     search = () => {
         this.setState({ click: true });
     };
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const { click } = this.state;
+        if (prevState.click != click && click) {
+            const { current } = this.offsetScrollingRef;
+            if (current) {
+                current.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }
   
     Name_onhandleChange(value,data) {
         var data_select = []
@@ -168,6 +180,9 @@ class FileReader extends React.Component {
                 </Form>
             </div>
             <div>
+                <div style={{ position: "relative" }}>
+                    <div style={{ position: "absolute", top: -16 }} ref={this.offsetScrollingRef} />
+                </div>
                 {this.state.click === true ? 
                 <Offset data={this.state.real} name={this.state.checkbox} what={this.state.what_select}/>
                 : null}

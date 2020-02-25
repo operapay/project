@@ -51,12 +51,23 @@ class FileReader extends React.Component {
         this.check = props.check
         this.date = props.date
 
+        this.offsetScrollingRef = React.createRef();
         // this.getData = this.getData.bind(this);
     }
 
     search = () => {
         this.setState({ click: true });
     };
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const { click } = this.state;
+        if (prevState.click != click && click) {
+            const { current } = this.offsetScrollingRef;
+            if (current) {
+                current.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }
 
     distance(lat1, lon1, lat2, lon2, unit) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
@@ -333,6 +344,9 @@ class FileReader extends React.Component {
                 </Form>
             </div>
             <div  style={{marginBottom:'1%'}}>
+                <div style={{ position: "relative" }}>
+                    <div style={{ position: "absolute", top: -16 }} ref={this.offsetScrollingRef} />
+                </div>
                 {this.state.click === true ? 
                 <Separate data={this.state.time_flight} time_pick={this.state.real} name={this.state.name} turn={this.state.date_name}/>
                 : null}

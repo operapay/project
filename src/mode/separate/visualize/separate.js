@@ -7,6 +7,7 @@ import * as maptalks from 'maptalks'
 import { Select,Checkbox,Col } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import BlockScrolling from "../../../BlockScrolling";
 
 const { Option } = Select;
 
@@ -270,7 +271,9 @@ class FileReader2 extends React.Component {
     //   console.log(this.state.csvfile);
       return (
         <div className="App">
+            <BlockScrolling>
             <ReactEcharts option={this.getOption()}  style={{width:'100%', height:800, border:'1px solid lightgray'}}/>
+            </BlockScrolling>
             {/* <Plot data={this.state.data_line}/> */}
         </div>
       );

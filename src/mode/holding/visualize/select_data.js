@@ -29,6 +29,8 @@ class FileReader2 extends React.Component {
         };
         this.data = props.data
         this.date = props.date
+
+        this.offsetScrollingRef = React.createRef();
         
         // this.getData = this.getData.bind(this);
         // this.updateData = this.updateData.bind(this);
@@ -38,6 +40,16 @@ class FileReader2 extends React.Component {
     search = () => {
         this.setState({ click: true });
     };
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const { click } = this.state;
+        if (prevState.click != click && click) {
+            const { current } = this.offsetScrollingRef;
+            if (current) {
+                current.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }
 
     Date_onhandleChange(value,data) {
         var data_select = []
@@ -106,6 +118,9 @@ class FileReader2 extends React.Component {
                 {/* <Button onClick={this.search}>Search</Button> */}
             </div>
             <div>
+                <div style={{ position: "relative" }}>
+                    <div style={{ position: "absolute", top: -16 }} ref={this.offsetScrollingRef} />
+                </div>
                 {this.state.click === true ? 
                     <Holding data={this.state.data_time} name={this.state.name}/>
                 : null}
