@@ -181,9 +181,9 @@ class OffsetAnalyze extends React.Component {
             var dis = 0; var no = 0; var no1 = 0;
             // for(var j=1;j<result[i].coords.length;j++){
             for(var j=result[i].coords.length-1;j>1;j--){
-                x1 = (((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x1 = -(((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 y1 = (((result[i].coords[j-1].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j-1].lat*0.01745329251))*0.539957)
-                x2 = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x2 = -(((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 y2 = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
                 dis = dis + this.distance_xy(x1,y1,x2,y2)
                 // console.log('check',dis,x1,y1,x2,y2)
@@ -193,9 +193,11 @@ class OffsetAnalyze extends React.Component {
                     //console.log(i)
                     this.state.arr[i].data.push([])
                     this.state.arr[i].name = result[i].name
-                    this.state.arr[i].data[no].push(x1)
-                    this.state.arr[i].data[no].push(y1)
-                    no++
+                    if(x1 < 0){
+                        this.state.arr[i].data[no].push(x1)
+                        this.state.arr[i].data[no].push(y1)
+                        no++
+                    }
                 }
                 if(dis < 50){
                     dist[i].name = result[i].name
@@ -229,7 +231,7 @@ class OffsetAnalyze extends React.Component {
                 dist.push({name:'',data:[[]]})
             }
         }
-        console.log(distribute)
+        // console.log(distribute)
         this.state.avg_arr.data = []
         // this.state.avg_arr.data.push([0,0])
         var num = 0
@@ -420,7 +422,7 @@ class OffsetAnalyze extends React.Component {
     getData() {
         // console.log(this.test)
         this.data_linegraph(this.test,0)
-        this.setState({plot_graph:xaxis[0],plot_xaxis:xyaxis[0][1],plot_yaxis:xyaxis[0][2]})
+        this.setState({plot_graph:xaxis[0],plot_xaxis:xyaxis[0][1],plot_yaxis:xyaxis[0][0]})
 
     }
 
@@ -453,7 +455,7 @@ class OffsetAnalyze extends React.Component {
             type: 'value',
             name: this.state.plot_xaxis,
             nameLocation: 'center',
-            nameGap: 30,
+            nameGap: 40,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -468,7 +470,7 @@ class OffsetAnalyze extends React.Component {
             type: 'value',
             name: this.state.plot_yaxis,
             nameLocation: 'center',
-            nameGap: 50,
+            nameGap: 70,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -520,6 +522,7 @@ class OffsetAnalyze extends React.Component {
             {
                 data: this.state.distribute3nmi,
                 type: 'bar',
+                color: '#A9CCE3'
             }
         ]      
     });
@@ -562,6 +565,7 @@ class OffsetAnalyze extends React.Component {
             {
                 data: this.state.distribute5nmi,
                 type: 'bar',
+                color: '#A9CCE3'
             }
         ]      
     });
@@ -604,6 +608,7 @@ class OffsetAnalyze extends React.Component {
             {
                 data: this.state.distribute8nmi,
                 type: 'bar',
+                color: '#A9CCE3'
             }
         ]      
     });

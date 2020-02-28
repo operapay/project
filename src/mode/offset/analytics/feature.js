@@ -189,9 +189,9 @@ class OffsetAnalyze extends React.Component {
             var dis = 0;
             for(var j=1;j<result[i].coords.length;j++){
 
-                x1 = (((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x1 = -(((result[i].coords[j-1].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 y1 = (((result[i].coords[j-1].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j-1].lat*0.01745329251))*0.539957)
-                x2 = (((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
+                x2 = -(((result[i].coords[j].lat - lat_origin)*(0.01745329251*6371))*0.539957)
                 y2 = (((result[i].coords[j].long - long_origin)*(0.01745329251*6371)*Math.cos(result[i].coords[j].lat*0.01745329251))*0.539957)
                 dis = dis + this.distance_xy(x1,y1,x2,y2)
                 if( dis < 20 ){
@@ -448,7 +448,7 @@ class OffsetAnalyze extends React.Component {
             type: 'value',
             name: this.state.plot_xaxis,
             nameLocation: 'center',
-            nameGap: 30,
+            nameGap: 40,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -463,7 +463,7 @@ class OffsetAnalyze extends React.Component {
             type: 'value',
             name: this.state.plot_yaxis,
             nameLocation: 'center',
-            nameGap: 90,
+            nameGap: 70,
             nameTextStyle: {
                 fontSize: 20
             },
@@ -515,6 +515,7 @@ class OffsetAnalyze extends React.Component {
             {
                 data: this.state.distribute3nmi,
                 type: 'bar',
+                color: '#A9CCE3'
             }
         ]      
     });
@@ -557,6 +558,7 @@ class OffsetAnalyze extends React.Component {
             {
                 data: this.state.distribute5nmi,
                 type: 'bar',
+                color: '#A9CCE3'
             }
         ]      
     });
@@ -599,6 +601,7 @@ class OffsetAnalyze extends React.Component {
             {
                 data: this.state.distribute8nmi,
                 type: 'bar',
+                color: '#A9CCE3'
             }
         ]      
     });

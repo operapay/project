@@ -59,11 +59,11 @@ class FileReader2 extends React.Component {
               style={{ width: 188, marginBottom: 8, display: 'block' }}
             />
             <Button
-              type="primary"
+            //   style={{backgroundColor:'#b47b44',color:'white'}}
               onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
             //   icon="search"
               size="small"
-              style={{ width: 90, marginRight: 8 }}
+              style={{ width: 90, marginRight: 8,backgroundColor:'#b47b44',color:'white' }}
             >
               Search
             </Button>
@@ -429,7 +429,7 @@ class FileReader2 extends React.Component {
                 })
             }
         }
-        var name = 'Table between ' + param.seriesName + ' at ' + param.data[0] + ' nmi'
+        var name = 'Wake separation between ' + param.seriesName + ' at ' + param.data[0] + ' nmi'
         // console.log(data)
         data.sort(this.compare)
         this.setState({data_table:data,click:true,name_table:name})

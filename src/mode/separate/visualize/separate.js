@@ -184,10 +184,10 @@ class FileReader2 extends React.Component {
                 coord = [[res_lon,res_lat,res_alt],[data[i].data.coords[state][0],data[i].data.coords[state][1],data[i].data.coords[state][2]]]
                 for(var j=state;j>1;j--){
                     dis = dis + this.distance(data[i].data.coords[j][1],data[i].data.coords[j][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][0])
-                    coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][2]])
                     if(dis >= real_dis){
                         break
                     }
+                    coord.push([data[i].data.coords[j-1][0],data[i].data.coords[j-1][1],data[i].data.coords[j-1][2]])
                 }
                 if(coord.length > 2){
                     // console.log(color_num)
