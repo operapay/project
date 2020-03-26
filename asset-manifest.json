@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "https://operapay.github.io/project/static/css/main.93db2cb4.chunk.css",
+    "main.js": "https://operapay.github.io/project/static/js/main.2c24481f.chunk.js",
+    "main.js.map": "https://operapay.github.io/project/static/js/main.2c24481f.chunk.js.map",
+    "runtime-main.js": "https://operapay.github.io/project/static/js/runtime-main.11fdfe1b.js",
+    "runtime-main.js.map": "https://operapay.github.io/project/static/js/runtime-main.11fdfe1b.js.map",
+    "static/css/2.fb9ed26a.chunk.css": "https://operapay.github.io/project/static/css/2.fb9ed26a.chunk.css",
+    "static/js/2.09f74a20.chunk.js": "https://operapay.github.io/project/static/js/2.09f74a20.chunk.js",
+    "static/js/2.09f74a20.chunk.js.map": "https://operapay.github.io/project/static/js/2.09f74a20.chunk.js.map",
+    "index.html": "https://operapay.github.io/project/index.html",
+    "precache-manifest.d9c0b0b7a84aead04450bbb82d026dfc.js": "https://operapay.github.io/project/precache-manifest.d9c0b0b7a84aead04450bbb82d026dfc.js",
+    "service-worker.js": "https://operapay.github.io/project/service-worker.js",
+    "static/css/2.fb9ed26a.chunk.css.map": "https://operapay.github.io/project/static/css/2.fb9ed26a.chunk.css.map",
+    "static/css/main.93db2cb4.chunk.css.map": "https://operapay.github.io/project/static/css/main.93db2cb4.chunk.css.map"
+  }
+}
